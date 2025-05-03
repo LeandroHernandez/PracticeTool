@@ -1,0 +1,21 @@
+<!-- <p>words works!</p> -->
+
+<main class="main">
+    <div class="main_container">
+        <div class="content-header">
+            <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header>
+        </div>
+        <div class="table">
+            <app-table 
+                [tableInfo]="tableInfo" 
+                [itemList]="itemList" 
+                [page]="page" 
+                [filterFormFields]="filterFormFields" 
+                (editAction)="wordEdit($event)" 
+                (deleteAction)="wordDelete($event)"
+                (pageEmitter)="getWords(null, $event)"
+                (filterAction)="getWords($event)"
+            ></app-table>
+        </div>
+    </div>
+</main>

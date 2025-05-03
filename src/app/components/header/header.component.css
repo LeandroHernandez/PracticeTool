@@ -1,0 +1,34 @@
+
+.container_div {
+    max-width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-radius: 5px;
+    border-bottom: 1px solid var(--secondary);
+    background-color: var(--primary);
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 6px 12px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+
+    &:hover {
+        color: var(--secondary);
+        background-color: var(--accent);
+    }
+}
+
+.menu_btn {
+    color: var(--secondary);
+    background-color: var(--accent);
+}
+
+h1 {
+    font-size: clamp(1rem, 3vw, 2rem);
+}

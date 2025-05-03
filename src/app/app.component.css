@@ -1,0 +1,35 @@
+
+.main {
+    height: calc(100% - 92px);
+    width: 100%;
+}
+
+.main_contianer {
+    height: 100%;
+    /* width: 100%; */
+}
+
+.header {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.content_section {
+    height: 100%;
+    display: flex;
+}
+
+.nav {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    /* padding: 20px; */
+}
+
+.content {
+    height: 100%;
+    width: 100%;
+}

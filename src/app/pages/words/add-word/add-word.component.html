@@ -1,0 +1,73 @@
+<!-- <p>add-word works!</p> -->
+
+<main class="main">
+    <button class="btn back_btn" [routerLink]="['/words']">
+        <i class="bi bi-arrow-bar-left"></i>
+        Volver
+    </button>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <header class="form_header">
+            <h4>{{ !id ? 'New' : 'Edit'}} Word</h4>
+            @if( form.value.type === 'Verb' ) {
+                <div class="form-check form-switch">
+                    <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"></nz-switch>
+                </div>
+            }
+        </header>
+        <div class="form_content">
+            <label class="label">
+                <span> Type: </span>
+                <select class="select" formControlName="type">
+                    @for(type of types; track $index){
+                        <option [value]="type" class="option">{{type}}</option>
+                    }
+                </select>
+            </label>
+            <label class="label">
+                <span> Base: </span>
+                <input type="text" formControlName="en" class="input" placeholder="Base Form" />
+            </label>
+            @if ( form.value.irregular === true ) {
+                <label class="label">
+                    <span> Simple Present: </span>
+                    <input type="text" formControlName="simplePresent" class="input" placeholder="Presente Simple" />
+                </label>
+                <label class="label">
+                    <span> Simple Past: </span>
+                    <input type="text" formControlName="simplePast" class="input" placeholder="Simple Past" />
+                </label>
+                <label class="label">
+                    <span> Past Participle: </span>
+                    <input type="text" formControlName="pastParticiple" class="input" placeholder="Past Participle" />
+                </label>
+            }
+            <h6>
+                <span> Meanings </span>
+                <span> {{es.controls.length}} </span>
+            </h6>
+            <div formArrayName="es" class="formArrayName" >
+                <!-- @for ( meaning of es.controls; track $index ) {
+                    <div [formGroupName]="$index" class="formGroupName" >
+                        <input type="text" formControlName="value" placeholder="Value">
+                        @if ( es.length > 1 ) {
+                            <i class="bi bi-trash" (click)="removeItem($index)" title="Remove" ></i>
+                        }
+                    </div>
+                } -->
+                @for ( meaning of es.controls; track meaning ) {
+                    <div [formGroupName]="es.controls.indexOf(meaning)" class="formGroupName" >
+                      <input type="text" formControlName="value" placeholder="Value">
+                      @if ( es.length > 1 ) {
+                        <i class="bi bi-trash" (click)="removeItem(es.controls.indexOf(meaning))" title="Remove" ></i>
+                      }
+                    </div>
+                  }
+                  
+            </div>
+            <button type="button" class="btn add_btn"(click)="addItem()" title="Add Meaning" >
+                <i class="bi bi-plus-circle"></i>
+            </button>
+            <button type="submit" class="btn register_btn" title="Register">{{!id ? 'Register' : 'Update'}} Word</button>
+        </div>
+    </form>
+</main>

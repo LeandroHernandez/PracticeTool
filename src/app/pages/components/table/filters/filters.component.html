@@ -1,0 +1,99 @@
+<!-- <p>filters works!</p> -->
+
+<div class="container">
+    
+    <header class="header">
+
+        <!-- <button class="button clear_form_button " (click)="form.reset()" >
+            Clear Filters
+            <i class="bi bi-arrow-counterclockwise"></i>
+        </button> -->
+        <h5 class="title"> Filters </h5>
+        <!-- <form [formGroup]="activeForm">
+            <nz-switch 
+                [nzCheckedChildren]="'Active'" 
+                [nzUnCheckedChildren]="'Not active'" 
+                [formControlName]="'activeFilters'" 
+                class="active_filters" 
+                (click)="changeActiveFilters()"
+            ></nz-switch>
+        </form> -->
+        
+    </header>
+    
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        @for (item of filterFormFields; track item.key) {
+            @if (item.type === 'subForm') {
+                <!-- <div class="subForm" [formGroupName]="item.key" >
+    
+                    @for (subFormItem of item.subForm; track subFormItem.key) {
+                        @if (subFormItem.type === 'switch') {
+                            <nz-switch [nzCheckedChildren]="subFormItem.switchInfo?.checked ?? ''" [nzUnCheckedChildren]="subFormItem.switchInfo?.unChecked ?? ''" [formControlName]="subFormItem.key"></nz-switch>
+                        }@else {
+                            <label class="label">
+                                <span>{{subFormItem.label}}</span>
+                                @if (subFormItem.type === 'select') {
+                                    <select class="select" [formControlName]="subFormItem.key">
+                                        @for(type of subFormItem.selectOptions; track type.id){
+                                            <option [value]="type.id" class="option">{{type.name}}</option>
+                                        }
+                                    </select>
+                                } @else {
+                                    <input 
+                                        [type]="subFormItem.type" 
+                                        class="input" 
+                                        [placeholder]="subFormItem.placeholder" 
+                                        [formControlName]="subFormItem.key" 
+                                    >
+                                }
+                            </label>
+                        }
+                    }
+    
+                </div> -->
+                @for (subFormItem of item.subForm; track subFormItem.key) {
+                    <div class="subForm" [formGroupName]="item.key" >
+        
+                        @if (subFormItem.type === 'switch') {
+                            <nz-switch [nzCheckedChildren]="subFormItem.switchInfo?.checked ?? ''" [nzUnCheckedChildren]="subFormItem.switchInfo?.unChecked ?? ''" [formControlName]="subFormItem.key"></nz-switch>
+                        }@else {
+                            <label class="label">
+                                <span>{{subFormItem.label}}</span>
+                                @if (subFormItem.type === 'select') {
+                                    <select class="select" [formControlName]="subFormItem.key">
+                                        <option [value]="''" class="option" selected >All</option>
+                                        @for(type of subFormItem.selectOptions; track type.id){
+                                            <option [value]="type.id" class="option">{{type.name}}</option>
+                                        }
+                                    </select>
+                                } @else {
+                                    <input 
+                                        [type]="subFormItem.type" 
+                                        class="input" 
+                                        [placeholder]="subFormItem.placeholder" 
+                                        [formControlName]="subFormItem.key" 
+                                    >
+                                }
+                            </label>
+                        }
+                        
+                    </div>
+                }
+            } @else {
+                <label class="label">
+                    <span>{{item.label}}</span>
+                    <input 
+                        [type]="item.type" 
+                        class="input" 
+                        [placeholder]="item.placeholder" 
+                        [formControlName]="item.key" 
+                    >
+                </label>
+            }
+        }
+        <button type="submit" title="Apply Filter" class="button submit_button">
+            Filter
+        </button>
+    </form>
+
+</div>

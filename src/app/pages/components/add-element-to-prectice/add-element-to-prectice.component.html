@@ -1,0 +1,83 @@
+<!-- <p>add-element-to-prectice works!</p> -->
+
+<main class="main">
+    <header class="main_header">
+        <button class="btn back_btn" [routerLink]="[ '/' + backTo ]">
+            <i class="bi bi-arrow-bar-left"></i>
+            Volver
+        </button>
+        
+        @if (url.endsWith('test')) {
+            <span> {{ testList.length }} </span>
+        }
+    </header>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <header class="form_header">
+            @if (url.endsWith('test')) {
+                <h4>{{formLabel}}</h4>
+            } @else {
+                <h4>{{ !id ? 'New' : 'Edit'}} {{formLabel}}</h4>
+            }
+            <!-- @if( startWithWords && form.value.verbInfo.wordType === verbId ) { -->
+            @if( form.value.verbInfo && form.value.verbInfo.wordType === verbId ) {
+                <div formGroupName="verbInfo" class="form-check form-switch">
+                    <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"></nz-switch>
+                </div>
+            }
+        </header>
+        <div class="form_content">
+            @if (startWithWords && form.value.verbInfo) {
+                <div formGroupName="verbInfo" >
+                    <label class="label">
+                        <span> Type: </span>
+                        <select class="select" formControlName="wordType">
+                            @for(type of types; track $index){
+                                <option [value]="type.id" class="option">{{type.name}}</option>
+                            }
+                        </select>
+                    </label>
+                </div>
+            }
+            <label class="label">
+                <span> Base: </span>
+                <input type="text" formControlName="en" class="input {{ url.endsWith('test') ? 'disable' : '' }}" placeholder="Base Form" />
+            </label>
+            @if ( form.value.verbInfo && form.value.verbInfo.irregular === true ) {
+                <div formGroupName="verbInfo">
+                    <label class="label">
+                        <span> Simple Present: </span>
+                        <input type="text" formControlName="simplePresent" class="input" placeholder="Presente Simple" />
+                    </label>
+                    <label class="label">
+                        <span> Simple Past: </span>
+                        <input type="text" formControlName="simplePast" class="input" placeholder="Simple Past" />
+                    </label>
+                    <label class="label">
+                        <span> Past Participle: </span>
+                        <input type="text" formControlName="pastParticiple" class="input" placeholder="Past Participle" />
+                    </label>
+                </div>
+            }
+            <h6>
+                <span> Meanings </span>
+                <span> {{es.controls.length}} </span>
+            </h6>
+            <div formArrayName="es" class="formArrayName" >
+                @for ( meaning of es.controls; track meaning ) {
+                    <div [formGroupName]="es.controls.indexOf(meaning)" class="formGroupName" >
+                      <input type="text" formControlName="value" placeholder="Value">
+                      @if ( es.length > 1 ) {
+                        <i class="bi bi-trash" (click)="removeItem(es.controls.indexOf(meaning))" title="Remove" ></i>
+                      }
+                    </div>
+                  }
+                  
+            </div>
+            <button type="button" class="btn add_btn"(click)="addItem()" title="Add Meaning" >
+                <i class="bi bi-plus-circle"></i>
+            </button>
+            <button type="submit" class="btn register_btn" title="Register">{{submitButton()}}</button>
+        </div>
+    </form>
+</main>
+

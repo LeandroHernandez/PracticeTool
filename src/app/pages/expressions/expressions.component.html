@@ -1,0 +1,19 @@
+<!-- <p>expressions works!</p> -->
+
+<main class="main">
+    <div class="main_container">
+        <div class="content-header">
+            <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header>
+        </div>
+        <div class="table">
+            <app-table 
+                [tableInfo]="tableInfo" 
+                [itemList]="itemList" 
+                [filterFormFields]="filterFormFields" 
+                (editAction)="expressionEdit($event)" 
+                (deleteAction)="expressionDelete($event)"
+                (filterAction)="getExpressions($event)"
+            ></app-table>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,12 @@
+<!-- <p>nav works!</p> -->
+<div class="nav_container">
+    <ul class="ul">
+        @for(item of navList; track item.route) {
+            <li class="li {{ url.startsWith('/' + item.route) ? 'active' : '' }}" [title]="item.title" [routerLink]="['/' + item.route]" >
+                <i [class]="'bi bi-' + item.icon"></i>
+                {{item.label}}
+            </li>
+        }
+    </ul>
+</div>
+

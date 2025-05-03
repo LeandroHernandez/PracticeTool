@@ -1,0 +1,64 @@
+<!-- <p>table works!</p> -->
+<main class="main">
+    <div class="filters_section">
+        <button class="button show" (click)="showFiltersModal()" >
+            Filter <i class="bi bi-filter"></i>
+        </button>
+        
+        <!-- <app-filters [filterFormFields]="filterFormFields" (valueFormEmitter)="filterAction.emit($event)" ></app-filters> -->
+    </div>
+    <div class="table_container">
+        <table class="table">
+            <thead class="thead">
+                <tr class="tr">
+                    <th class="th">#</th>
+                    @for(item of tableInfo; track $index) {
+                        <th class="th">
+                            {{item.header}}
+                        </th>
+                    }
+                    <th class="th">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="tbody">
+                @for(item of itemList; track item.id) {
+                    <tr class="tr {{ ($index + 1) % 2 === 0 ? 'pair' : '' }} ">
+                        <td class="td"> {{ $index + 1 }} </td>
+                        <!-- <td> {{ item | json }}</td> -->
+                        @for(keyItem of tableInfo; track keyItem) {
+                            <td class="td {{ getClass(item, keyItem) }}">
+                                @if (keyItem.key === 'es') {
+                                    @for (meaning of item[keyItem.key]; track $index; let i = $index) {
+                                        {{ meaning.value }}
+                                        @if (item[keyItem.key].length > 1 && i + 1 < item[keyItem.key].length) {
+                                            <span> - </span>
+                                        }
+                                    }
+                                } 
+                                @else {
+                                    {{getValue(item, keyItem)}}
+                                }
+                            </td>
+                        }
+                        <td class="td actions_td">
+                            <i class="bi bi-pencil-square" title="Edit Word" (click)="editAction.emit(item.id)" ></i>
+                            <i nz-popconfirm nzPopconfirmTitle="Sure to delete?" (nzOnConfirm)="deleteAction.emit(item.id)" class="bi bi-x-circle" title="Delete Word" ></i>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="paginator">
+        <nz-pagination
+          [(nzPageIndex)]="page.index"
+          [(nzPageSize)]="page.size"
+          [nzTotal]="itemList.length"
+          [nzSize]="'default'"
+          nzShowSizeChanger
+          nzShowQuickJumper
+          (nzPageIndexChange)="pageEmitter.emit(page)"
+          (nzPageSizeChange)="pageEmitter.emit(page)"
+        ></nz-pagination>
+    </div>
+</main>

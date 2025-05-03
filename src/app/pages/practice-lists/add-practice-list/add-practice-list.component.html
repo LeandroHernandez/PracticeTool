@@ -1,0 +1,38 @@
+<!-- <p>add-practice-list works!</p> -->
+
+<main class="main">
+    <header class="header">
+        <button class="button" type="button" [routerLink]="[ '/practice-lists' ]" >
+            Volver
+        </button>
+    </header>
+
+    <div class="content_div">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+
+            <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" [formControlName]="'state'" [disabled]="true"></nz-switch>
+
+            <div class="fileds">
+                <label class="label">
+                    <span>Title</span>
+                    <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'title'" >
+                </label>
+    
+                <label class="label">
+                    <span>Content</span>
+                    <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'list'" >
+                </label>
+            </div>
+        </form>
+        <div class="table_container">
+            <app-table 
+                [tableInfo]="tableInfo" 
+                [itemList]="itemList" 
+                [filterFormFields]="filterFormFields" 
+                (editAction)="elementToPraciceEdit($event)" 
+                (deleteAction)="elementToPraciceDelete($event)"
+                (filterAction)="getElementsToPracice($event)"
+            ></app-table>
+        </div>
+    </div>
+</main>
