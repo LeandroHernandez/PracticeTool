@@ -20,13 +20,34 @@ export class TableComponent {
   // @Input() tableHeader: Array<string> = [];
   @Input() filterFormFields: Array<IFilterFormField> = [];
   @Input() tableInfo: Array<ITableItem> = [];
-  @Input() page: IPageTableInfo = { index: 1, size: 10};
-  @Input() itemList: Array<any> = [];
+  @Input() page: IPageTableInfo = {
+    pageSize: 10,
+    startAfterDoc: undefined,
+  }
+  @Input() itemList: Array<any> | null = null;
   
-  @Input() pageEmitter: EventEmitter<IPageTableInfo> = new EventEmitter();
+  @Output() pageEmitter: EventEmitter<IPageTableInfo> = new EventEmitter();
   @Output() filterAction: EventEmitter<IElementToPractice | null> = new EventEmitter();
   @Output() editAction: EventEmitter<string> = new EventEmitter();
   @Output() deleteAction: EventEmitter<string> = new EventEmitter();
+
+  public indexPage: number = 1;
+
+  public getPaginatedList<T>(list: T[], pageSize: number, index: number): T[] {
+  if (pageSize <= 0) {
+    throw new Error('El tamaño de página debe ser mayor a cero.');
+  }
+
+  const start = index * pageSize;
+  const end = start + pageSize;
+  
+  return list.slice(start, end);
+}
+
+
+  public get paginatedItemList(): Array<any> {
+    return this.getPaginatedList( this.itemList ?? [], this.page.pageSize ?? 1, this.indexPage - 1 )
+  }
 
   constructor(private _nzModalSvc: NzModalService) {}
 
@@ -64,11 +85,12 @@ export class TableComponent {
     const key: string = keyItem.key;
     const valueItem: any = this.getNestedValue(item, key);
 
-    if (key.endsWith('irregular')) {
+    if (key.endsWith('irregular') && item.wordType && item.wordType.id === 'cieWObetRIxQzKFddEg4') {
+      // return valueItem ? 'Irregular' : 'Regular';
       return valueItem ? 'Irregular' : 'Regular';
     } else if (!valueItem) {
       
-      if (item.verbInfo.wordType.id !== 'cieWObetRIxQzKFddEg4') {
+      if (item.wordType && item.wordType.id !== 'cieWObetRIxQzKFddEg4') {
         return '----'
       }
 
@@ -99,6 +121,21 @@ export class TableComponent {
     instance.valueFormEmitter.subscribe((value: any) => {
       console.log('Cambio en filtros:', value);
       this.filterAction.emit(value);
+      this.indexPage = 1;
     });
+  }
+  
+  public pagintorChange(event: any): void {
+    console.log({event, page: this.page, });
+    this.pageEmitter.emit(this.page);
+  }
+
+  public itemIndexPosition(i: number) : number {
+    const size: number | undefined = this.page.pageSize;
+    if (typeof size !== 'number' ) {
+      return i;
+    }
+    // return i * (size / 10);
+    return i + ((this.indexPage - 1) * size);
   }
 }

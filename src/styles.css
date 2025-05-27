@@ -47,8 +47,13 @@ ul {
     cursor: pointer;
     transition: .2s transform ease;
 
-    &:hover {
+    &:not(:disabled):hover {
         transform: scale(1.1);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: .5;
     }
 }
  

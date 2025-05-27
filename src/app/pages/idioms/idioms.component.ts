@@ -27,6 +27,7 @@ export class IdiomsComponent {
       title: 'Idiom Test',
       // route: `/${RoutesApp.idioms}/${RoutesApp.testidioms}`,
       route: `/${RoutesApp.idioms}/${RoutesApp.test}`,
+      disabled: true,
     },
   }
 
@@ -97,7 +98,7 @@ export class IdiomsComponent {
     },
   ]
   // public itemList: Array<Iidiom> = [];
-  public itemList: Array<any> = [];
+  public itemList: Array<any> | null = [];
 
   constructor (
     private _router: Router, 
@@ -112,12 +113,16 @@ export class IdiomsComponent {
     // this.getidiomTypes();
   }
   
-  public getIdioms(query?: any ): void {
-    this._elementToPracticeSvc.getElementsToPracticeByType(this.idiomTypeId).subscribe(
+  public getIdioms( query?: any, options?: any ): void {
+    this._elementToPracticeSvc.getFilteredElementsToPractice( { type: this.idiomTypeId, ...query }, options ?? undefined ).subscribe(
       (idioms) => {
         this.itemList = idioms;
         // console.log({idioms});
+        if (idioms.length > 0) {
+          this.contentHeaderInfo.test.disabled = false;
+        }
       }, (error) => {
+        this.itemList = [];
         console.log({error});
       }
     )
@@ -158,19 +163,22 @@ export class IdiomsComponent {
   }
 
   public idiomDelete(id: string): void {
-    // this._idiomSvc.deleteidiom(id)
-    // .then(
-    //   (deleteResponse) => {
-    //     console.log({deleteResponse});
-    //     this._notificationSvc.success('Success', 'idiom deleted successfully.');
-    //   }
-    // )
-    // .catch(
-    //   (error) => {
-    //     console.log({error});
-    //     this._notificationSvc.error('Error', 'There was an error and we were not able to delete the idiom.');
-    //   }
-    // )
+    this._elementToPracticeSvc.deleteElementToPractice(id)
+    .then(
+      (deleteResponse) => {
+        console.log({deleteResponse});
+        this._notificationSvc.success('Success', 'Idiom deleted successfully.');
+        if (this.itemList && this.itemList.length === 0) {
+          this.contentHeaderInfo.test.disabled = true;
+        }
+      }
+    )
+    .catch(
+      (error) => {
+        console.log({error});
+        this._notificationSvc.error('Error', 'There was an error and we were not able to delete the idiom.');
+      }
+    )
   }
 }
 

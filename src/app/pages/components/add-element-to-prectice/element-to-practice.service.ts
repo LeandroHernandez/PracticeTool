@@ -138,7 +138,8 @@ export class ElementToPracticeService {
     options: {
       pageSize?: number;
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
-    } = {}
+    } = {},
+    general?: boolean
   ): Observable<any[]> {
     const elementsRef = collection(this.firestore, DbCollections.elementsToPractice) as CollectionReference<IElementToPractice>;
   
@@ -156,9 +157,12 @@ export class ElementToPracticeService {
   
     const validFilters = extractValidFilters(filters);
     for (const [path, value] of validFilters) {
-      constraints.push(where(path, '==', value));
-      // constraints.push(where(path, '>=', value));
-      // constraints.push(where(path, '<=', value + '\uf8ff'));
+      if (typeof value === 'string') {
+        constraints.push(where(path, '>=', value));
+        constraints.push(where(path, '<=', value + '\uf8ff'));
+      } else {
+        constraints.push(where(path, '==', value));
+      }
     }
   
     if (options.pageSize) {
@@ -175,16 +179,31 @@ export class ElementToPracticeService {
       map(snapshot => snapshot.map(doc => ({ id: doc.id, ...doc.data() }))),
       switchMap((elements: any[]) => {
         const enrichedElements$ = elements.map(element => {
-          const wordTypeId = element.verbInfo?.wordType;
+          // const wordTypeId = element.verbInfo?.wordType;
+          const wordTypeId = element.wordType;
   
           if (wordTypeId) {
-            return this._typeSvc.getType(wordTypeId).pipe(
+            // return this._typeSvc.getType(wordTypeId).pipe(
+            const response = this._typeSvc.getType(wordTypeId).pipe(
               map(wordTypeData => ({
                 ...element,
-                verbInfo: {
-                  ...element.verbInfo,
-                  wordType: wordTypeData, // Reemplaza el ID por el objeto completo
-                },
+                // verbInfo: {
+                //   ...element.verbInfo,
+                //   wordType: wordTypeData, // Reemplaza el ID por el objeto completo
+                // },
+                wordType: wordTypeData, // Reemplaza el ID por el objeto completo
+              }))
+            );
+            if (!general) return response;
+          }
+
+          const typeId = element.type;
+  
+          if (typeId && general) {
+            return this._typeSvc.getType(typeId).pipe(
+              map(typeData => ({
+                ...element,
+                type: typeData
               }))
             );
           }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { ElementToPracticeService } from './element-to-practice.service';
@@ -60,16 +60,18 @@ export class AddElementToPrecticeComponent implements OnInit {
       type: [''],
       en: ['', [Validators.required]],
       es: this._fb.array([]),
+      // wordType: [this.verbId, [Validators.required]],
     })
     if (this.url.startsWith(`/${RoutesApp.words}/`)) {
       this.startWithWords = true;
       this.formLabel = 'Word';
       this.backTo = RoutesApp.words;
       
+      this.form.addControl('wordType', new FormControl(this.verbId, [Validators.required]));
       this.form.addControl(
         'verbInfo', 
         this._fb.group({
-          wordType: [this.verbId, [Validators.required]],
+          // wordType: [this.verbId, [Validators.required]],
           simplePresent: [''],
           simplePast: [''],
           pastParticiple: [''],
@@ -156,7 +158,7 @@ export class AddElementToPrecticeComponent implements OnInit {
     if (this.startWithWords) {
       // this.verbInfo?.get('wordType')?.patchValue(this.verbId);
       this.form.controls['verbInfo'].patchValue({
-        wordType: this.verbId,
+        // wordType: this.verbId,
         simplePresent: '',
         simplePast: '',
         pastParticiple: '',
@@ -176,8 +178,8 @@ export class AddElementToPrecticeComponent implements OnInit {
   };
 
   public check(item: IElementToPractice): void | NzNotificationRef {
-    const inputMeanings: Array<string> = this.form.value.es.map((meaning: any) => meaning.value.toLowerCase());
-    const meanings: Array<string> = item.es.map((meaning) => meaning.value.toLowerCase());
+    const inputMeanings: Array<string> = this.form.value.es.map((meaning: any) => meaning.toLowerCase());
+    const meanings: Array<string> = item.es.map((meaning) => meaning.toLowerCase());
 
     const errorCounter: Array<string> = [];
 
@@ -221,12 +223,12 @@ export class AddElementToPrecticeComponent implements OnInit {
           this._notificationSvc.warning('Error', `Past Participle Entered: " ${ itemVerbInfo.pastParticiple } " and it really is: " ${ item.verbInfo?.pastParticiple } "`);
           return this.youLose(i)
         } 
-        if (itemVerbInfo.wordType !== item.verbInfo?.wordType.id) {
-          console.log({ enteredWordTypeId: itemVerbInfo.wordType, wordType: item.verbInfo?.wordType })
-          // this._notificationSvc.warning('Error', `Type Entered: " ${ itemVerbInfo.wordType } " and it really is: " ${ item.verbInfo?.wordType } "`);
-          this._notificationSvc.warning('Error', ` Wrong Type selected the right one is: " ${ item.verbInfo?.wordType.name } "`);
-          return this.youLose(i)
-        } 
+        // if (itemVerbInfo.wordType !== item.verbInfo?.wordType.id) {
+        //   console.log({ enteredWordTypeId: itemVerbInfo.wordType, wordType: item.verbInfo?.wordType })
+        //   // this._notificationSvc.warning('Error', `Type Entered: " ${ itemVerbInfo.wordType } " and it really is: " ${ item.verbInfo?.wordType } "`);
+        //   this._notificationSvc.warning('Error', ` Wrong Type selected the right one is: " ${ item.verbInfo?.wordType.name } "`);
+        //   return this.youLose(i)
+        // } 
       }
     }
     
@@ -247,6 +249,10 @@ export class AddElementToPrecticeComponent implements OnInit {
   public youWin(): void {
     if (this.elementsToPractice) this.testList = this.elementsToPractice;
     this._notificationSvc.success('You Win', `You have successfully reviewed the ${ this.elementsToPractice?.length } ${ this.formLabel }s`);
+    // console.log({
+    //   testList: this.testList,
+    //   elementsToPractice: this.elementsToPractice,
+    // })
   }
 
   public getTypes(): void {
@@ -275,12 +281,13 @@ export class AddElementToPrecticeComponent implements OnInit {
       (meaning: any) => {
         const newItem = this.newItem(meaning.value);
         this.es.push(newItem);
+        // this.es.push(new FormControl('', [Validators.required]));
       }
     );
     const value: any = { ...elementToPractice }
     this.form.patchValue(value);
   }
-
+  
   public getElementToPractice(id: string): void {
     this._elementToPracticeSvc.getElementToPractice(id).subscribe(
       (elementToPractice) => {
@@ -288,12 +295,17 @@ export class AddElementToPrecticeComponent implements OnInit {
       }
     )
   }
-
-  public newItem(value?: string): FormGroup {
-    return this._fb.group({
-      value: [ value ?? '', Validators.required],
-    });
+  
+  public newItem(value?: string): FormControl {
+    // return this._fb.control([value ?? '', Validators.required])
+    return new FormControl('', [Validators.required]);
   }
+
+  // public newItem(value?: string): FormGroup {
+  //   return this._fb.group({
+  //     value: [ value ?? '', Validators.required],
+  //   });
+  // }
 
   public addItem() {
     this.es.push(this.newItem());
@@ -328,6 +340,7 @@ export class AddElementToPrecticeComponent implements OnInit {
   }
   
   public submit(): void | NzNotificationRef {
+    console.log({form: this.form.value})
     if (!this.form.valid) {
       return this.invalidForm();
     }
@@ -336,15 +349,26 @@ export class AddElementToPrecticeComponent implements OnInit {
       return this.check(this.elementToTest);
     }
 
+    // const verbInfoBody = { irregular: null, pastParticiple: null, simplePast: null, simplePresent: null };
+    const bodyValue = this.form.value;
+
+    if (bodyValue.wordType !== this.verbId) {
+      console.log('NO VERB');
+      delete bodyValue.verbInfo;
+    }
+
+    console.log({ bodyValue });
+
     if (!this.id) {
-      this._elementToPracticeSvc.addElementToPractice(this.form.value)
+      this._elementToPracticeSvc.addElementToPractice(bodyValue)
       .then(
         (response)=> {
           this.form.reset();
           this.esClear();
           if (this.startWithWords) {
             this.form.get('type')?.patchValue(this.wordTypeId);
-            this.form.controls['verbInfo'].get('wordType')?.patchValue(this.verbId);
+            // this.form.controls['verbInfo'].get('wordType')?.patchValue(this.verbId);
+            this.form.get('wordType')?.patchValue(this.verbId);
           }
           if (this.url.startsWith(`/${RoutesApp.phrasalVerbs}/`)) {
             this.form.get('type')?.patchValue(this.phrasalVerbTypeId);
@@ -358,7 +382,7 @@ export class AddElementToPrecticeComponent implements OnInit {
         }
       );
     } else {
-      this._elementToPracticeSvc.updateElementToPractice(this.id, this.form.value)
+      this._elementToPracticeSvc.updateElementToPractice(this.id, bodyValue)
       .then(
         (updateResponse)=> {
           this.successUpdate();
@@ -367,9 +391,10 @@ export class AddElementToPrecticeComponent implements OnInit {
     }
     if (this.startWithWords) {
       // this.form.get('verbInfo')?.get('wordType').setValue(this.verbId);
-      if (this.verbInfo) {
-        this.verbInfo.get('worType')?.setValue(this.verbId);
-      }
+      // if (this.verbInfo) {
+      //   this.verbInfo.get('worType')?.setValue(this.verbId);
+      // }
+      this.form.get('worType')?.setValue(this.verbId);
     }
   }
   

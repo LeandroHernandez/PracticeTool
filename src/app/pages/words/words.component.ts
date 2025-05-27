@@ -45,6 +45,14 @@ export class WordsComponent implements OnInit{
       placeholder: 'Basic',
     },
     {
+      type: 'select',
+      label: 'Type',
+      key: 'wordType',
+      placeholder: 'Type',
+      // intialValue: this.verbId
+      intialValue: ''
+    },
+    {
       type: 'subForm',
       label: '',
       key: 'verbInfo',
@@ -74,14 +82,14 @@ export class WordsComponent implements OnInit{
             },
           ]
         },
-        {
-          type: 'select',
-          label: 'Type',
-          key: 'wordType',
-          placeholder: 'Type',
-          // intialValue: this.verbId
-          intialValue: ''
-        },
+        // {
+        //   type: 'select',
+        //   label: 'Type',
+        //   key: 'wordType',
+        //   placeholder: 'Type',
+        //   // intialValue: this.verbId
+        //   intialValue: ''
+        // },
         {
           type: 'text',
           label: 'Simple Present',
@@ -109,7 +117,8 @@ export class WordsComponent implements OnInit{
   public tableInfo: Array<ITableItem> = [
     {
       header: 'Type',
-      key: `${this.verbInfoKey}.wordType.name`
+      // key: `${this.verbInfoKey}.wordType.name`
+      key: `wordType.name`
     },
     {
       header: 'Irregular',
@@ -138,11 +147,11 @@ export class WordsComponent implements OnInit{
   ]
 
   public page: IPageTableInfo = {
-    index: 1,
-    size: 5
+    pageSize: 10,
+    startAfterDoc: undefined,
   }
   // public itemList: Array<IWord> = [];
-  public itemList: Array<any> = [];
+  public itemList: Array<any> | null = null;
 
   constructor (
     private _router: Router, 
@@ -156,6 +165,44 @@ export class WordsComponent implements OnInit{
     this.getWords();
     this.getWordTypes();
   }
+
+  public normalize(): void {
+    if (this.itemList) {
+      this.itemList.forEach(
+        (word) => {
+          // // console.log({ prevWord: word });
+          // const esList: Array<string> = [];
+          // word.es.forEach(
+          //   (meaning: any) => {
+          //     if (typeof meaning === 'string') {
+          //       return;
+          //     }
+          //     esList.push(meaning.value);
+          //     // meaning = meaning.value;
+          //   }
+          // );
+          // word.es = esList;
+          // if (esList.length === 0) {
+          //   return;
+          // }
+          const body = {
+            irregular: false,
+            pastParticiple: "",
+            simplePast: "",
+            simplePresent: "",
+            wordType: "cieWObetRIxQzKFddEg4",
+          };
+          if (!word.verbInfo.irregular) {
+            word.verbInfo = body;
+            this._elementToPracticeSvc.updateElementToPractice(word.id, {...word})
+            .then((response) => console.log({response}))
+            .catch((error) => console.log({error}))
+          }
+          // console.log({ postWord: word });
+        }
+      )
+    }
+  }
   
   public getWords(query?: any, options?: any ): void {
     // this._elementToPracticeSvc.getElementsToPracticeByType(this.wordTypebId).subscribe(
@@ -168,10 +215,11 @@ export class WordsComponent implements OnInit{
     // )
     console.log({ query });
     // this._elementToPracticeSvc.getFilteredElementsToPractice( query ?? null ).subscribe(
-    this._elementToPracticeSvc.getFilteredElementsToPractice( { type: this.wordTypebId, ...query }, options ?? null ).subscribe(
+    this._elementToPracticeSvc.getFilteredElementsToPractice( { type: this.wordTypebId, ...query }, options ?? undefined ).subscribe(
       (words) => {
         this.itemList = words;
-        // console.log({words});
+        console.log({words});
+        // this.normalize();
       }, (error) => {
         console.log({error});
       }
@@ -183,14 +231,15 @@ export class WordsComponent implements OnInit{
     this._typeServiceSvc.getTypesByFather(this.wordTypebId).subscribe(
       (types) => {
         this.filterFormFields = this.filterFormFields.map((item) => {
-          item.subForm?.map(
-            (subFormItem) => {
-              if (subFormItem.key === 'wordType') {
-                subFormItem.selectOptions = types;
-              }
-              return subFormItem;
-            }
-          )
+          // item.subForm?.map(
+          //   (subFormItem) => {
+          //     if (subFormItem.key === 'wordType') {
+          //       subFormItem.selectOptions = types;
+          //     }
+          //     return subFormItem;
+          //   }
+          // )
+          item.selectOptions = types;
           return item;
         }) 
         console.log({types});
@@ -205,7 +254,20 @@ export class WordsComponent implements OnInit{
   }
 
   public wordDelete(id: string): void {
-    this._wordSvc.deleteWord(id)
+    // this._wordSvc.deleteWord(id)
+    // .then(
+    //   (deleteResponse) => {
+    //     console.log({deleteResponse});
+    //     this._notificationSvc.success('Success', 'Word deleted successfully.');
+    //   }
+    // )
+    // .catch(
+    //   (error) => {
+    //     console.log({error});
+    //     this._notificationSvc.error('Error', 'There was an error and we were not able to delete the word.');
+    //   }
+    // )
+    this._elementToPracticeSvc.deleteElementToPractice(id)
     .then(
       (deleteResponse) => {
         console.log({deleteResponse});

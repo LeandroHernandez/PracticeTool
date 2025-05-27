@@ -19,15 +19,16 @@
                 <h4>{{ !id ? 'New' : 'Edit'}} {{formLabel}}</h4>
             }
             <!-- @if( startWithWords && form.value.verbInfo.wordType === verbId ) { -->
-            @if( form.value.verbInfo && form.value.verbInfo.wordType === verbId ) {
+            @if( startWithWords && form.value.wordType === verbId ) {
                 <div formGroupName="verbInfo" class="form-check form-switch">
                     <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"></nz-switch>
                 </div>
             }
         </header>
         <div class="form_content">
-            @if (startWithWords && form.value.verbInfo) {
-                <div formGroupName="verbInfo" >
+            <!-- @if (startWithWords && form.value.verbInfo) { -->
+            @if (startWithWords) {
+                <!-- <div formGroupName="verbInfo" > -->
                     <label class="label">
                         <span> Type: </span>
                         <select class="select" formControlName="wordType">
@@ -36,7 +37,7 @@
                             }
                         </select>
                     </label>
-                </div>
+                <!-- </div> -->
             }
             <label class="label">
                 <span> Base: </span>
@@ -63,12 +64,18 @@
                 <span> {{es.controls.length}} </span>
             </h6>
             <div formArrayName="es" class="formArrayName" >
-                @for ( meaning of es.controls; track meaning ) {
-                    <div [formGroupName]="es.controls.indexOf(meaning)" class="formGroupName" >
+                @for ( meaning of es.controls; track meaning; let j = $index ) {
+                    <!-- <div [formGroupName]="es.controls.indexOf(meaning)" class="formGroupName" >
                       <input type="text" formControlName="value" placeholder="Value">
                       @if ( es.length > 1 ) {
                         <i class="bi bi-trash" (click)="removeItem(es.controls.indexOf(meaning))" title="Remove" ></i>
                       }
+                    </div> -->
+                    <div class="formGroupName">
+                        <input type="text" [formControlName]="j" placeholder="Value">
+                        @if ( es.length > 1 ) {
+                          <i class="bi bi-trash" (click)="removeItem(j)" title="Remove" ></i>
+                        }
                     </div>
                   }
                   

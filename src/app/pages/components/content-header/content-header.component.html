@@ -18,7 +18,8 @@
             class="btn test_btn" 
             title="Test" 
             [routerLink]="[contentHeaderInfo.test.route]" 
-            [title]="contentHeaderInfo.test.title" 
+            [title]="!contentHeaderInfo.test.disabled ? contentHeaderInfo.test.title : ' Register some ' + contentHeaderInfo.title + ' first '" 
+            [disabled]="contentHeaderInfo.test.disabled ?? false"
         >
             {{ contentHeaderInfo.test.label }} 
             <i class="bi bi-play-fill"></i> 

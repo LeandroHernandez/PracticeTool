@@ -1,5 +1,14 @@
+import {
+  QueryDocumentSnapshot,
+  DocumentData,
+} from '@angular/fire/firestore';
+
+// export interface IPageTableInfo {
+//     index: number;
+//     size: number;
+// }
 
 export interface IPageTableInfo {
-    index: number;
-    size: number;
+  pageSize?: number;
+  startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
 }

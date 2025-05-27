@@ -28,6 +28,7 @@ export class ExpressionsComponent {
       title: 'Expression Test',
       // route: `/${RoutesApp.expressions}/${RoutesApp.testexpressions}`,
       route: `/${RoutesApp.expressions}/${RoutesApp.test}`,
+      disabled: true,
     },
   }
 
@@ -98,7 +99,7 @@ export class ExpressionsComponent {
     },
   ]
   // public itemList: Array<Iexpression> = [];
-  public itemList: Array<any> = [];
+  public itemList: Array<any> | null = null;
 
   constructor (
     private _router: Router, 
@@ -113,13 +114,16 @@ export class ExpressionsComponent {
     // this.getexpressionTypes();
   }
   
-  public getExpressions(query?: any ): void {
-    this._elementToPracticeSvc.getElementsToPracticeByType(this.expressionTypebId).subscribe(
+  public getExpressions( query?: any, options?: any ): void {
+    this._elementToPracticeSvc.getFilteredElementsToPractice( { type: this.expressionTypebId, ...query }, options ?? undefined ).subscribe(
       (expressions) => {
         this.itemList = expressions;
+        if (expressions.length > 0) {
+          this.contentHeaderInfo.test.disabled = false;
+        }
         // console.log({expressions});
       }, (error) => {
-        console.log({error});
+        console.log({error}); 
       }
     )
     console.log({ query });
@@ -159,18 +163,18 @@ export class ExpressionsComponent {
   }
 
   public expressionDelete(id: string): void {
-    // this._expressionSvc.deleteExpression(id)
-    // .then(
-    //   (deleteResponse) => {
-    //     console.log({deleteResponse});
-    //     this._notificationSvc.success('Success', 'expression deleted successfully.');
-    //   }
-    // )
-    // .catch(
-    //   (error) => {
-    //     console.log({error});
-    //     this._notificationSvc.error('Error', 'There was an error and we were not able to delete the expression.');
-    //   }
-    // )
+    this._elementToPracticeSvc.deleteElementToPractice(id)
+    .then(
+      (deleteResponse) => {
+        console.log({deleteResponse});
+        this._notificationSvc.success('Success', 'Expression deleted successfully.');
+      }
+    )
+    .catch(
+      (error) => {
+        console.log({error});
+        this._notificationSvc.error('Error', 'There was an error and we were not able to delete the expression.');
+      }
+    )
   }
 }

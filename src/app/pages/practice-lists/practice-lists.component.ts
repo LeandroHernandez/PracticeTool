@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TableComponent } from '../components/table/table.component';
 import { ContentHeaderComponent } from '../components/content-header/content-header.component';
 import { IContentHeaderInfoItem, ITableItem } from '../../interfaces';
 import { RoutesApp } from '../../constants';
 import { IFilterFormField } from '../../interfaces/filter-form-field.interface';
+import { PracticeListsService } from './practice-lists.service';
 
 @Component({
   selector: 'app-practice-lists',
@@ -11,7 +12,7 @@ import { IFilterFormField } from '../../interfaces/filter-form-field.interface';
   templateUrl: './practice-lists.component.html',
   styleUrl: './practice-lists.component.css'
 })
-export class PracticeListsComponent {
+export class PracticeListsComponent implements OnInit {
 
   public contentHeaderInfo: IContentHeaderInfoItem = {
     add: {
@@ -24,6 +25,7 @@ export class PracticeListsComponent {
       label: 'Practice List Test',
       title: 'Practice List Test',
       route: `/${RoutesApp.practiceLists}/${RoutesApp.test}`,
+      disabled: true,
     },
   }
 
@@ -100,25 +102,22 @@ export class PracticeListsComponent {
   // public itemList: Array<IWord> = [];
   public itemList: Array<any> = [];
 
+  constructor (private _practiceListsSvc: PracticeListsService) {}
+  
+  ngOnInit(): void {
+    this.getPracticeLists();
+  }
 
   public getPracticeLists(query?: any ): void {
-    // this._elementToPracticeSvc.getElementsToPracticeByType(this.wordTypebId).subscribe(
-    //   (words) => {
-    //     this.itemList = words;
-    //     console.log({words});
-    //   }, (error) => {
-    //     console.log({error});
-    //   }
-    // )
     console.log({ query });
-    // this._elementToPracticeSvc.getFilteredElementsToPractice( query ?? null ).subscribe(
-    //   (words) => {
-    //     this.itemList = words;
-    //     console.log({words});
-    //   }, (error) => {
-    //     console.log({error});
-    //   }
-    // )
+    this._practiceListsSvc.getPracticeLists().subscribe(
+      (practiceLists) => {
+        this.itemList = practiceLists;
+        console.log({practiceLists});
+      }, (error) => {
+        console.log({error});
+      }
+    )
   };
 
   // public getWordTypes(): void {

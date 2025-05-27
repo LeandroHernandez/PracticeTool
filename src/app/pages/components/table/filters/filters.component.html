@@ -82,12 +82,21 @@
             } @else {
                 <label class="label">
                     <span>{{item.label}}</span>
-                    <input 
-                        [type]="item.type" 
-                        class="input" 
-                        [placeholder]="item.placeholder" 
-                        [formControlName]="item.key" 
-                    >
+                    @if (item.type === 'select') {
+                        <select class="select" [formControlName]="item.key">
+                            <option [value]="''" class="option" selected >All</option>
+                            @for(type of item.selectOptions; track type.id){
+                                <option [value]="type.id" class="option">{{type.name}}</option>
+                            }
+                        </select>
+                    } @else {
+                        <input 
+                            [type]="item.type" 
+                            class="input" 
+                            [placeholder]="item.placeholder" 
+                            [formControlName]="item.key" 
+                        >
+                    }
                 </label>
             }
         }

@@ -28,6 +28,7 @@ export class PhrasalVerbsComponent implements OnInit{
       title: 'Phrasal Verb Test',
       // route: `/${RoutesApp.phrasalVerbs}/${RoutesApp.testPhrasalVerbs}`,
       route: `/${RoutesApp.phrasalVerbs}/${RoutesApp.test}`,
+      disabled: true,
     },
   }
 
@@ -42,7 +43,7 @@ export class PhrasalVerbsComponent implements OnInit{
     },
   ]
   // public itemList: Array<IphrasalVerb> = [];
-  public itemList: Array<any> = [];
+  public itemList: Array<any> | null = null;
   public phrasalVerbTypeId: string = '';
 
   constructor (
@@ -66,11 +67,14 @@ export class PhrasalVerbsComponent implements OnInit{
     )
   }
   
-  public getPhrasalVerbs(): void {
+  public getPhrasalVerbs( query?: any, options?: any ): void {
     console.log({ phrasalVerbTypeId: this.phrasalVerbTypeId });
-    this._elementToPracticeSvc.getElementsToPracticeByType(this.phrasalVerbTypeId).subscribe(
+    this._elementToPracticeSvc.getFilteredElementsToPractice( { type: this.phrasalVerbTypeId, ...query }, options ?? undefined ).subscribe(
       (phrasalVerbs) => {
         this.itemList = phrasalVerbs;
+        if (phrasalVerbs.length > 0) {
+          this.contentHeaderInfo.test.disabled = false;
+        }
         console.log({phrasalVerbs});
       }, (error) => {
         console.log({error});

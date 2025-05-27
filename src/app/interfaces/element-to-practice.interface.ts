@@ -5,12 +5,12 @@ interface IVerbInfo {
     simplePast?: string;
     pastParticiple?: string;
     irregular?: boolean;
-    wordType: IType;
+    // wordType: IType;
 }
 
-interface IMeaning {
-    value: string
-}
+// interface IMeaning {
+//     value: string
+// }
 
 export interface IElementToPractice {
     id?: string;
@@ -18,6 +18,8 @@ export interface IElementToPractice {
     type: IType;
     en: string;
     verbInfo?: IVerbInfo;
-    es: Array<IMeaning>;
+    wordType?: IType;
+    // es: Array<IMeaning>;
+    es: Array<string>;
     // irregular?: boolean;
 }

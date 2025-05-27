@@ -40,48 +40,48 @@ export class AddPracticeListComponent implements OnInit {
       key: 'en',
       placeholder: 'Basic',
     },
-    {
-      type: 'subForm',
-      label: '',
-      key: 'verbInfo',
-      subForm: [
-        {
-          type: 'switch',
-          label: 'Irregular',
-          key: 'irregular',
-          placeholder: 'Irregular',
-          switchInfo: {
-            checked: 'Irregular',
-            unChecked: 'Regular',
-          }
-        },
-        {
-          type: 'select',
-          label: 'Word Type',
-          key: 'wordType',
-          placeholder: 'Word Type',
-          intialValue: this.verbId
-        },
-        {
-          type: 'text',
-          label: 'Simple Present',
-          key: 'simplePresent',
-          placeholder: 'Simple Present',
-        },
-        {
-          type: 'text',
-          label: 'Simple Past',
-          key: 'simplePast',
-          placeholder: 'Simple Past',
-        },
-        {
-          type: 'text',
-          label: 'PastParticiple',
-          key: 'pastParticiple',
-          placeholder: 'Past Participle',
-        },
-      ]
-    }
+    // {
+    //   type: 'subForm',
+    //   label: '',
+    //   key: 'verbInfo',
+    //   subForm: [
+    //     {
+    //       type: 'switch',
+    //       label: 'Irregular',
+    //       key: 'irregular',
+    //       placeholder: 'Irregular',
+    //       switchInfo: {
+    //         checked: 'Irregular',
+    //         unChecked: 'Regular',
+    //       }
+    //     },
+    //     {
+    //       type: 'select',
+    //       label: 'Word Type',
+    //       key: 'wordType',
+    //       placeholder: 'Word Type',
+    //       intialValue: this.verbId
+    //     },
+    //     {
+    //       type: 'text',
+    //       label: 'Simple Present',
+    //       key: 'simplePresent',
+    //       placeholder: 'Simple Present',
+    //     },
+    //     {
+    //       type: 'text',
+    //       label: 'Simple Past',
+    //       key: 'simplePast',
+    //       placeholder: 'Simple Past',
+    //     },
+    //     {
+    //       type: 'text',
+    //       label: 'PastParticiple',
+    //       key: 'pastParticiple',
+    //       placeholder: 'Past Participle',
+    //     },
+    //   ]
+    // }
   ];
   
   public verbInfoKey: string = 'verbInfo';
@@ -89,15 +89,15 @@ export class AddPracticeListComponent implements OnInit {
   public tableInfo: Array<ITableItem> = [
     {
       header: 'Type',
-      key: `type`
+      key: `type.name`
     },
     {
       header: 'Word Type',
-      key: `${this.verbInfoKey}.wordType.name`
+      key: `wordType.name`
     },
     {
       header: 'Irregular',
-      key: `${this.verbInfoKey}.irregular`,
+      key: `irregular`,
     },
     {
       header: 'Basic',
@@ -128,8 +128,8 @@ export class AddPracticeListComponent implements OnInit {
   }
 
 
-  public getElementsToPracice(query?: any ): void {
-    this._elementToPracticeSvc.getElementsToPractice().subscribe(
+  public getElementsToPracice( query?: any, options?: any ): void {
+    this._elementToPracticeSvc.getFilteredElementsToPractice( query, options ?? undefined, true ).subscribe(
       (elementsToPractice) => {
         this.itemList = elementsToPractice;
         console.log({elementsToPractice});

@@ -9,7 +9,7 @@
     padding: 20px;
 }
 
-.btn {
+.btn, .disable_btn {
     font-size: 16px;
     padding: 6px 12px;
     border: none;
@@ -33,4 +33,9 @@
 .test_btn {
     background-color: var(--accent);
     color: var(--secondary);
+}
+
+.disable_btn {
+    cursor: not-allowed;
+    opacity: .5;
 }

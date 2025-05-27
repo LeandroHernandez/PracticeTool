@@ -135,7 +135,6 @@ input, select {
 }
 
 .formGroupName {
-    /* width: 100%; */
     display: grid;
     grid-template-columns: calc(100% - 25px) min-content;
     justify-content: space-between;
