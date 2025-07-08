@@ -36,6 +36,10 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/phrasal-verbs/phrasal-verbs.routes').then(m => m.phrasalVerbRoutes),
     },
     {
+        path: RoutesApp.elementsToPractice,
+        loadChildren: () => import('./pages/elements-to-practice').then(m => m.elementsToPracticeRoutes),
+    },
+    {
         path: RoutesApp.grammar,
         loadComponent: () => import('./pages/grammar/grammar.component').then(m => m.GrammarComponent),
     },
@@ -49,6 +53,7 @@ export const routes: Routes = [
     },
     {
         path: RoutesApp.other,
-        redirectTo: RoutesApp.words,
+        // redirectTo: RoutesApp.words,
+        redirectTo: RoutesApp.elementsToPractice,
     }
 ];

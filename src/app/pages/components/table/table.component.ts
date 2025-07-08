@@ -68,9 +68,9 @@ export class TableComponent {
       return valueItem ? 'Irregular' : 'Regular';
     } else if (!valueItem) {
       
-      if (item.verbInfo.wordType.id !== 'cieWObetRIxQzKFddEg4') {
-        return '----'
-      }
+      // if (item.verbInfo.wordType.id !== 'cieWObetRIxQzKFddEg4') {
+      //   return '----'
+      // }
 
       const verbInfo: string = "verbInfo";
       if (key === `${verbInfo}.simplePresent` || key === `${verbInfo}.simplePast` || key === `${verbInfo}.pastParticiple`) {

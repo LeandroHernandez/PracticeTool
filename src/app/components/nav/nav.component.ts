@@ -37,6 +37,12 @@ export class NavComponent {
       icon: 'translate'
     },
     {
+      label: 'Elements to Practice',
+      title: 'Elements to Practice',
+      route: RoutesApp.elementsToPractice,
+      icon: 'translate'
+    },
+    {
       label: 'Grammar',
       title: 'Grammar',
       route: RoutesApp.grammar,

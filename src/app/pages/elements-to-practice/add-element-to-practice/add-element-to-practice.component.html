@@ -1,0 +1,201 @@
+<!-- <p>add-element-to-practice works!</p> -->
+
+<main class="main">
+    <header class="main_header">
+        <button class="btn back_btn" [routerLink]="[ '/' + backTo ]">
+            <i class="bi bi-arrow-bar-left"></i>
+            Volver
+        </button>
+        
+        <!-- @if (url.endsWith('test')) {
+            <span> {{ testList.length }} </span>
+        } -->
+    </header>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <header class="form_header">
+            <!-- @if (url.endsWith('test')) {
+                <h4>{{formLabel}}</h4>
+            } @else {
+                <h4>{{ !id ? 'New' : 'Edit'}} {{formLabel}}</h4>
+            }
+            @if( form.value.verbInfo && form.value.verbInfo.wordType === verbId ) {
+                <div formGroupName="verbInfo" class="form-check form-switch">
+                    <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"></nz-switch>
+                </div>
+            } -->
+        </header>
+        <div class="form_content">
+            <!-- @if (startWithWords && form.value.verbInfo) {
+                <div formGroupName="verbInfo" >
+                    <label class="label">
+                        <span> Type: </span>
+                        <select class="select" formControlName="wordType">
+                            @for(type of types; track $index){
+                                <option [value]="type.id" class="option">{{type.name}}</option>
+                            }
+                        </select>
+                    </label>
+                </div>
+            } -->
+
+            <label class="label">
+                <span> Type: </span>
+                <select class="select" formControlName="type">
+                    @for(type of typesList; track $index){
+                        <option [value]="type.id" class="option">{{type.name}}</option>
+                    }
+                </select>
+            </label>
+
+            <label class="label">
+                <span> {{ grammarLesson ? 'Title' : 'Base' }}: </span>
+                <!-- <input type="text" formControlName="en" class="input {{ url.endsWith('test') ? 'disable' : '' }}" placeholder="Base Form" /> -->
+                <input type="text" formControlName="en" class="input" [placeholder]=" grammarLesson ? 'Lesson Title' : 'Base Form'" />
+            </label>
+
+            <!-- Modificación -->
+            
+            
+
+            @if (word) {
+                <!-- <label class="label"> -->
+                    <span> Uses: </span>
+                    <!-- [(ngModel)]="listOfSelectedValue" -->
+                    <nz-select
+                        nzMode="multiple"
+                        nzPlaceHolder="Please select"
+                        formControlName="selectedUses"
+                    >
+                        @for (item of usesList; track item) {
+                            <!-- <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option> -->
+                            <nz-option [nzLabel]="item.name" [nzValue]="item"></nz-option>
+                        }
+                    </nz-select>
+                <!-- </label> -->
+
+                <div formArrayName="uses" class="uses_div">
+                    <!-- @for (group of uses.controls; track $index) { -->
+                    @for (group of uses.controls; track group.value.id; let i = $index) {
+                        <div class="use_container" [formGroupName]="i">
+                            <header>
+                                <h6> <span> {{group.value.name}} </span> Meanings: {{getMeanings(i).value.length}}</h6>
+                            </header>
+                            @if (group.value.id === verbId) {
+                                <div formGroupName="verbInfo" class="verbInfo">
+
+                                    <label class="label irregular_label">
+                                        <span>Irregular Verb:</span>
+                                        <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"></nz-switch>
+                                    </label>
+                                    
+                                    <div class="verbInfo_input_section">
+                                        <label class="label">
+                                            <span> Simple Past </span>
+                                            <input type="text" placeholder="Simple Past" formControlName="simplePast">
+                                        </label>
+                                        <label class="label">
+                                            <span> Past Participle </span>
+                                            <input type="text" placeholder="Past Participle" formControlName="pastParticiple">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <strong>Meanings</strong>
+                                <hr>
+                            }
+                            <div formArrayName="meanings" class="use_meanings" >
+                                <!-- @for (meaning of getMeanings(i).controls; track $index; let i = $index) { -->
+                                @for (meaning of getMeanings(i).controls; track meaning; let j = $index) {
+                                    <div class="meaning_container">
+                                        <input type="text" [formControlName]="j" placeholder="Meaning" >
+                                        @if (getMeanings(i).value.length > 1) {
+                                            <i class="bi bi-trash" (click)="removeWordMeaning(i, j)" title="Remove" ></i>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <footer class="use_footer">
+                                <button type="button" class="btn add_btn" (click)="addWordMeaning(i)" title="Add Meaning" >
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </footer>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div class="use_container">
+                    <header>
+                        <h6>Meanings: {{meanings.value.length}}</h6>
+                    </header>
+                    <div formArrayName="meanings" class="use_meanings" >
+                        <!-- @for (meaning of getMeanings(i).controls; track $index; let i = $index) { -->
+                        @for (meaning of meanings.controls; track meaning; let i = $index) {
+                            <div class="meaning_container">
+                                <input type="text" [formControlName]="i" placeholder="Meaning" >
+                                @if (meanings.value.length > 1) {
+                                    <i class="bi bi-trash" (click)="removeMeaning(i)" title="Remove" ></i>
+                                }
+                            </div>
+                        }
+                        <button type="button" class="btn add_btn" (click)="addMeaning()" title="Add Meaning" >
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+             
+            <!-- <section class="section use_section">
+                @for (use of usesList; track $index) {
+                    @if (use.name === 'Word') {
+
+                    }
+                }
+            </section> -->
+
+            <!-- Modificación -->
+
+            @if ( form.value.verbInfo && form.value.verbInfo.irregular === true ) {
+                <div formGroupName="verbInfo">
+                    <label class="label">
+                        <span> Simple Present: </span>
+                        <input type="text" formControlName="simplePresent" class="input" placeholder="Presente Simple" />
+                    </label>
+                    <label class="label">
+                        <span> Simple Past: </span>
+                        <input type="text" formControlName="simplePast" class="input" placeholder="Simple Past" />
+                    </label>
+                    <label class="label">
+                        <span> Past Participle: </span>
+                        <input type="text" formControlName="pastParticiple" class="input" placeholder="Past Participle" />
+                    </label>
+                </div>
+            }
+            <!-- <h6>
+                <span> Meanings </span>
+                <span> {{es.controls.length}} </span>
+            </h6> -->
+
+            
+            <!-- <div formArrayName="es" class="formArrayName" >
+                @for ( meaning of es.controls; track meaning ) {
+                    <div [formGroupName]="es.controls.indexOf(meaning)" class="formGroupName" >
+                      <input type="text" formControlName="value" placeholder="Value">
+                      @if ( es.length > 1 ) {
+                        <i class="bi bi-trash" (click)="removeItem(es.controls.indexOf(meaning))" title="Remove" ></i>
+                      }
+                    </div>
+                  }
+                  
+            </div> -->
+            <!-- <button type="button" class="btn add_btn"(click)="addItem()" title="Add Meaning" > -->
+
+            <!-- <button type="button" class="btn add_btn" title="Add Meaning" >
+                <i class="bi bi-plus-circle"></i>
+            </button> -->
+            
+            <!-- <button type="submit" class="btn register_btn" title="Register">{{submitButton()}}</button> -->
+            <button type="submit" class="btn register_btn" title="Register">Registrar / Editar</button>
+        </div>
+    </form>
+</main>
+

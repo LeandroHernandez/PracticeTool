@@ -21,20 +21,18 @@ import {
   collectionSnapshots
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
-import { IElementToPractice, IElementToPractice2 } from '../../../interfaces';
-import { DbCollections } from '../../../constants';
-import { TypeService } from '../../types/types.service';
+import { IElementToPractice } from '../../interfaces';
+import { DbCollections } from '../../constants';
+import { TypeService } from '../types/types.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ElementToPracticeService {
   private elementToPracticesRef: CollectionReference<IElementToPractice>;
-  private elementToPracticesRef2: CollectionReference<IElementToPractice2>;
 
   constructor(private firestore: Firestore, private _typeSvc: TypeService) {
     this.elementToPracticesRef = collection(this.firestore, DbCollections.elementsToPractice) as CollectionReference<IElementToPractice>;
-    this.elementToPracticesRef2 = collection(this.firestore, DbCollections.elementsToPractice) as CollectionReference<IElementToPractice2>;
   }
 
   getElementsToPractice(typeId?: string): Observable<IElementToPractice[]> {
@@ -42,13 +40,6 @@ export class ElementToPracticeService {
       return this.getElementsToPracticeByType(typeId);
     }
     return collectionData(this.elementToPracticesRef, { idField: 'id' }) as Observable<IElementToPractice[]>;
-  }
-
-  getElementsToPractice2(typeId?: string): Observable<IElementToPractice2[]> {
-    if (typeId) {
-      return this.getElementsToPracticeByType(typeId);
-    }
-    return collectionData(this.elementToPracticesRef2, { idField: 'id' }) as Observable<IElementToPractice2[]>;
   }
 
   getElementToPractice(id: string): Observable<IElementToPractice> {
@@ -207,8 +198,13 @@ export class ElementToPracticeService {
   }
   
   
-  addElementToPractice(elementToPractice: IElementToPractice) {
-    return addDoc(this.elementToPracticesRef, elementToPractice);
+  // addElementToPractice(elementToPractice: IElementToPractice) {
+  //   console.log({ elementToPractice })
+  //   return addDoc(this.elementToPracticesRef, elementToPractice);
+  // }
+  async addElementToPractice(data: IElementToPractice): Promise<string> {
+    const docRef = await addDoc(this.elementToPracticesRef, data);
+    return docRef.id;
   }
 
   updateElementToPractice(id: string, elementToPractice: Partial<IElementToPractice>) {
