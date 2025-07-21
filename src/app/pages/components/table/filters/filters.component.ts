@@ -7,35 +7,33 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
   selector: 'app-filters',
   imports: [ReactiveFormsModule, NzSwitchModule],
   templateUrl: './filters.component.html',
-  styleUrl: './filters.component.css'
+  styleUrl: './filters.component.css',
 })
 export class FiltersComponent implements OnInit {
-  
   @Output() valueFormEmitter: EventEmitter<any> = new EventEmitter();
-  @Input() filterFormFields: Array<IFilterFormField> = []
+  @Input() filterFormFields: Array<IFilterFormField> = [];
 
-  
   // public activeForm: FormGroup;
   public form: FormGroup;
 
   // public get activeFilters(): boolean {
   //   return this.activeForm.controls['activeFilters'].value;
   // };
-  
+
   constructor(private _fb: FormBuilder) {
     // this.activeForm = this._fb.group({
     //   activeFilters: [ false ]
     // });
     this.form = this._fb.group({});
   }
-  
+
   ngOnInit(): void {
     this.initForm();
     // this.form.valueChanges.subscribe(value => {
     //   this.valueFormEmitter.emit( this.activeFilters ? value : null);
     // });
   }
-  
+
   public getfieldType(item: IFilterFormField): number | boolean | string {
     if (item.key === 'number') {
       return 0;
@@ -45,34 +43,28 @@ export class FiltersComponent implements OnInit {
       return '';
     }
   }
-  
+
   public buildForm(items: Array<IFilterFormField>): FormGroup {
+    const group: FormGroup = this._fb.group({});
 
-    const group: FormGroup = this._fb.group({})
-
-    items.forEach(
-      (item) => {
-        // return group.addControl(item.key, item.type !=='subForm' ? [ this.getfieldType(item) ] : this.buildForm(item.subForm ?? []));
-        group.addControl(
-          item.key,
-          item.type !== 'subForm'
-            ? this._fb.control( item.intialValue ?? this.getfieldType(item))
-            : this.buildForm(item.subForm ?? [])
-        );
-        
-      }
-    )
-
+    items.forEach((item) => {
+      // return group.addControl(item.key, item.type !=='subForm' ? [ this.getfieldType(item) ] : this.buildForm(item.subForm ?? []));
+      group.addControl(
+        item.key,
+        item.type !== 'subForm'
+          ? this._fb.control(item.intialValue ?? this.getfieldType(item))
+          : this.buildForm(item.subForm ?? [])
+      );
+    });
 
     return group;
-
   }
 
   public initForm(): void {
     this.form = this.buildForm(this.filterFormFields);
     console.log({ form: this.form });
     // this.form.disable();
-  };
+  }
 
   // public changeActiveFilters(): void {
 
@@ -87,9 +79,15 @@ export class FiltersComponent implements OnInit {
 
   public submit(): void {
     const irregular = this.form.get('verbInfo')?.get('irregular');
-    this.form.get('verbInfo')?.get('irregular')?.patchValue( irregular && irregular.value !== '' ? JSON.parse(irregular.value) : '');
+    this.form
+      .get('verbInfo')
+      ?.get('irregular')
+      ?.patchValue(
+        irregular && irregular.value !== '' ? JSON.parse(irregular.value) : ''
+      );
+
+    console.log({ filterForm: this.form });
 
     this.valueFormEmitter.emit(this.form.value);
   }
-
 }

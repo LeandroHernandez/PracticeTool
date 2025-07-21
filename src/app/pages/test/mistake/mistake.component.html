@@ -1,0 +1,50 @@
+<!-- <p>mistake works!</p> -->
+
+<div class="container">
+  @for (mistake of mistakeList; track $index) {
+  <div class="mistake_div">
+    <header class="header">
+      <h4 class="h4">{{ mistake.property }}</h4>
+    </header>
+    <div class="content">
+      @for (item of [ mistake.input, mistake.right ]; track $index; let i =
+      $index) {
+      <div [class]="i === 0 ? 'enteredValue' : 'rightValue'">
+        <strong class="strong">
+          {{ i === 0 ? "Entered" : "rigth" }} Value:
+        </strong>
+        @if (typeof item === 'string') {
+        <span class="span"> {{ item }} </span>
+        } @else if ( typeof item === 'boolean' ) {
+        <span class="span"> {{ item ? "Truth" : "False" }} </span>
+        } @else { @if ( mistake.property === 'uses') { @for (useItem of item;
+        track $index) { @if( typeof useItem !== 'string' ) {
+        <h6>{{ useItem.name }}</h6>
+        @if (useItem.verbInfo) {
+        <div class="verbInfo_section">
+          <div class="irregular">
+            <span>Irregular:</span>
+            <span>{{ useItem.verbInfo.irregular }}</span>
+          </div>
+          <div class="simplePast">
+            <span>SimplePast:</span>
+            <span>{{ useItem.verbInfo.simplePast }}</span>
+          </div>
+          <div class="pastParticiple">
+            <span>Past Participle:</span>
+            <span>{{ useItem.verbInfo.pastParticiple }}</span>
+          </div>
+        </div>
+        } @for (meaningItem of useItem.meanings; track $index) {
+        <span class="span"> {{ meaningItem }} </span>
+        } } @else {
+        <span class="span"> {{ useItem }} </span>
+        } } } @else {
+        <span> {{ mistake.right | json }} </span>
+        } }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

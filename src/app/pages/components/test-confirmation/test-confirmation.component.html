@@ -1,0 +1,45 @@
+<!-- <p>test-confirmation works!</p> -->
+
+<!-- <nz-select
+  nzMode="multiple"
+  nzPlaceHolder="Please select"
+  [(ngModel)]="selectedItems"
+>
+  @for (item of types; track item) {
+  <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+  }
+</nz-select> -->
+
+<!-- <form [formGroup]="form" (ngSubmit)="goToTest()" class="form"> -->
+<!-- <label class="label">
+    <span></span> -->
+<!-- <div class="containter"> -->
+<!-- formControlName="selectedItems" -->
+<!-- [nzDisabled]="
+        selectedListOfETP.length > 0 && this.form.get('selectedETP')?.value
+      " -->
+<!-- (ngModelChange)="onChange($event)" -->
+<div class="container">
+  <nz-tree-select
+    nzMode="multiple"
+    class="treeSelect"
+    [(ngModel)]="selectedItems"
+    [nzNodes]="nodes"
+    [nzMultiple]="true"
+    nzShowSearch
+    nzCheckable
+    nzPlaceHolder="Please select"
+  ></nz-tree-select>
+  <button class="button" type="submit" (click)="goToTest()">Go to Test</button>
+</div>
+<!-- @if ( selectedListOfETP.length > 0 ) {
+    <div class="section">
+      <label class="label">
+        <span>Elements to practice which are already selected</span>
+        <nz-switch formControlName="selectedETP" title=""></nz-switch>
+      </label>
+    </div>
+    } -->
+<!-- </div> -->
+<!-- </label> -->
+<!-- </form> -->

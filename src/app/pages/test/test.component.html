@@ -1,4 +1,18 @@
 <!-- <p>test works!</p> -->
 
-<!-- <app-add-element-to-prectice [elementsToPractice]="elementsToPractice"></app-add-element-to-prectice> -->
-<app-add-element-to-prectice ></app-add-element-to-prectice>
+<!-- <app-add-element-to-prectice ></app-add-element-to-prectice> -->
+
+<main class="main">
+  <header class="main_header">
+    <button class="btn back_btn" [routerLink]="['/' + backTo]">
+      <i class="bi bi-arrow-bar-left"></i>
+      Volver
+    </button>
+
+    @if (url.endsWith('test')) {
+    <span> {{ elementsToPractice.length }} </span>
+    }
+  </header>
+
+  <app-form [etp$]="etp$" (etpEmitter)="submit($event)"></app-form>
+</main>

@@ -1,6 +1,7 @@
 export * from './content-header-info.interface';
 export * from './element-to-practice.interface';
 export * from './element-to-practice.interface2';
+export * from './etp-item.interface';
 export * from './filter-form-field.interface';
 export * from './nav-item.interface';
 export * from './page-table-info.interface';

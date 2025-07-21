@@ -6,7 +6,13 @@ import { ITableItem } from '../../interfaces/table-item.interface';
 import { RoutesApp } from '../../constants';
 import { Router, RouterModule } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { IContentHeaderInfoItem, IElementToPractice, IElementToPractice2, IPageTableInfo } from '../../interfaces';
+import {
+  IContentHeaderInfoItem,
+  IElementToPractice,
+  IElementToPractice2,
+  IPageTableInfo,
+  IType,
+} from '../../interfaces';
 import { ElementToPracticeService } from '../components/add-element-to-prectice/element-to-practice.service';
 import { IFilterFormField } from '../../interfaces/filter-form-field.interface';
 import { TypeService } from '../types/types.service';
@@ -15,10 +21,9 @@ import { TypeService } from '../types/types.service';
   selector: 'app-elements-to-practice',
   imports: [RouterModule, ContentHeaderComponent, TableComponent],
   templateUrl: './elements-to-practice.component.html',
-  styleUrl: './elements-to-practice.component.css'
+  styleUrl: './elements-to-practice.component.css',
 })
-export class ElementsToPracticeComponent implements OnInit{
-
+export class ElementsToPracticeComponent implements OnInit {
   public contentHeaderInfo: IContentHeaderInfoItem = {
     add: {
       label: 'Add Element To Practice',
@@ -31,7 +36,7 @@ export class ElementsToPracticeComponent implements OnInit{
       title: 'Element To Practice Test',
       route: `/${RoutesApp.elementsToPractice}/${RoutesApp.test}`,
     },
-  }
+  };
 
   public wordTypebId: string = 'TBKrgXIeg2LaUrMLhD0T';
   public verbId: string = 'cieWObetRIxQzKFddEg4';
@@ -65,13 +70,13 @@ export class ElementsToPracticeComponent implements OnInit{
           selectOptions: [
             {
               id: false,
-              name: 'Regular'
+              name: 'Regular',
             },
             {
               id: true,
-              name: 'Irregular'
+              name: 'Irregular',
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -79,7 +84,7 @@ export class ElementsToPracticeComponent implements OnInit{
           key: 'wordType',
           placeholder: 'Type',
           // intialValue: this.verbId
-          intialValue: ''
+          intialValue: '',
         },
         {
           type: 'text',
@@ -99,10 +104,10 @@ export class ElementsToPracticeComponent implements OnInit{
           key: 'pastParticiple',
           placeholder: 'Past Participle',
         },
-      ]
-    }
+      ],
+    },
   ];
-  
+
   public verbInfoKey: string = 'verbInfo';
 
   public tableInfo: Array<ITableItem> = [
@@ -112,7 +117,7 @@ export class ElementsToPracticeComponent implements OnInit{
     // },
     {
       header: 'Type',
-      key: `type.name`
+      key: `type.name`,
     },
     // {
     //   header: 'Irregular',
@@ -120,11 +125,11 @@ export class ElementsToPracticeComponent implements OnInit{
     // },
     {
       header: 'Basic',
-      key: 'en'
+      key: 'en',
     },
     {
       header: 'Meanings',
-      key: 'meanings'
+      key: 'meanings',
     },
     // {
     //   header: 'Simple Present',
@@ -142,31 +147,33 @@ export class ElementsToPracticeComponent implements OnInit{
     //   header: 'Meaning',
     //   key: 'es'
     // },
-  ]
+  ];
 
-  public page: IPageTableInfo = {
+  public page: IPageTableInfo | any = {
     index: 1,
-    size: 5
-  }
+    size: 10,
+  };
   // public itemList: Array<IWord> = [];
   public itemList: Array<any> = [];
   public elementsToPractice: Array<IElementToPractice2> = [];
 
-  constructor (
-    private _router: Router, 
-    // private _wordSvc: WordService, 
-    private _typeServiceSvc: TypeService, 
-    private _elementToPracticeSvc: ElementToPracticeService, 
+  public types: Array<IType> = [];
+
+  constructor(
+    private _router: Router,
+    // private _wordSvc: WordService,
+    private _typeServiceSvc: TypeService,
+    private _elementToPracticeSvc: ElementToPracticeService,
     private _notificationSvc: NzNotificationService
   ) {}
 
   ngOnInit(): void {
     this.getElementsToPractice();
     // this.getWordTypes();
-    this.getTypes();
+    // this.getTypes();
   }
-  
-  public getElementsToPractice(query?: any, options?: any ): void {
+
+  public getElementsToPractice(query?: any, options?: any): void {
     // // this._elementToPracticeSvc.getElementsToPracticeByType(this.wordTypebId).subscribe(
     // //   (words) => {
     // //     this.itemList = words;
@@ -186,16 +193,24 @@ export class ElementsToPracticeComponent implements OnInit{
     //   }
     // )
 
-    this._elementToPracticeSvc.getElementsToPractice2().subscribe(
-      (elementsToPractice) => {
+    // this._elementToPracticeSvc
+    //   .getElementsToPractice2()
+    //   .subscribe((elementsToPractice) => {
+    //     console.log({ elementsToPractice });
+    //     this.elementsToPractice = elementsToPractice;
+    //     this.getTypes();
+    //     // this.itemList = elementsToPractice;
+    //   });
+    this._elementToPracticeSvc
+      .getFilteredElementsToPractice(query)
+      .subscribe((elementsToPractice) => {
         console.log({ elementsToPractice });
         this.elementsToPractice = elementsToPractice;
+        this.getTypes();
         // this.itemList = elementsToPractice;
-      }
-    )
-  };
-  
-  
+      });
+  }
+
   // public getWordTypes(): void {
   //   this._typeServiceSvc.getTypesByFather(this.wordTypebId).subscribe(
   //     (types) => {
@@ -209,46 +224,48 @@ export class ElementsToPracticeComponent implements OnInit{
   //           }
   //         )
   //         return item;
-  //       }) 
+  //       })
   //       console.log({types});
   //     }, (error) => {
   //       console.log({error});
   //     }
   //   )
   // };
-  
+
   public getTypes(): void {
     this._typeServiceSvc.getTypes().subscribe(
       (types) => {
-        this.elementsToPractice = this.elementsToPractice.map(elementItem => {
+        this.types = types;
+        this.elementsToPractice = this.elementsToPractice.map((elementItem) => {
           const typeId = elementItem.type;
-          elementItem.type = types.find(type => type.id === typeId) ?? typeId
+          elementItem.type = types.find((type) => type.id === typeId) ?? typeId;
           return elementItem;
-        })
+        });
         // console.log({ elementsToPractice: this.elementsToPractice });
         this.filterFormFields = this.filterFormFields.map((item) => {
-          item.subForm?.map(
-            (subFormItem) => {
-              if (subFormItem.key === 'wordType') {
-                subFormItem.selectOptions = types;
-              }
-              return subFormItem;
+          item.subForm?.map((subFormItem) => {
+            if (subFormItem.key === 'wordType') {
+              subFormItem.selectOptions = types;
             }
-          )
+            return subFormItem;
+          });
           return item;
-        }) 
-        console.log({types});
-      }, (error) => {
-        console.log({error});
+        });
+        console.log({ types });
+      },
+      (error) => {
+        console.log({ error });
       }
-    )
-  };
-
-  public wordEdit(id: string): void {
-    this._router.navigate([`/${RoutesApp.words}/${RoutesApp.addWord}/${id}`])
+    );
   }
 
-  public wordDelete(id: string): void {
+  public elementToPracticeEdit(id: string): void {
+    this._router.navigate([
+      `/${RoutesApp.elementsToPractice}/${RoutesApp.addElementToPractice}/${id}`,
+    ]);
+  }
+
+  public elementToPracticeDelete(id: string): void {
     // this._wordSvc.deleteWord(id)
     // .then(
     //   (deleteResponse) => {
@@ -262,6 +279,11 @@ export class ElementsToPracticeComponent implements OnInit{
     //     this._notificationSvc.error('Error', 'There was an error and we were not able to delete the word.');
     //   }
     // )
+
+    this._elementToPracticeSvc
+      .deleteElementToPractice(id)
+      .then((deleteResponse) => console.log({ deleteResponse }))
+      .catch((error) => console.log({ error }));
   }
 
   // public filterAction(item: IElementToPractice | null): void {

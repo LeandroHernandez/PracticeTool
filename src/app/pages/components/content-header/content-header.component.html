@@ -1,27 +1,28 @@
 <!-- <p>content-header works!</p> -->
 
 @if (contentHeaderInfo) {
-    <div class="main_content">
-        <button 
-            type="button" 
-            class="btn add_btn" 
-            title="Add Word" 
-            [routerLink]="[contentHeaderInfo.add.route]" 
-            [title]="contentHeaderInfo.add.title" 
-        >
-            {{ contentHeaderInfo.add.label }} 
-            <i class="bi bi-plus-lg"></i> 
-        </button>
-        <h3 class="title">{{ contentHeaderInfo.title }}</h3>
-        <button 
-            type="button" 
-            class="btn test_btn" 
-            title="Test" 
-            [routerLink]="[contentHeaderInfo.test.route]" 
-            [title]="contentHeaderInfo.test.title" 
-        >
-            {{ contentHeaderInfo.test.label }} 
-            <i class="bi bi-play-fill"></i> 
-        </button>
-    </div>
+<div class="main_content">
+  <button
+    type="button"
+    class="btn add_btn"
+    title="Add Word"
+    [routerLink]="[contentHeaderInfo.add.route]"
+    [title]="contentHeaderInfo.add.title"
+  >
+    {{ contentHeaderInfo.add.label }}
+    <i class="bi bi-plus-lg"></i>
+  </button>
+  <h3 class="title">{{ contentHeaderInfo.title }}</h3>
+  <!-- [routerLink]="[contentHeaderInfo.test.route]"  -->
+  <button
+    type="button"
+    class="btn test_btn"
+    title="Test"
+    (click)="goToTest()"
+    [title]="contentHeaderInfo.test.title"
+  >
+    {{ contentHeaderInfo.test.label }}
+    <i class="bi bi-play-fill"></i>
+  </button>
+</div>
 }

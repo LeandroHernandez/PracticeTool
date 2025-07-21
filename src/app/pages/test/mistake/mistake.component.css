@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.mistake_div {
+  width: 100%;
+  border: 1px solid var(--secondary);
+  border-radius: 1rem;
+  padding: 20px;
+}

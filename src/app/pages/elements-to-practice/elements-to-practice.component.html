@@ -1,24 +1,28 @@
 <!-- <p>elements-to-practice works!</p> -->
 
 <main class="main">
-    <div class="main_container">
-        <div class="content-header">
-            <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header>
-        </div>
-        <div class="table">
-            <!-- (pageEmitter)="getWords(null, $event)"
-            (filterAction)="getWords($event)" -->
-            <!-- [itemList]="itemList"  -->
-            <app-table 
-                [tableInfo]="tableInfo" 
-                [itemList]="elementsToPractice" 
-                [page]="page" 
-                [filterFormFields]="filterFormFields" 
-                (editAction)="wordEdit($event)" 
-                (deleteAction)="wordDelete($event)"
-                (pageEmitter)="getElementsToPractice(null, $event)"
-                (filterAction)="getElementsToPractice($event)"
-            ></app-table>
-        </div>
+  <div class="main_container">
+    <div class="content-header">
+      <!-- [types]="types" -->
+      <app-content-header
+        [contentHeaderInfo]="contentHeaderInfo"
+      ></app-content-header>
     </div>
+    <div class="table">
+      <!-- (pageEmitter)="getWords(null, $event)"
+            (filterAction)="getWords($event)" -->
+      <!-- [itemList]="itemList"  -->
+      <!-- (pageEmitter)="getElementsToPractice(null, $event)" -->
+      <app-table
+        [tableInfo]="tableInfo"
+        [itemList]="elementsToPractice"
+        [page]="page"
+        [filterFormFields]="filterFormFields"
+        (editAction)="elementToPracticeEdit($event)"
+        (deleteAction)="elementToPracticeDelete($event)"
+        (pageEmitter)="page = $event"
+        (filterAction)="getElementsToPractice($event)"
+      ></app-table>
+    </div>
+  </div>
 </main>
