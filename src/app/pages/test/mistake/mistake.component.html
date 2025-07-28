@@ -7,44 +7,65 @@
       <h4 class="h4">{{ mistake.property }}</h4>
     </header>
     <div class="content">
-      @for (item of [ mistake.input, mistake.right ]; track $index; let i =
+      @for (item of getEnteredAndCorrect(mistake); track $index; let i =
       $index) {
-      <div [class]="i === 0 ? 'enteredValue' : 'rightValue'">
-        <strong class="strong">
-          {{ i === 0 ? "Entered" : "rigth" }} Value:
-        </strong>
+      <div class="enteredCorrect_seciton {{i === 0 ? 'enteredValue' : 'rightValue'}}">
+        <h5 class="h5">
+          {{ i === 0 ? "Entered" : "Correct" }} Value:
+        </h5>
         @if (typeof item === 'string') {
-        <span class="span"> {{ item }} </span>
+          <span class="span"> "{{ item }}" </span>
         } @else if ( typeof item === 'boolean' ) {
-        <span class="span"> {{ item ? "Truth" : "False" }} </span>
-        } @else { @if ( mistake.property === 'uses') { @for (useItem of item;
-        track $index) { @if( typeof useItem !== 'string' ) {
-        <h6>{{ useItem.name }}</h6>
-        @if (useItem.verbInfo) {
-        <div class="verbInfo_section">
-          <div class="irregular">
-            <span>Irregular:</span>
-            <span>{{ useItem.verbInfo.irregular }}</span>
-          </div>
-          <div class="simplePast">
-            <span>SimplePast:</span>
-            <span>{{ useItem.verbInfo.simplePast }}</span>
-          </div>
-          <div class="pastParticiple">
-            <span>Past Participle:</span>
-            <span>{{ useItem.verbInfo.pastParticiple }}</span>
-          </div>
-        </div>
-        } @for (meaningItem of useItem.meanings; track $index) {
-        <span class="span"> {{ meaningItem }} </span>
-        } } @else {
-        <span class="span"> {{ useItem }} </span>
-        } } } @else {
-        <span> {{ mistake.right | json }} </span>
-        } }
+          <span class="span"> {{ item ? "Truth" : "False" }} </span>
+        } @else { 
+          @if ( mistake.property === 'Uses' || mistake.property === 'Meanings') { 
+            @for (useItem of item; track $index; let j = $index) { 
+              @if( typeof useItem !== 'string' ) {
+                <div class="field_section">
+                  <h6 class="field_title" >{{ useItem.name }}</h6>
+                  <div class="field_content">
+                    @if (useItem.verbInfo && getEnteredAndCorrect(mistake)[0].verbInfo !== getEnteredAndCorrect(mistake)[1].verbInfo) {
+                      <div class="verbInfo_section">
+                        <div class="irregular">
+                          <span>Irregular: </span>
+                          <span>{{ useItem.verbInfo.irregular }}</span>
+                        </div>
+                        <div class="simplePast">
+                          <span>SimplePast: </span>
+                          <span>{{ useItem.verbInfo.simplePast }}</span>
+                        </div>
+                        <div class="pastParticiple">
+                          <span>Past Participle: </span>
+                          <span>{{ useItem.verbInfo.pastParticiple }}</span>
+                        </div>
+                      </div>
+                    } 
+                    <div class="meanings">
+                      <header class="meaningsHeader">
+                        <h6 class="h6">Meanings</h6>
+                        <span> {{useItem.meanings.length}} </span>
+                      </header>
+                      <div class="meaningsContent">
+                        @for (meaningItem of useItem.meanings; track $index; let y = $index) {
+                          <span class="span"> "{{ meaningItem }}" {{y + 1 < useItem.meanings.length ? ',' : ''}} </span>
+                        } 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              } @else {
+                  <span class="span"> "{{ useItem }}"  {{j + 1 < item.length ? ',' : ''}} </span>
+                } 
+            } 
+          } @else {
+            <span> {{ mistake.right | json }} </span>
+        } 
+      }
       </div>
       }
     </div>
   </div>
   }
 </div>
+
+<button class="button" (click)="confirmEmitter.emit(true)" >Confirm</button>

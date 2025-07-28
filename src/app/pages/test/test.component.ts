@@ -7,6 +7,7 @@ import {
   IEtpItem,
   IEtpToCheck,
   IUse,
+  IVerbInfo,
 } from '../../interfaces';
 import { ElementToPracticeService } from '../components/add-element-to-prectice/element-to-practice.service';
 // import { AddElementToPrecticeComponent } from '../components/add-element-to-prectice/add-element-to-prectice.component';
@@ -85,8 +86,11 @@ export class TestComponent implements OnInit {
 
   public verifySelectedList(): void | Array<IElementToPractice2> {
     const selectedList: Array<IElementToPractice2> = JSON.parse(
-      localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]'
+      // localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]'
+      localStorage.getItem(localStorageLabels.customSelectedListOfETP) ?? '[]'
     );
+
+    // localStorage.removeItem(localStorageLabels.customSelectedListOfETP);
 
     if (selectedList.length > 0) {
       // return (this.elementsToPractice = selectedList);
@@ -103,7 +107,7 @@ export class TestComponent implements OnInit {
     this._elementToPracticeSvc
       .getElementsToPractice2()
       .subscribe((elementsToPractice) => {
-        console.log({ elementsToPractice });
+        // console.log({ elementsToPractice });
         this.elementsToPractice = elementsToPractice;
         this.buildPracticeList();
         this.getRandomETP();
@@ -112,28 +116,34 @@ export class TestComponent implements OnInit {
   }
 
   public getRandomETP(i?: number): void {
-    // return this.elementToPractice.next( this.elementsToPractice[this.getRandomIndex()] ?? null);
-    // const index = this.getRandomIndex();
-    let index = this.getRandomIndex();
-    if (i)
-      while (index === i) {
-        index = this.getRandomIndex();
-      }
-    // this.practiceList[this.getRandomIndex()] ?? null
+    let index = this.getRandomIndex(i);
+    // if (i && this.practiceList.length > 1)
+    //   while (index === i) {
+    //     index = this.getRandomIndex();
+    //   }
     const content = this.practiceList[index];
+
     return this.elementToPractice.next({ content, index });
   }
 
-  public getRandomIndex(): number {
+  public getRandomIndex(i?: number): number {
+    const length = this.practiceList.length;
     const min = 0;
-    // const max = this.elementsToPractice.length - 1;
-    const max = this.practiceList.length - 1;
+    // const max = this.practiceList.length - 1;
+    const max = length - 1;
 
-    // let randomInteger = Math.floor(Math.random() * (max - min + 1)) + min;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    // return Math.floor(Math.random() * (max - min + 1)) + min;
+    let index = 0;
+    
+    do {
+      index = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (index === i && length > 1);
+
+    return index;
   }
 
   public win(): Promise<boolean> {
+    console.log('You win');
     this._nzNotificationSvc.success(
       'You win',
       'Congratulations, you have completed succesfully the test.'
@@ -142,6 +152,7 @@ export class TestComponent implements OnInit {
   }
 
   public mistake(mistakeList: Array<IMistake>, index: number): void {
+    this.buildPracticeList();
     // mistakeList.forEach((mistake) => {
     //   console.log({ mistake });
     //   // console.log('Mistake');
@@ -161,13 +172,13 @@ export class TestComponent implements OnInit {
     const instance = modal.getContentComponent();
     instance.mistakeList = mistakeList;
 
-    // instance.valueFormEmitter.subscribe((value: any) => {
-    //   console.log('Cambio en filtros:', value);
-    //   this.filterAction.emit(value);
-    // });
+    instance.confirmEmitter.subscribe(() => modal.close());
+
+    modal.afterClose.subscribe(() => this.getRandomETP(index))
 
     this._nzNotificationSvc.error('Mistake', `You have just made a mistake `);
-    return this.getRandomETP(index);
+    // return this.getRandomETP(index);
+    return;
   }
 
   public useNormalize(use: IUse): IMistakenUse {
@@ -204,12 +215,7 @@ export class TestComponent implements OnInit {
       );
       if (
         meanings.length !== formMeanings.length ||
-        meanings.every((meaningItem) =>
-          // formMeanings.find(
-          //   (item) => item.toLowerCase() === meaningItem.toLowerCase()
-          // )
-          formMeanings.includes(meaningItem.toLowerCase())
-        )
+        !meanings.every((meaningItem) => formMeanings.includes(meaningItem.toLowerCase()))
       )
         mistakeList.push({
           property: 'Meanings',
@@ -263,9 +269,22 @@ export class TestComponent implements OnInit {
         this.useNormalize(useItem)
       );
 
+      // console.log({ iquality: usesList === enteredUsesList, usesList, enteredUsesList });
+
       if (
         usesList.length !== enteredUsesList.length ||
-        usesList.every((useItem) => enteredUsesList.includes(useItem))
+        !usesList.every((useItem) => {
+          const someCodition = enteredUsesList.some(enteredItem => {
+            let subCondition = useItem.name === enteredItem.name && useItem.meanings.every(useMeaning => enteredItem.meanings.includes(useMeaning))
+            if (useItem.verbInfo) {
+              const useVerbIndo: IVerbInfo = useItem.verbInfo;
+              const enterdeVerbInfo: IVerbInfo | undefined = enteredItem.verbInfo;
+              subCondition = !enterdeVerbInfo ? false : useVerbIndo.irregular === enterdeVerbInfo.irregular && useVerbIndo.simplePast === enterdeVerbInfo.simplePast && useVerbIndo.pastParticiple === enterdeVerbInfo.pastParticiple;
+            }
+            return subCondition;
+          })
+          return someCodition;
+        })
       )
         mistakeList.push({
           property: 'Uses',
@@ -284,27 +303,30 @@ export class TestComponent implements OnInit {
 
   // public submit(formValue: any): void {}
   public submit(etpToCheck: IEtpToCheck): Promise<boolean> | void {
-    console.log({ etpToCheck });
-    // const { id, word, aplications } = etpBody;
+    // console.log({ etpToCheck });
     const { etpItem, checkingWord, formValue } = etpToCheck;
 
-    // const valid: boolean = this.checkEtp(etpToCheck);
+    // const etp = etpItem.content.etp;
 
-    const etp = etpItem.content.etp;
-
-    if (etp.id) delete etp.id;
+    // if (etp.id) delete etp.id;
 
     const { content, index } = etpItem;
 
     const mistakeList = this.check(etpToCheck);
     if (mistakeList.length > 0) return this.mistake(mistakeList, index);
 
+    console.log('Without mistakes');
+
     let { word, aplications } = content;
 
     checkingWord ? (word = true) : (aplications = true);
 
+    if (word) this.practiceList[index].word = word;
+    if (aplications) this.practiceList[index].aplications = aplications;
+
     if (word && aplications) this.practiceList.splice(index, 1);
 
+    // const length = this.practiceList.length;
     if (this.practiceList.length > 0) return this.getRandomETP(index);
 
     return this.win();

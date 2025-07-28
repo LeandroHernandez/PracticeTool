@@ -1,7 +1,8 @@
 interface IOption {
     label: string;
     title: string;
-    route: string;
+    route?: string;
+    practiceList?: boolean;
   }
   
 export interface IContentHeaderInfoItem {

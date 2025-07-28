@@ -10,7 +10,7 @@
     <div class="content_div">
         <form [formGroup]="form" (ngSubmit)="submit()" class="form">
 
-            <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" [formControlName]="'state'" [disabled]="true"></nz-switch>
+            <!-- <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" [formControlName]="'state'" [disabled]="true"></nz-switch> -->
 
             <div class="fileds">
                 <label class="label">
@@ -18,13 +18,25 @@
                     <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'title'" >
                 </label>
     
-                <label class="label">
+                <div class="select_container">
                     <span>Content</span>
-                    <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'list'" >
-                </label>
+                    <!-- <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'list'" > -->
+                    <nz-select
+                        nzMode="multiple"
+                        nzPlaceHolder="Please select"
+                        formControlName="list"
+                        class="select"
+                    >
+                        @for (item of elementsToPractice; track item.id) {
+                            <!-- <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option> -->
+                            <nz-option [nzLabel]="item.en" [nzValue]="item.id"></nz-option>
+                        }
+                    </nz-select>
+                </div>
             </div>
+            <button type="submit" class="submit" [title]=" !id ? 'Register' : 'Edit' + 'practice list'"> {{ !id ? 'Register' : 'Edit'}} </button>
         </form>
-        <div class="table_container">
+        <!-- <div class="table_container">
             <app-table 
                 [tableInfo]="tableInfo" 
                 [itemList]="itemList" 
@@ -33,6 +45,6 @@
                 (deleteAction)="elementToPraciceDelete($event)"
                 (filterAction)="getElementsToPracice($event)"
             ></app-table>
-        </div>
+        </div> -->
     </div>
 </main>

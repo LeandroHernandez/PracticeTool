@@ -7,7 +7,7 @@
 
     <!-- <app-filters [filterFormFields]="filterFormFields" (valueFormEmitter)="filterAction.emit($event)" ></app-filters> -->
 
-    @if ( selectedItems || indeterminate) {
+    @if ( checked || indeterminate) {
     <button
       class="button deleteAll"
       nz-popconfirm
@@ -27,7 +27,7 @@
           <!-- [nzChecked]="checked" -->
           <th
             class="th"
-            [nzChecked]="selectedItems"
+            [nzChecked]="checked"
             [nzIndeterminate]="indeterminate"
             nzLabel="Select all"
             (nzCheckedChange)="onAllChecked($event)"
@@ -54,26 +54,41 @@
           <td class="td">{{ getItemIndex(item.id) }}</td>
           @for(keyItem of tableInfo; track keyItem) {
           <td class="td {{ getClass(item, keyItem) }}">
-            @if (keyItem.key === 'meanings') { @if ( item.uses ) { @for (use of
-            item.uses; track $index; let i = $index) {
-            <span>
-              [
-              <span class="useName">{{ use.name }}:</span>
-            </span>
-            @for (meaning of use.meanings; track $index; let j = $index) {
-            {{ meaning }}
-            @if (use.meanings.length > 1 && j + 1 < use.meanings.length) {
-            <span> - </span>
-            } }
-            <span>]</span>
-            } } @else { @for (meaning of item[keyItem.key]; track $index; let i
-            = $index) {
-            {{ meaning }}
-            @if (item[keyItem.key].length > 1 && i + 1 <
-            item[keyItem.key].length) {
-            <span> - </span>
-            } } } } @else {
-            {{ getValue(item, keyItem) }}
+            @if (keyItem.key === 'meanings') {
+              @if ( item.uses ) {
+                @for (use of item.uses; track $index; let i = $index) {
+                  <span>
+                    [
+                    <span class="useName">{{ use.name }}:</span>
+                  </span>
+                  @for (meaning of use.meanings; track $index; let j = $index) {
+                    {{ meaning }}
+                    @if (use.meanings.length > 1 && j + 1 < use.meanings.length) {
+                      <span> - </span>
+                    }
+                  }
+                  <span>]</span>
+                }
+              } 
+              @else {
+                @for (meaning of item[keyItem.key]; track $index; let i = $index) {
+                  {{ meaning }}
+                  @if (item[keyItem.key].length > 1 && i + 1 < item[keyItem.key].length) {
+                    <span> - </span>
+                  }
+                }
+              }
+            } 
+            @else if ( keyItem.key ==='list' ) {
+              <!-- <div class="list_container">
+                @for (etpItem of item[keyItem.key]; track $index) {
+                  <span class="list_item"> {{etpItem.en}} </span>
+                }
+              </div> -->
+              <span> {{ item.list.length }} </span>
+            } 
+            @else {
+              {{ getValue(item, keyItem) }}
             }
           </td>
           }

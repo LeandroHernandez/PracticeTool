@@ -33,12 +33,47 @@ export class PracticeListsService {
     this.practiceListsRef = collection(this.firestore, DbCollections.practiceLists) as CollectionReference<IPracticeList>;
   }
 
-  getPracticeLists(typeId?: string): Observable<IPracticeList[]> {
-    if (typeId) {
-      return this.getPracticeListByType(typeId);
-    }
-    return collectionData(this.practiceListsRef, { idField: 'id' }) as Observable<IPracticeList[]>;
-  }
+  // getPracticeLists(typeId?: string): Observable<IPracticeList[]> {
+  //   if (typeId) {
+  //     return this.getPracticeListByType(typeId);
+  //   }
+  //   return collectionData(this.practiceListsRef, { idField: 'id' }) as Observable<IPracticeList[]>;
+  // }
+  getPracticeLists(typeId?: string): Observable<any[]> {
+  const base$ = typeId
+    ? this.getPracticeListByType(typeId)
+    : collectionData(this.practiceListsRef, { idField: 'id' }) as Observable<IPracticeList[]>;
+
+  return base$.pipe(
+    switchMap((lists: IPracticeList[]) => {
+      const enrichedLists$ = lists.map((list) => {
+        if (!list.list || list.list.length === 0) {
+          return of({ ...list, list: [] }); // Si la lista está vacía
+        }
+
+        const elementRefs = list.list.map((id) =>
+          doc(this.firestore, DbCollections.elementsToPractice, id)
+        );
+
+        const elements$ = combineLatest(
+          elementRefs.map((ref) => docData(ref, { idField: 'id' }))
+        );
+
+        return elements$.pipe(
+          map((elements) => ({
+            ...list,
+            list: elements, // reemplaza los IDs con los documentos completos
+          }))
+        );
+      });
+
+      return enrichedLists$.length > 0
+        ? combineLatest(enrichedLists$)
+        : of([]);
+    })
+  );
+}
+
 
   getPracticeList(id: string): Observable<IPracticeList> {
     // const PracticeListDoc = doc(this.firestore, `PracticeLists/${id}`);

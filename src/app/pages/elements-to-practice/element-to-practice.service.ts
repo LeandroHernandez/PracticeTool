@@ -22,9 +22,9 @@ import {
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { IElementToPractice, IElementToPractice2 } from '../../interfaces';
-import { DbCollections } from '../../constants';
+import { DbCollections, typesOfWords } from '../../constants';
 import { TypeService } from '../types/types.service';
-import { setDoc } from 'firebase/firestore';
+import { Query, setDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -102,53 +102,6 @@ export class ElementToPracticeService {
     );
   }
 
-  // getFilteredElementsToPractice(
-  //   filters: Record<string, any> = {},
-  //   options: {
-  //     pageSize?: number;
-  //     startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
-  //   } = {}
-  // ): Observable<any[]> {
-  //   // const elementsRef = collection(this.firestore, 'elementsToPractice');
-  //   const elementsRef = collection(this.firestore, DbCollections.elementsToPractice) as CollectionReference<IElementToPractice>;
-
-  //   // Utilidad recursiva para extraer pares [ruta, valor] donde haya valor no nulo/vacío
-  //   function extractValidFilters(obj: any, prefix = ''): [string, any][] {
-  //     return Object.entries(obj).flatMap(([key, val]) => {
-  //       if (val === null || val === '') return [];
-  //       if (typeof val === 'object' && !Array.isArray(val)) {
-  //         return extractValidFilters(val, `${prefix}${key}.`);
-  //       }
-  //       return [[`${prefix}${key}`, val]];
-  //     });
-  //   }
-
-  //   const constraints: QueryConstraint[] = [];
-
-  //   // Construir filtros dinámicos (incluyendo 'type' si está presente)
-  //   const validFilters = extractValidFilters(filters);
-  //   for (const [path, value] of validFilters) {
-  //     constraints.push(where(path, '==', value));
-  //   }
-
-  //   // Paginación: aplicar límite y cursor si se especifican
-  //   if (options.pageSize) {
-  //     constraints.push(limit(options.pageSize));
-  //   }
-  //   if (options.startAfterDoc) {
-  //     constraints.push(startAfter(options.startAfterDoc));
-  //   }
-
-  //   const filteredQuery = query(elementsRef, ...constraints);
-
-  //   // return from(getDocs(filteredQuery)).pipe(
-  //   //   map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-  //   // );
-  //   return collectionSnapshots(filteredQuery).pipe(
-  //     map(snapshot => snapshot.map(doc => ({ id: doc.id, ...doc.data() })))
-  //   );
-  // }
-
   getFilteredElementsToPractice(
     filters: Record<string, any> = {},
     options: {
@@ -171,57 +124,182 @@ export class ElementToPracticeService {
       });
     }
 
+    const typeFilter = filters['type'];
+    delete filters['type'];
+    
+    const validFilters = extractValidFilters(filters);
     const constraints: QueryConstraint[] = [];
 
-    const validFilters = extractValidFilters(filters);
+
+    console.log({ validFilters });
+
     for (const [path, value] of validFilters) {
+
+      // const condition: boolean = path === 'type' && Array.isArray(value);
+      // const condition2: boolean = condition && value.some((val: string) => childrenTypes.includes(val));
+
+      // if ( condition2 ) 
+      //   constraints.push(
+      //     where(
+      //       'selectedUses', 
+      //       'array-contains-any', 
+      //       value.filter((val: string) => childrenTypes.includes(val))
+      //     )
+      //   );
+
+      // if (!condition || value.some((val: string) => !childrenTypes.includes(val))) constraints.push(where(path, condition ? 'in' : '==', condition2 ? value.filter((val: string) => !childrenTypes.includes(val)) : value));
+
       constraints.push(where(path, '==', value));
       // constraints.push(where(path, '>=', value));
       // constraints.push(where(path, '<=', value + '\uf8ff'));
     }
 
-    if (options.pageSize) {
-      constraints.push(limit(options.pageSize));
+    console.log({ constraints });
+    
+    const baseQuery = query(elementsRef, ...constraints);
+    
+    if (!typeFilter) return this.executeQuery(baseQuery, options);
+    
+    const parents: string[] = [];
+    const children: string[] = [];
+
+    const childrenTypes: string[] = [
+      typesOfWords.verb,
+      typesOfWords.adjective,
+      typesOfWords.preposition,
+      typesOfWords.adverb,
+      typesOfWords.noun
+    ]
+
+    for (const typeId of Array.isArray(typeFilter) ? typeFilter : [typeFilter]) {
+      if ( childrenTypes.includes(typeId) ) {children.push(typeId)} else parents.push(typeId);
+      // const found = allTypes.find((t) => t.id === typeId);
+      // if (!found) continue;
+      // if (found.father) {
+      //   children.push(typeId);
+      // } else {
+      //   parents.push(typeId);
+      // }
     }
 
-    if (options.startAfterDoc) {
-      constraints.push(startAfter(options.startAfterDoc));
-    }
+      const parentQuery = parents.length > 0
+        ? query(baseQuery, where('type', 'in', parents))
+        : null;
 
-    const filteredQuery = query(elementsRef, ...constraints);
+      const childQuery = children.length > 0
+        ? query(baseQuery, where('selectedUses', 'array-contains-any', children))
+        : null;
 
-    return collectionSnapshots(filteredQuery).pipe(
-      map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-      switchMap((elements: any[]) => {
-        const enrichedElements$ = elements.map((element) => {
-          const wordTypeId = element.verbInfo?.wordType;
+      const observables: Observable<any[]>[] = [];
 
-          if (wordTypeId) {
-            return this._typeSvc.getType(wordTypeId).pipe(
-              map((wordTypeData) => ({
-                ...element,
-                verbInfo: {
-                  ...element.verbInfo,
-                  wordType: wordTypeData, // Reemplaza el ID por el objeto completo
-                },
-              }))
-            );
-          }
+      if (parentQuery) {
+        observables.push(this.executeQuery(parentQuery, options));
+      }
+      if (childQuery) {
+        observables.push(this.executeQuery(childQuery, options));
+      }
 
-          return of(element);
-        });
+      if (observables.length === 0) {
+        return of([]);
+      }
 
-        return enrichedElements$.length > 0
-          ? combineLatest(enrichedElements$)
-          : of([]);
-      })
-    );
+      return combineLatest(observables).pipe(
+        map((results) => {
+          const merged = [...results.flat()];
+          // Quitar duplicados por ID
+          const uniqueMap = new Map();
+          merged.forEach((el) => uniqueMap.set(el.id, el));
+          return Array.from(uniqueMap.values());
+        })
+      );
+    
+    
+    // if (options.pageSize) {
+    //   constraints.push(limit(options.pageSize));
+    // }
+
+    // if (options.startAfterDoc) {
+    //   constraints.push(startAfter(options.startAfterDoc));
+    // }
+
+    // const filteredQuery = query(elementsRef, ...constraints);
+
+    // return collectionSnapshots(filteredQuery).pipe(
+    //   map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+    //   switchMap((elements: any[]) => {
+    //     const enrichedElements$ = elements.map((element) => {
+    //       const wordTypeId = element.verbInfo?.wordType;
+
+    //       if (wordTypeId) {
+    //         return this._typeSvc.getType(wordTypeId).pipe(
+    //           map((wordTypeData) => ({
+    //             ...element,
+    //             verbInfo: {
+    //               ...element.verbInfo,
+    //               wordType: wordTypeData, // Reemplaza el ID por el objeto completo
+    //             },
+    //           }))
+    //         );
+    //       }
+
+    //       return of(element);
+    //     });
+
+    //     return enrichedElements$.length > 0
+    //       ? combineLatest(enrichedElements$)
+    //       : of([]);
+    //   })
+    // );
+  }
+  
+private executeQuery(
+  queryRef: Query<IElementToPractice>,
+  options: {
+    pageSize?: number;
+    startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
+  }
+): Observable<any[]> {
+  const constraints: QueryConstraint[] = [];
+
+  if (options.pageSize) {
+    constraints.push(limit(options.pageSize));
   }
 
-  // addElementToPractice(elementToPractice: IElementToPractice) {
-  //   console.log({ elementToPractice })
-  //   return addDoc(this.elementToPracticesRef, elementToPractice);
-  // }
+  if (options.startAfterDoc) {
+    constraints.push(startAfter(options.startAfterDoc));
+  }
+
+  const finalQuery = query(queryRef, ...constraints);
+
+  return collectionSnapshots(finalQuery).pipe(
+    // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+    map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+    switchMap((elements: any[]) => {
+      const enrichedElements$ = elements.map((element) => {
+        const wordTypeId = element.verbInfo?.wordType;
+
+        if (wordTypeId) {
+          return this._typeSvc.getType(wordTypeId).pipe(
+            map((wordTypeData) => ({
+              ...element,
+              verbInfo: {
+                ...element.verbInfo,
+                wordType: wordTypeData,
+              },
+            }))
+          );
+        }
+
+        return of(element);
+      });
+
+      return enrichedElements$.length > 0
+        ? combineLatest(enrichedElements$)
+        : of([]);
+    })
+  );
+}
+
   async addElementToPractice(data: IElementToPractice | any): Promise<string> {
     const docRef = await addDoc(this.elementToPracticesRef, data);
     return docRef.id;

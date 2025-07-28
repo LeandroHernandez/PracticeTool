@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IMistake } from '../../../interfaces/mistake.interface';
 import { JsonPipe } from '@angular/common';
 
@@ -10,4 +10,10 @@ import { JsonPipe } from '@angular/common';
 })
 export class MistakeComponent {
   @Input() mistakeList: Array<IMistake> = [];
+
+  @Output() confirmEmitter: EventEmitter<boolean> = new EventEmitter();
+
+  public getEnteredAndCorrect(mistake: IMistake): Array<string | any> {
+    return [ mistake.input, mistake.right ]
+  }
 }

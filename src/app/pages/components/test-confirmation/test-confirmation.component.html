@@ -20,16 +20,21 @@
       " -->
 <!-- (ngModelChange)="onChange($event)" -->
 <div class="container">
-  <nz-tree-select
-    nzMode="multiple"
-    class="treeSelect"
-    [(ngModel)]="selectedItems"
-    [nzNodes]="nodes"
-    [nzMultiple]="true"
-    nzShowSearch
-    nzCheckable
-    nzPlaceHolder="Please select"
-  ></nz-tree-select>
+  @if (practiceList) {
+    <p>You are about to practice {{ selectedListOfPL.length > 0 ? `the ${ selectedListOfPL.length } that you have selected` : 'all the practice lists'}} </p>
+  } @else {
+    <nz-tree-select
+      nzMode="multiple"
+      class="treeSelect"
+      [(ngModel)]="selectedItems"
+      [nzNodes]="nodes"
+      [nzMultiple]="true"
+      (ngModelChange)="onChange($event)"
+      nzShowSearch
+      nzCheckable
+      nzPlaceHolder="Please select"
+    ></nz-tree-select>
+  }
   <button class="button" type="submit" (click)="goToTest()">Go to Test</button>
 </div>
 <!-- @if ( selectedListOfETP.length > 0 ) {

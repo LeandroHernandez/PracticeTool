@@ -25,7 +25,7 @@ export class ContentHeaderComponent {
     });
 
     const instance = modal.getContentComponent();
-    // instance.types = this.types;
+    if (this.contentHeaderInfo?.test.practiceList) instance.practiceList = true;
 
     // instance.valueFormEmitter.subscribe((value: any) => {
     //   console.log('Cambio en filtros:', value);

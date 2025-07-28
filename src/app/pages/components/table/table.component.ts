@@ -11,7 +11,8 @@ import { IWord } from '../../../interfaces/word.interface';
 import { ITableItem } from '../../../interfaces/table-item.interface';
 import { IFilterFormField } from '../../../interfaces/filter-form-field.interface';
 import { IElementToPractice, IPageTableInfo } from '../../../interfaces';
-import { localStorageLabels } from '../../../constants';
+import { localStorageLabels, RoutesApp } from '../../../constants';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-table',
@@ -42,19 +43,58 @@ export class TableComponent {
   // @Output() setOfCheckedIdsEmitter: EventEmitter<Set<number>> =
   //   new EventEmitter();
 
-  checked = false;
-  indeterminate = false;
+  // checked = false;
+  // indeterminate = false;
   setOfCheckedId = new Set<number>();
 
-  constructor(private _nzModalSvc: NzModalService) {
-    localStorage.removeItem(localStorageLabels.selectedListOfETP);
-  }
-
+  public actualLabel: string = localStorageLabels.selectedListOfETP;
+  
   public get paginatedItems(): Array<any> {
     const { index, size } = this.page;
     const sheet: number = size * index;
     return this.itemList.slice(sheet - size, sheet);
   }
+  
+  public get checked(): boolean {
+    return this.paginatedItems.length > 0 && this.paginatedItems.every((item) => {
+      return this.setOfCheckedId.has(item.id);
+    });
+  }
+  
+  public get indeterminate(): boolean {
+    return !this.checked && this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id));
+  }
+  
+  public get url(): string {
+    return this._router.url;
+  }
+
+  constructor(private _router: Router, private _nzModalSvc: NzModalService) {
+    // JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
+    this.initSet();
+  }
+  
+  public initSet(): void {
+    // const val = this.url.split('/')[1localStorageLabels.selectedListOfETP];
+    // console.log({ val });
+    switch (this.url.split('/')[1]) {
+      case RoutesApp.practiceLists:
+        this.actualLabel = localStorageLabels.selectedListOfPL;
+        break;
+        
+        default:
+        this.actualLabel = localStorageLabels.selectedListOfETP;
+        break;
+    }
+    return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
+  };
+
+  // public selectionInit(): void {
+  //   JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
+  //   // if ( this.setOfCheckedId.values.length === 0 ) return;
+  //   // this.refreshCheckedStatus();
+  //   // console.log({ indeterminate: this.indeterminate, checked: this.checked });
+  // }
 
   public getItemIndex(i: number): number {
     const item = this.itemList.findIndex((item) => item.id === i);
@@ -68,7 +108,7 @@ export class TableComponent {
     this.paginatedItems
       // .filter(({ disabled }) => !disabled)
       .forEach(({ id }) => this.updateCheckedSet(id, checked));
-    this.refreshCheckedStatus();
+    // this.refreshCheckedStatus();
   }
 
   updateCheckedSet(id: number, checked: boolean): void {
@@ -77,19 +117,18 @@ export class TableComponent {
     } else {
       this.setOfCheckedId.delete(id);
     }
+    return this.setSelectedList();
   }
 
-  refreshCheckedStatus(): void {
-    // const listOfEnabledData = this.listOfCurrentPageData.filter(({ disabled }) => !disabled);
-    this.checked = this.paginatedItems.every(({ id }) =>
-      this.setOfCheckedId.has(id)
-    );
-    this.indeterminate =
-      this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id)) &&
-      !this.checked;
-    // this.setOfCheckedIdsEmitter.emit(this.setOfCheckedId);
-    this.setSelectedList();
-  }
+  // refreshCheckedStatus(): void {
+  //   // this.checked = this.paginatedItems.every(({ id }) =>
+  //   //   this.setOfCheckedId.has(id)
+  //   // );
+  //   // this.indeterminate =
+  //   //   this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id)) &&
+  //   //   !this.checked;
+  //   this.setSelectedList();
+  // }
 
   public setSelectedList(): void {
     const selectedList = this.itemList.filter((item) =>
@@ -97,10 +136,12 @@ export class TableComponent {
     );
 
     if (selectedList.length === 0)
-      return localStorage.removeItem(localStorageLabels.selectedListOfETP);
+      // return localStorage.removeItem(localStorageLabels.selectedListOfETP);
+      return localStorage.removeItem(this.actualLabel);
 
     return localStorage.setItem(
-      localStorageLabels.selectedListOfETP,
+      // localStorageLabels.selectedListOfETP,
+      this.actualLabel,
       JSON.stringify(selectedList)
     );
   }
@@ -108,14 +149,7 @@ export class TableComponent {
   onItemChecked(id: number, checked: boolean): void {
     // console.log({ itemCheckedFunc: { id, checked } });6
     this.updateCheckedSet(id, checked);
-    this.refreshCheckedStatus();
-  }
-
-  // public selectedItems(array1, array2) {
-  public get selectedItems(): boolean {
-    return this.paginatedItems.every((item) => {
-      return this.setOfCheckedId.has(item.id);
-    });
+    // this.refreshCheckedStatus();
   }
 
   public getKeys(item: IWord): Array<string> {
@@ -196,6 +230,6 @@ export class TableComponent {
   public paginationChange(): void {
     // return this.pageEmitter.emit(this.page);
     this.pageEmitter.emit(this.page);
-    this.refreshCheckedStatus();
+    // this.refreshCheckedStatus();
   }
 }

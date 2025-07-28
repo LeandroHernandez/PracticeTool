@@ -10,16 +10,17 @@ export const practiceListsRoutes: Routes = [
         path: RoutesApp.addPracticeList,
         loadComponent: () => import('./add-practice-list/add-practice-list.component').then(m => m.AddPracticeListComponent),
     },
-    // {
-    //     path: `${RoutesApp.addWord}/:id`,
-    //     loadComponent: () => import('../components/add-element-to-prectice/add-element-to-prectice.component').then(m => m.AddElementToPrecticeComponent),
-    // },
-    // {
-    //     // path: RoutesApp.testWords,
-    //     path: RoutesApp.test,
-    //     // loadComponent: () => import('./test-words/test-words.component').then(m => m.TestWordsComponent),
-    //     loadComponent: () => import('../test/test.component').then(m => m.TestComponent),
-    // },
+    {
+        path: `${RoutesApp.addPracticeList}/:id`,
+        loadComponent: () => import('./add-practice-list/add-practice-list.component').then(m => m.AddPracticeListComponent),
+    },
+    {
+        // path: RoutesApp.testWords,
+        path: RoutesApp.test,
+        // loadComponent: () => import('./test-words/test-words.component').then(m => m.TestWordsComponent),
+        loadComponent: () =>
+            import('../test').then((m) => m.TestComponent),
+    },
     {
         path: RoutesApp.other,
         redirectTo: RoutesApp.root,
