@@ -8,6 +8,8 @@ import { ElementToPracticeService } from '../../components/add-element-to-precti
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
 import { PracticeListsService } from '../practice-lists.service';
+import { IPracticeList } from '../../../interfaces';
+import { localStorageLabels } from '../../../constants';
 
 @Component({
   selector: 'app-add-practice-list',
@@ -193,7 +195,7 @@ export class AddPracticeListComponent implements OnInit {
   };
 
   public error(edit?: boolean): NzNotificationRef {
-    return this._nzNotificationSvc.success('Error', 'Something went wrong so we were not able to complete de process, please try again.');
+    return this._nzNotificationSvc.success('Error', 'Something went wrong so we were not able to complete the proccess, please try again.');
   };
 
   public submit(): void | NzNotificationRef | Promise<void> {
@@ -206,6 +208,15 @@ export class AddPracticeListComponent implements OnInit {
       .then( 
         response => {
           console.log({ response });
+        const selectedList: Array<IPracticeList> = JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfPL) ?? '[]');
+        
+        if ( selectedList.length > 0 ) {
+          const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
+          if (selectedItemIndex >= 0) {
+            selectedList.splice(selectedItemIndex, 1, this.form.value);
+            localStorage.setItem(localStorageLabels.selectedListOfPL, JSON.stringify(selectedList));
+          }
+        }
           this.successful(true);
         }
       )

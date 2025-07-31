@@ -109,6 +109,8 @@ export class ElementToPracticeService {
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
     } = {}
   ): Observable<any[]> {
+
+    // console.log({ filters: {...filters} });
     const elementsRef = collection(
       this.firestore,
       DbCollections.elementsToPractice
@@ -131,7 +133,7 @@ export class ElementToPracticeService {
     const constraints: QueryConstraint[] = [];
 
 
-    console.log({ validFilters });
+    // console.log({ validFilters });
 
     for (const [path, value] of validFilters) {
 
@@ -154,7 +156,7 @@ export class ElementToPracticeService {
       // constraints.push(where(path, '<=', value + '\uf8ff'));
     }
 
-    console.log({ constraints });
+    // console.log({ constraints });
     
     const baseQuery = query(elementsRef, ...constraints);
     

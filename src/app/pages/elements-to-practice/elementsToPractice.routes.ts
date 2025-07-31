@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { RoutesApp } from '../../constants';
+import { testGuard } from '../../guards/test-guard.guard';
 
 export const elementsToPracticeRoutes: Routes = [
   {
@@ -39,6 +40,7 @@ export const elementsToPracticeRoutes: Routes = [
     // loadComponent: () => import('./test-words/test-words.component').then(m => m.TestWordsComponent),
     loadComponent: () =>
       import('../test/test.component').then((m) => m.TestComponent),
+    // canActivate: [testGuard],
   },
   {
     path: RoutesApp.other,

@@ -4,7 +4,8 @@
 
 <main class="main">
   <header class="main_header">
-    <button class="btn back_btn" [routerLink]="['/' + backTo]">
+    <!-- <button class="btn back_btn" [routerLink]="['/' + backTo]"> -->
+    <button class="btn back_btn" (click)="backToAction()">
       <i class="bi bi-arrow-bar-left"></i>
       Volver
     </button>
@@ -14,5 +15,6 @@
     }
   </header>
 
-  <app-form [etp$]="etp$" (etpEmitter)="submit($event)"></app-form>
+  <!-- <app-form [etp$]="etp$" (etpEmitter)="submit($event)"></app-form> -->
+  <app-form (etpEmitter)="submit($event)"></app-form>
 </main>

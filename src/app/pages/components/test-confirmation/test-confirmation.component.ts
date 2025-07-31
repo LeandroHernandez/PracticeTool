@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import {
 //   FormBuilder,
@@ -17,6 +17,7 @@ import { ElementToPracticeService } from '../../elements-to-practice/element-to-
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { Subscription } from 'rxjs';
 import { PracticeListsService } from '../../practice-lists/practice-lists.service';
+import { TestService } from '../../test/test.service';
 
 interface INode {
   // selected: boolean;
@@ -35,6 +36,8 @@ interface INode {
   styleUrl: './test-confirmation.component.css',
 })
 export class TestConfirmationComponent {
+  @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter();
+
   @Input() practiceList: boolean = false;
   public types: Array<IType> = [];
 
@@ -45,6 +48,7 @@ export class TestConfirmationComponent {
   // constructor(private _fb: FormBuilder, private _typeSvc: TypeService) {
   constructor(
     private _router: Router,
+    private _testSvc: TestService,
     private _typeSvc: TypeService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _practiceListsSvc: PracticeListsService,
@@ -74,7 +78,7 @@ export class TestConfirmationComponent {
     this._typeSvc.getTypes().subscribe(
       (types) => {
         this.types = types;
-        console.log({ types });
+        // console.log({ types });
         this.buildNodes(types);
         if (this.selectedListOfETP.length > 0)
           this.nodes.push(
@@ -131,7 +135,7 @@ export class TestConfirmationComponent {
   }
 
   public onChange(selectedList: string[]): void | string[] {
-    console.log({selectedList});
+    // console.log({selectedList});
     // const selectedOpIndex = selectedList.findIndex( item => item === '1')
 
     // if ( selectedOpIndex < 0 ) return;
@@ -144,31 +148,33 @@ export class TestConfirmationComponent {
     return this.selectedItems = selectedList[selectedList.length - 1] === '1' ? ['1'] : [selectedList[1]];
   }
   
-  public navigate(error?: boolean): Promise<boolean> {
+  public navigate(error?: boolean): Promise<boolean> | void {
+    // this.closeEmitter.emit(true);
+    if (!this._testSvc.currentStatus) return;
+    console.log('Redireccionando al test');
     return this._router.navigateByUrl(
       `/${ !this.practiceList ? RoutesApp.elementsToPractice : RoutesApp.practiceLists}/${ !error ? RoutesApp.test : ''}`
     );
   }
 
   public setCustomList(list: any[]): void {
-    console.log({ list });
+    // console.log({ list });
     const finalList: any[] = [];
     list.forEach(item => { if (!finalList.some(subItem => subItem.id === item.id)) finalList.push(item)});
     return localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify(finalList));
   }
   
   public goToTest(): void | Subscription | Promise<boolean> {
-    // this.nodes.forEach((node) => this.nodes2.push(node));
-    console.log({
-      selectedItems: this.selectedItems,
-      nodes: this.nodes,
-    });
+    // console.log({
+    //   selectedItems: this.selectedItems,
+    //   nodes: this.nodes,
+    // });
 
-    console.log({ practiceList: this.practiceList, selectedListOfPL: this.selectedListOfPL });
+    // console.log({ practiceList: this.practiceList, selectedListOfPL: this.selectedListOfPL });
     if (this.practiceList) {
       if (this.selectedListOfPL.length === 0) return this._practiceListsSvc.getPracticeLists().subscribe(
         (practiceLists) => {
-          console.log({ practiceLists })
+          // console.log({ practiceLists })
           if (practiceLists.length < 1) {
             this._nzNotificationSvc.warning('Without practice lists', 'There are not any practice lists');
             return this.navigate(true);
@@ -191,8 +197,10 @@ export class TestConfirmationComponent {
     
     const selectedOption: boolean = this.selectedItems[0] === '1';
 
-    if ( this.selectedItems.length < 1 || selectedOption ) {
+    // if ( this.selectedItems.length < 1 || selectedOption ) {
+    if ( selectedOption ) {
       // if (selectedOption) localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify(this.selectedListOfETP))
+      // console.log({ selectedOption });
       if (selectedOption) this.setCustomList(this.selectedListOfETP);
       return this.navigate()
     };
@@ -201,9 +209,9 @@ export class TestConfirmationComponent {
     //   // return this._elementToPracticeSvc.getFilteredElementsToPractice({ type: this.selectedItems}).subscribe((filteredEtpsByKind) => console.log({ filteredEtpsByKind }));
     // }
     return this._elementToPracticeSvc.getFilteredElementsToPractice(
-      { type: this.selectedItems}).subscribe(
+      this.selectedItems.length ? { type: this.selectedItems} : undefined).subscribe(
         (filteredEtpsByKind) => {
-          console.log({ filteredEtpsByKind })
+          // console.log({ filteredEtpsByKind })
           if (filteredEtpsByKind.length < 1) return this._nzNotificationSvc.warning('Without matches', 'There are not any elements to practice for this filters');
           // localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify(filteredEtpsByKind));
           this.setCustomList(filteredEtpsByKind);

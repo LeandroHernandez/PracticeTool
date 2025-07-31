@@ -9,10 +9,6 @@
       ></app-content-header>
     </div>
     <div class="table">
-      <!-- (pageEmitter)="getWords(null, $event)"
-            (filterAction)="getWords($event)" -->
-      <!-- [itemList]="itemList"  -->
-      <!-- (pageEmitter)="getElementsToPractice(null, $event)" -->
       <app-table
         [tableInfo]="tableInfo"
         [itemList]="elementsToPractice"
@@ -22,6 +18,7 @@
         (deleteAction)="elementToPracticeDelete($event)"
         (pageEmitter)="page = $event"
         (filterAction)="getElementsToPractice($event)"
+        (deleteAllAction)="deleteAll($event)"
       ></app-table>
     </div>
   </div>

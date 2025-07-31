@@ -12,42 +12,42 @@ import { Router, RouterLink } from '@angular/router';
 export class NavComponent {
   
   public navList: Array<INavItem> = [
-    {
-      label: 'Words',
-      title: 'Words',
-      route: RoutesApp.words,
-      icon: 'file-word'
-    },
-    {
-      label: 'Phrasal Verbs',
-      title: 'Phrasal Verbs',
-      route: RoutesApp.phrasalVerbs,
-      icon: 'diagram-2'
-    },
-    {
-      label: 'Idioms',
-      title: 'Idioms',
-      route: RoutesApp.idioms,
-      icon: 'globe-americas'
-    },
-    {
-      label: 'Expressions',
-      title: 'Expressions',
-      route: RoutesApp.expressions,
-      icon: 'translate'
-    },
+    // {
+    //   label: 'Words',
+    //   title: 'Words',
+    //   route: RoutesApp.words,
+    //   icon: 'file-word'
+    // },
+    // {
+    //   label: 'Phrasal Verbs',
+    //   title: 'Phrasal Verbs',
+    //   route: RoutesApp.phrasalVerbs,
+    //   icon: 'diagram-2'
+    // },
+    // {
+    //   label: 'Idioms',
+    //   title: 'Idioms',
+    //   route: RoutesApp.idioms,
+    //   icon: 'globe-americas'
+    // },
+    // {
+    //   label: 'Expressions',
+    //   title: 'Expressions',
+    //   route: RoutesApp.expressions,
+    //   icon: 'translate'
+    // },
     {
       label: 'Elements to Practice',
       title: 'Elements to Practice',
       route: RoutesApp.elementsToPractice,
       icon: 'translate'
     },
-    {
-      label: 'Grammar',
-      title: 'Grammar',
-      route: RoutesApp.grammar,
-      icon: 'highlighter'
-    },
+    // {
+    //   label: 'Grammar',
+    //   title: 'Grammar',
+    //   route: RoutesApp.grammar,
+    //   icon: 'highlighter'
+    // },
     {
       label: 'Practice Lists',
       title: 'Practice Lists',

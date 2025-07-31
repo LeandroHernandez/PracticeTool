@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { IContentHeaderInfoItem, IType } from '../../../interfaces';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { TestConfirmationComponent } from '../test-confirmation/test-confirmation.component';
+import { TestService } from '../../test/test.service';
 
 @Component({
   selector: 'app-content-header',
@@ -14,9 +15,11 @@ export class ContentHeaderComponent {
   @Input() contentHeaderInfo: IContentHeaderInfoItem | null = null;
   // @Input() types: Array<IType> = [];
 
-  constructor(private _nzModalSvc: NzModalService) {}
+  constructor(private _nzModalSvc: NzModalService, private _testSvc: TestService) {}
 
   public goToTest(): void {
+    console.log(' Showing test confirmation ');
+    this._testSvc.setStatus(true);
     const modal: NzModalRef = this._nzModalSvc.create({
       // nzTitle: 'Test Confirmation',
       nzTitle: 'What kind of elements do you want to practice?',
@@ -27,9 +30,6 @@ export class ContentHeaderComponent {
     const instance = modal.getContentComponent();
     if (this.contentHeaderInfo?.test.practiceList) instance.practiceList = true;
 
-    // instance.valueFormEmitter.subscribe((value: any) => {
-    //   console.log('Cambio en filtros:', value);
-    //   this.filterAction.emit(value);
-    // });
+    instance.closeEmitter.subscribe(() => modal.close());
   }
 }

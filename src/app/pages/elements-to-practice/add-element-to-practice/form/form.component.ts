@@ -30,6 +30,7 @@ import {
 } from '../../../../interfaces';
 import { ElementToPracticeService } from '../../element-to-practice.service';
 import { ActivatedRoute } from '@angular/router';
+import { TestService } from '../../../test/test.service';
 
 @Component({
   selector: 'app-form',
@@ -45,8 +46,7 @@ import { ActivatedRoute } from '@angular/router';
 export class FormComponent implements OnInit {
   @Input() formLabel: string = 'Element to practice';
   @Input() elementToPractice: IElementToPractice | any = null;
-  // @Input() etp$: Observable<IElementToPractice2 | null> = new Observable();
-  @Input() etp$: Observable<IEtpItem | null> | null = null;
+  // @Input() etp$: Observable<IEtpItem | null> | null = null;
 
   @Output() formInfoEmitter: EventEmitter<IElementToPractice2> =
     new EventEmitter();
@@ -63,12 +63,13 @@ export class FormComponent implements OnInit {
 
   public verbId: string = typesOfWords.verb;
 
-  public etpItem: IEtpItem | null = null;
+  // public etpItem: IEtpItem | null = null;
   public checkingWord = false;
 
   constructor(
     private _fb: FormBuilder,
     private _route: ActivatedRoute,
+    private _testSvc: TestService,
     private _elementToPracticeService: ElementToPracticeService,
     private _typeService: TypeService,
     private _nzNotificationService: NzNotificationService
@@ -84,9 +85,23 @@ export class FormComponent implements OnInit {
       this.id = this._route.snapshot.paramMap.get('id');
       this.id ? this.getElementToPractice(this.id) : this.formInit();
     } else this.formInit(this.elementToPractice);
+    
+    this._testSvc.etp$.subscribe((etpItem) => {
+      // console.log({ etpItem });
+      if (!etpItem) return;
+      // this.etpItem = etpItem;
+      const { content } = etpItem;
+      if (!content) return;
+      this.formInit(content.etp, content);
+      this.setSupscriptions();
+    });
 
     this.setSupscriptions();
   }
+
+  get etpItem(): IEtpItem | null {
+    return this._testSvc.current;
+  };
 
   get type(): FormControl {
     return this.form.get('type') as FormControl;
@@ -113,23 +128,22 @@ export class FormComponent implements OnInit {
   ngOnInit(): void {
     this.getTypes();
 
-    this.etpInit();
+    // this.etpInit();
   }
 
-  public etpInit(): Subscription | void {
-    if (!this.etp$) return;
+  // public etpInit(): Subscription | void {
+  //   if (!this._testSvc.current) return;
 
-    return this.etp$.subscribe((etpItem) => {
-      // console.log({ etpItem });
-      if (!etpItem) return;
-      this.etpItem = etpItem;
-      // this.formInit(etpItem.content.etp);
-      const { content } = etpItem;
-      if (!content) return;
-      this.formInit(content.etp, content);
-      this.setSupscriptions();
-    });
-  }
+  //   return this._testSvc.etp$.subscribe((etpItem) => {
+  //     // console.log({ etpItem });
+  //     if (!etpItem) return;
+  //     // this.etpItem = etpItem;
+  //     const { content } = etpItem;
+  //     if (!content) return;
+  //     this.formInit(content.etp, content);
+  //     this.setSupscriptions();
+  //   });
+  // }
 
   public setSupscriptions(): void {
     this.form.get('selectedUses')?.valueChanges.subscribe((value) => {
@@ -384,7 +398,7 @@ export class FormComponent implements OnInit {
   }
 
   public removeMeaning(i: number): void {
-    if (this.getMeanings(i).length < 2) return;
+    // if (this.getMeanings(i).length < 2) return;
 
     return this.meanings.removeAt(i);
   }
@@ -417,7 +431,7 @@ export class FormComponent implements OnInit {
     if (!this.form.get('uses'))
       this.form.addControl('uses', this._fb.array([]));
 
-    if (this.form.get('meanings')) this.form.removeControl('meanings');
+    // if (this.form.get('meanings')) this.form.removeControl('meanings');
   }
 
   public removeUses(): void {
@@ -427,11 +441,11 @@ export class FormComponent implements OnInit {
     if (this.form.get('uses')) this.form.removeControl('uses');
 
     if (!this.form.get('meanings'))
-      this.form.addControl('meanings', this._fb.array([this.newMeaning()]));
+      this.form.setControl('meanings', this._fb.array([this.newMeaning()]));
   }
 
   public submit(): void | NzNotificationRef {
-    // console.log({ valid: this.form.valid, value: this.form.value });
+    console.log({ valid: this.form.valid, value: this.form.value });
     
     const meanings: Array<string> | null = this.form.get('meanings')?.value ?? null;
 
@@ -446,7 +460,7 @@ export class FormComponent implements OnInit {
     }
 
     let etpForm: FormGroup | null = null;
-    if (this.etp$) {
+    if (this.etpItem) {
       etpForm = this.form;
       etpForm.enable();
     }
@@ -470,7 +484,7 @@ export class FormComponent implements OnInit {
     //   );
     // }
 
-    // console.log({ etpItemToCheck: this.etpItem })
+    console.log({ etpItemToCheck: this.etpItem });
     if (this.etpItem) {
       const etpItem = {...this.etpItem};
       return this.etpEmitter.emit({

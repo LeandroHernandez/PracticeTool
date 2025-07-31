@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   IElementToPractice,
   IElementToPractice2,
@@ -9,7 +9,7 @@ import {
   IUse,
   IVerbInfo,
 } from '../../interfaces';
-import { ElementToPracticeService } from '../components/add-element-to-prectice/element-to-practice.service';
+// import { ElementToPracticeService } from '../components/add-element-to-prectice/element-to-practice.service';
 // import { AddElementToPrecticeComponent } from '../components/add-element-to-prectice/add-element-to-prectice.component';
 import { Router, RouterLink } from '@angular/router';
 import { localStorageLabels } from '../../constants';
@@ -22,15 +22,17 @@ import {
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { MistakeComponent } from './mistake/mistake.component';
 import { IMistake, IMistakenUse } from '../../interfaces/mistake.interface';
+import { ElementToPracticeService } from '../elements-to-practice/element-to-practice.service';
+import { TestService } from './test.service';
 
 @Component({
   selector: 'app-test',
   // imports: [AddElementToPrecticeComponent],
-  imports: [RouterLink, FormComponent, NzModalModule],
+  imports: [FormComponent, NzModalModule],
   templateUrl: './test.component.html',
   styleUrl: './test.component.css',
 })
-export class TestComponent implements OnInit {
+export class TestComponent implements OnInit, OnDestroy {
   public elementsToPractice: Array<IElementToPractice2> = [];
   public practiceList: Array<IEtp> = [];
 
@@ -39,12 +41,13 @@ export class TestComponent implements OnInit {
   // private elementToPractice = new BehaviorSubject<IElementToPractice2 | null>(
   //   null
   // );
-  private elementToPractice = new BehaviorSubject<IEtpItem | null>(null);
-  etp$ = this.elementToPractice.asObservable();
+  // private elementToPractice = new BehaviorSubject<IEtpItem | null>(null);
+  // etp$ = this.elementToPractice.asObservable();
 
   constructor(
     private _router: Router,
     private _elementToPracticeSvc: ElementToPracticeService,
+    private _testSvc: TestService,
     private _nzNotificationSvc: NzNotificationService,
     private _nzModalSvc: NzModalService
   ) {}
@@ -71,6 +74,11 @@ export class TestComponent implements OnInit {
   ngOnInit(): void {
     // this.getElementsToPractice();
     this.testInit();
+  }
+
+  public backToAction(): Promise<boolean> {
+    this._testSvc.reset();
+    return this._router.navigate([this.backTo]);
   }
 
   public testInit(): void {
@@ -105,7 +113,8 @@ export class TestComponent implements OnInit {
 
   public getElementsToPractice(): void {
     this._elementToPracticeSvc
-      .getElementsToPractice2()
+      // .getElementsToPractice2()
+      .getFilteredElementsToPractice()
       .subscribe((elementsToPractice) => {
         // console.log({ elementsToPractice });
         this.elementsToPractice = elementsToPractice;
@@ -123,7 +132,7 @@ export class TestComponent implements OnInit {
     //   }
     const content = this.practiceList[index];
 
-    return this.elementToPractice.next({ content, index });
+    return this._testSvc.setEtp({ content, index });
   }
 
   public getRandomIndex(i?: number): number {
@@ -152,6 +161,7 @@ export class TestComponent implements OnInit {
   }
 
   public mistake(mistakeList: Array<IMistake>, index: number): void {
+    this._testSvc.reset();
     this.buildPracticeList();
     // mistakeList.forEach((mistake) => {
     //   console.log({ mistake });
@@ -326,9 +336,14 @@ export class TestComponent implements OnInit {
 
     if (word && aplications) this.practiceList.splice(index, 1);
 
-    // const length = this.practiceList.length;
     if (this.practiceList.length > 0) return this.getRandomETP(index);
 
     return this.win();
+  }
+
+  ngOnDestroy(): void {
+    // console.log('Test Reset');
+    this._testSvc.reset();
+    this._testSvc.setStatus(false);
   }
 }

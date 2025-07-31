@@ -4,4 +4,6 @@ export enum localStorageLabels {
   selectedListOfETP = 'selectedListOfETP',
   selectedListOfPL = 'selectedListOfPL',
   selectedListOfKinds = 'selectedListOfKinds',
+  filerBodyETP = 'filerBodyETP',
+  filerBodyPL = 'filerBodyPL',
 }

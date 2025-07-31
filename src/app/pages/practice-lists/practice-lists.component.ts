@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TableComponent } from '../components/table/table.component';
 import { ContentHeaderComponent } from '../components/content-header/content-header.component';
-import { IContentHeaderInfoItem, ITableItem } from '../../interfaces';
-import { RoutesApp } from '../../constants';
+import { IContentHeaderInfoItem, IPracticeList, ITableItem } from '../../interfaces';
+import { localStorageLabels, RoutesApp } from '../../constants';
 import { IFilterFormField } from '../../interfaces/filter-form-field.interface';
 import { PracticeListsService } from './practice-lists.service';
 import { Router } from '@angular/router';
@@ -37,9 +37,9 @@ export class PracticeListsComponent implements OnInit {
   public filterFormFields: Array<IFilterFormField> = [
     {
       type: 'text',
-      label: 'Basic',
-      key: 'en',
-      placeholder: 'Basic',
+      label: 'Title',
+      key: 'title',
+      placeholder: 'Title of practice list',
     },
   ];
 
@@ -69,13 +69,16 @@ export class PracticeListsComponent implements OnInit {
   }
 
   public getPracticeLists(query?: any ): void {
-    console.log({ query });
+    // console.log({ query });
 
-    this._practiceListsSvc.getPracticeLists().subscribe(
+    if (!query) localStorage.removeItem(localStorageLabels.filerBodyPL);
+
+    this._practiceListsSvc.getPracticeLists(query).subscribe(
       practiceLists => {
-        console.log({ practiceLists });
+        // console.log({ practiceLists });
         // this.practiceLists = practiceLists;
         this.itemList = practiceLists;
+        // localStorage.removeItem(localStorageLabels.selectedListOfPL);
       },
       error => console.log({ error })
     )
@@ -106,12 +109,20 @@ export class PracticeListsComponent implements OnInit {
     this._router.navigate([`/${RoutesApp.practiceLists}/${RoutesApp.addPracticeList}/${id}`])
   }
 
-  public practiceListDelete(id: string): void {
+  public practiceListDelete(id: string, all?: boolean): void {
     this._practiceListsSvc.deletePracticeList(id)
     .then(
       (deleteResponse) => {
-        console.log({deleteResponse});
-        this._notificationSvc.success('Success', 'practice list deleted successfully.');
+        // console.log({deleteResponse});
+        if (!all) {
+          const selectedList: IPracticeList[] = JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfPL) ?? '[]');
+          const selectedIndex: number = selectedList.findIndex(item => item.id === id);
+          if (selectedIndex >= 0) {
+            selectedList.splice(selectedIndex, 1);
+            localStorage.setItem(localStorageLabels.selectedListOfPL, JSON.stringify(selectedList));
+          }
+          this._notificationSvc.success('Success', 'practice list deleted successfully.');
+        }
       }
     )
     .catch(
@@ -120,6 +131,13 @@ export class PracticeListsComponent implements OnInit {
         this._notificationSvc.error('Error', 'There was an error and we were not able to delete the practice list.');
       }
     )
+  }
+  
+  public deleteAll(event: any): void {
+    // console.log({ deleteAllEvent: event });
+    JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfPL) ?? '[]').forEach((item: any) => this.practiceListDelete(item.id, true));
+    localStorage.removeItem(localStorageLabels.selectedListOfPL);
+    this._notificationSvc.success('Success', 'All the selected practice lists were deleted successfully.');
   }
 
 }

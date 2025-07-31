@@ -23,62 +23,20 @@
     
     <form [formGroup]="form" (ngSubmit)="submit()" class="form">
         @for (item of filterFormFields; track item.key) {
-            @if (item.type === 'subForm') {
-                <!-- <div class="subForm" [formGroupName]="item.key" >
-    
-                    @for (subFormItem of item.subForm; track subFormItem.key) {
-                        @if (subFormItem.type === 'switch') {
-                            <nz-switch [nzCheckedChildren]="subFormItem.switchInfo?.checked ?? ''" [nzUnCheckedChildren]="subFormItem.switchInfo?.unChecked ?? ''" [formControlName]="subFormItem.key"></nz-switch>
-                        }@else {
-                            <label class="label">
-                                <span>{{subFormItem.label}}</span>
-                                @if (subFormItem.type === 'select') {
-                                    <select class="select" [formControlName]="subFormItem.key">
-                                        @for(type of subFormItem.selectOptions; track type.id){
-                                            <option [value]="type.id" class="option">{{type.name}}</option>
-                                        }
-                                    </select>
-                                } @else {
-                                    <input 
-                                        [type]="subFormItem.type" 
-                                        class="input" 
-                                        [placeholder]="subFormItem.placeholder" 
-                                        [formControlName]="subFormItem.key" 
-                                    >
-                                }
-                            </label>
+            @if (item.type === 'multiselect') {
+                <div class="multiselect_div">
+                    <span>{{item.label}}</span>
+                    <nz-select
+                        class="select"
+                        nzMode="multiple"
+                        [nzPlaceHolder]="item.placeholder ?? ''"
+                        [formControlName]="item.key"
+                    >
+                        @for (item of item.selectOptions; track item) {
+                            <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
                         }
-                    }
-    
-                </div> -->
-                @for (subFormItem of item.subForm; track subFormItem.key) {
-                    <div class="subForm" [formGroupName]="item.key" >
-        
-                        @if (subFormItem.type === 'switch') {
-                            <nz-switch [nzCheckedChildren]="subFormItem.switchInfo?.checked ?? ''" [nzUnCheckedChildren]="subFormItem.switchInfo?.unChecked ?? ''" [formControlName]="subFormItem.key"></nz-switch>
-                        }@else {
-                            <label class="label">
-                                <span>{{subFormItem.label}}</span>
-                                @if (subFormItem.type === 'select') {
-                                    <select class="select" [formControlName]="subFormItem.key">
-                                        <option [value]="''" class="option" selected >All</option>
-                                        @for(type of subFormItem.selectOptions; track type.id){
-                                            <option [value]="type.id" class="option">{{type.name}}</option>
-                                        }
-                                    </select>
-                                } @else {
-                                    <input 
-                                        [type]="subFormItem.type" 
-                                        class="input" 
-                                        [placeholder]="subFormItem.placeholder" 
-                                        [formControlName]="subFormItem.key" 
-                                    >
-                                }
-                            </label>
-                        }
-                        
-                    </div>
-                }
+                    </nz-select>
+                </div>
             } @else {
                 <label class="label">
                     <span>{{item.label}}</span>

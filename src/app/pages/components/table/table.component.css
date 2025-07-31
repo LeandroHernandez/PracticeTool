@@ -6,6 +6,21 @@
   /* overflow-x: auto; */
 }
 
+.actual_selection {
+  min-height: 26px;
+  display: flex;
+  justify-content: center;
+
+  .number {
+    color: var(--accent);
+  }
+}
+
+.selectedItem_span {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 .filters_section {
   width: 100%;
   display: flex;
@@ -26,6 +41,19 @@
   .deleteAll {
     background-color: var(--secondary);
     color: var(--primary);
+  }
+}
+
+.filterButton_div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+
+  .clear {
+    background-color: var(--accent);
+    color: var(--secondary);
   }
 }
 
@@ -106,7 +134,20 @@
   font-weight: 700;
 }
 
+.empty_p {
+  padding: 20px;
+  text-align: center;
+  font-size: 1rem;
+  background-color: rgba(26, 24, 53, 0.1);
+}
+
 .paginator {
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.itemListLength {
+  font-weight: 600;
 }

@@ -16,7 +16,7 @@ import {
   limit,
   startAfter,
   getDocs,
-  QueryDocumentSnapshot
+  QueryDocumentSnapshot,
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { IPracticeList } from '../../interfaces';
@@ -39,10 +39,29 @@ export class PracticeListsService {
   //   }
   //   return collectionData(this.practiceListsRef, { idField: 'id' }) as Observable<IPracticeList[]>;
   // }
-  getPracticeLists(typeId?: string): Observable<any[]> {
-  const base$ = typeId
-    ? this.getPracticeListByType(typeId)
-    : collectionData(this.practiceListsRef, { idField: 'id' }) as Observable<IPracticeList[]>;
+  getPracticeLists(filters: Record<string, any> = {}): Observable<any[]> {
+    
+  function extractValidFilters(obj: any, prefix = ''): [string, any][] {
+    return Object.entries(obj).flatMap(([key, val]) => {
+      if (val === null || val === '') return [];
+      if (typeof val === 'object' && !Array.isArray(val)) {
+        return extractValidFilters(val, `${prefix}${key}.`);
+      }
+      return [[`${prefix}${key}`, val]];
+    });
+  }
+  const validFilters = extractValidFilters(filters);
+  const constraints: QueryConstraint[] = [];
+
+  console.log({ validFilters });
+  
+  for (const [path, value] of validFilters) {
+    constraints.push(where(path, '==', value));
+  }
+  // const base$ = typeId
+  //   ? this.getPracticeListByType(typeId)
+  //   : collectionData(this.practiceListsRef, { idField: 'id' }) as Observable<IPracticeList[]>;
+  const base$ = collectionData(query(this.practiceListsRef, ...constraints), { idField: 'id' }) as Observable<IPracticeList[]>;
 
   return base$.pipe(
     switchMap((lists: IPracticeList[]) => {

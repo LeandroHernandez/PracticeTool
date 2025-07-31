@@ -68,6 +68,18 @@ export class TableComponent {
   public get url(): string {
     return this._router.url;
   }
+  
+  public get actualSelectedItems(): any[] {
+    return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]');
+  }
+  
+  public get actualFilterLabel(): string {
+    return this.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.filerBodyETP : localStorageLabels.filerBodyPL;
+  }
+  
+  public get actualSelectedFilters(): Object | null {
+    return JSON.parse(localStorage.getItem(this.actualFilterLabel) ?? 'null');
+  }
 
   constructor(private _router: Router, private _nzModalSvc: NzModalService) {
     // JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
@@ -86,7 +98,8 @@ export class TableComponent {
         this.actualLabel = localStorageLabels.selectedListOfETP;
         break;
     }
-    return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
+    // return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
+    return this.actualSelectedItems.forEach((element: any) => this.setOfCheckedId.add(element.id));
   };
 
   // public selectionInit(): void {
@@ -225,6 +238,11 @@ export class TableComponent {
       console.log('Cambio en filtros:', value);
       this.filterAction.emit(value);
     });
+  }
+
+  public clearFilters(): void {
+    localStorage.removeItem(this.actualFilterLabel);
+    return this.filterAction.emit(undefined);
   }
 
   public paginationChange(): void {

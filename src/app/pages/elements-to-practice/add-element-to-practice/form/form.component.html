@@ -172,7 +172,8 @@
       class="btn register_btn"
       [title]="!id ? 'Register' : 'Editar'"
     >
-      {{ etp$ ? "Validar" : !id ? "Registrar" : "Editar" }}
+      <!-- {{ etp$ ? "Validar" : !id ? "Registrar" : "Editar" }} -->
+      {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
     </button>
   </div>
 </form>

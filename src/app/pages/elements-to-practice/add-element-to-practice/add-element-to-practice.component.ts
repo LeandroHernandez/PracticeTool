@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { RoutesApp } from '../../../constants';
+import { localStorageLabels, RoutesApp } from '../../../constants';
 
 import {
   NzNotificationRef,
@@ -52,11 +52,11 @@ export class AddElementToPracticeComponent implements OnInit {
   }
 
   public submit(
-    elementsToPractice: IElementToPractice2 | any
+    elementToPractice: IElementToPractice2 | any
   ): Promise<void> | NzNotificationRef {
     if (!this.id) {
       return this._elementToPracticeService
-        .addElementToPractice(elementsToPractice)
+        .addElementToPractice(elementToPractice)
         .then((reponse) => {
           console.log({ reponse });
           this._nzNotificationService.success(
@@ -68,9 +68,18 @@ export class AddElementToPracticeComponent implements OnInit {
     }
 
     return this._elementToPracticeService
-      .updateElementToPractice2(this.id, elementsToPractice)
+      .updateElementToPractice2(this.id, elementToPractice)
       .then((reponse) => {
         console.log({ reponse });
+        const selectedList: Array<IElementToPractice2> = JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]');
+        
+        if ( selectedList.length > 0 ) {
+          const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
+          if (selectedItemIndex >= 0) {
+            selectedList.splice(selectedItemIndex, 1, elementToPractice);
+            localStorage.setItem(localStorageLabels.selectedListOfETP, JSON.stringify(selectedList));
+          }
+        }
         this._nzNotificationService.success(
           'Edited',
           'The element to practice was edited successfully'

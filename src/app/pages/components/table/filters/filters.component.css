@@ -46,6 +46,7 @@
 .form {
     width: 100%;
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     /* flex-direction: column; */
     justify-content: center;
@@ -62,18 +63,27 @@
     gap: 20px;
 }
 
-.label {
+.label, .multiselect_div {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
 .input, select, button {
-    width: 200px;
-    max-width: 100%;
+    width: 100%;
     border: none;
     outline: none;
     color: var(--secondary);
     border-radius: 5px;
     padding: 4px 8px;
+}
+
+button {
+    margin-top: 20px;
+    background-color: var(--accent);
+
+    &:hover {
+        transform: scale(105%);
+    }
 }

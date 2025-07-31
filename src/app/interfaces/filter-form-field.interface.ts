@@ -5,7 +5,7 @@ interface ISwitchInfo {
 } 
 
 export interface IFilterFormField {
-    type: 'select' | 'switch' | 'text' | 'number' | 'subForm';
+    type: 'select' | 'multiselect' | 'switch' | 'text' | 'number' | 'subForm';
     label: string;
     key: string;
     intialValue?: any;
