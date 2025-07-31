@@ -16,9 +16,22 @@
   }
 }
 
+.selectedItem_div {
+  min-height: 28px;
+}
+
 .selectedItem_span {
   font-size: 1rem;
   font-weight: 700;
+}
+
+.clear {
+  background-color: var(--accent);
+  color: var(--secondary);
+  padding: 3px 5px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
 }
 
 .filters_section {

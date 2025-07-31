@@ -1,11 +1,14 @@
 <!-- <p>table works!</p> -->
 <main class="main">
   <div class="actual_selection">
-    <span class="selectedItem_span">
+    <div class="selectedItem_div">
       @if (actualSelectedItems.length > 0) {
-        <span> You have selected <span class="number" > {{actualSelectedItems.length}} </span> items </span>
+        <span class="selectedItem_span"> You have selected <span class="number" > {{actualSelectedItems.length}} </span> items </span>
+        <button class="button clear" (click)="clearSelectedItems()" title="Clear selected items">
+          Clear <i class="bi bi-clear"></i>
+        </button>
       }
-    </span>
+    </div>
   </div>
   <div class="filters_section">
     <div class="filterButton_div">

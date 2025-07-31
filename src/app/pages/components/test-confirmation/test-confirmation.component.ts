@@ -149,7 +149,7 @@ export class TestConfirmationComponent {
   }
   
   public navigate(error?: boolean): Promise<boolean> | void {
-    // this.closeEmitter.emit(true);
+    this.closeEmitter.emit(true);
     if (!this._testSvc.currentStatus) return;
     console.log('Redireccionando al test');
     return this._router.navigateByUrl(
@@ -171,6 +171,7 @@ export class TestConfirmationComponent {
     // });
 
     // console.log({ practiceList: this.practiceList, selectedListOfPL: this.selectedListOfPL });
+    console.log({ practiceListCondition: this.practiceList, selectedListOfPL: this.selectedListOfPL });
     if (this.practiceList) {
       if (this.selectedListOfPL.length === 0) return this._practiceListsSvc.getPracticeLists().subscribe(
         (practiceLists) => {

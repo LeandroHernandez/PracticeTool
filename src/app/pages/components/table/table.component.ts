@@ -245,6 +245,11 @@ export class TableComponent {
     return this.filterAction.emit(undefined);
   }
 
+  public clearSelectedItems(): void {
+    this.setOfCheckedId.clear();
+    return localStorage.removeItem(this.actualLabel);
+  }
+
   public paginationChange(): void {
     // return this.pageEmitter.emit(this.page);
     this.pageEmitter.emit(this.page);

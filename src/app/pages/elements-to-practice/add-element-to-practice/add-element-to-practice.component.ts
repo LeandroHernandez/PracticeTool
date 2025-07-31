@@ -76,7 +76,8 @@ export class AddElementToPracticeComponent implements OnInit {
         if ( selectedList.length > 0 ) {
           const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
           if (selectedItemIndex >= 0) {
-            selectedList.splice(selectedItemIndex, 1, elementToPractice);
+            // selectedList.splice(selectedItemIndex, 1, elementToPractice);
+            selectedList[selectedItemIndex] = { ...selectedList[selectedItemIndex], ...elementToPractice};
             localStorage.setItem(localStorageLabels.selectedListOfETP, JSON.stringify(selectedList));
           }
         }

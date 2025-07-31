@@ -204,7 +204,9 @@ export class AddPracticeListComponent implements OnInit {
 
     console.log({ form: this.form });
 
-    if (this.id) return this._practiceListsSvc.updatePracticeList(this.id, this.form.value)
+    const formValue = {...this.form.value};
+
+    if (this.id) return this._practiceListsSvc.updatePracticeList(this.id, formValue)
       .then( 
         response => {
           console.log({ response });
@@ -213,7 +215,12 @@ export class AddPracticeListComponent implements OnInit {
         if ( selectedList.length > 0 ) {
           const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
           if (selectedItemIndex >= 0) {
-            selectedList.splice(selectedItemIndex, 1, this.form.value);
+            const updatedItem = selectedList[selectedItemIndex];
+            const list: any[] = [];
+            formValue.list.forEach((id: string) => {
+              list.push(this.elementsToPractice.find(etpItem => etpItem.id === id) ?? id);
+            });
+            selectedList[selectedItemIndex] = { ...updatedItem, ...formValue, list };
             localStorage.setItem(localStorageLabels.selectedListOfPL, JSON.stringify(selectedList));
           }
         }
@@ -227,7 +234,7 @@ export class AddPracticeListComponent implements OnInit {
         }
       );
     
-    return this._practiceListsSvc.addPracticeList(this.form.value)
+    return this._practiceListsSvc.addPracticeList(formValue)
     .then( 
       response => {
         console.log({ response });
