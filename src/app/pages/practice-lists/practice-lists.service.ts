@@ -143,7 +143,7 @@ export class PracticeListsService {
       const flatFilters = this.flattenObject(filterData);
       for (const [key, value] of Object.entries(flatFilters)) {
         if (value !== null && value !== undefined && value !== '') {
-          constraints.push(where(key, '==', value));
+          constraints.push(where(key, key === 'list' ? 'array-contains-any' : '==', value));
         }
       }
     }

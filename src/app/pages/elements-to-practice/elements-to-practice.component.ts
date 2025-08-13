@@ -17,6 +17,7 @@ import { IFilterFormField } from '../../interfaces/filter-form-field.interface';
 import { TypeService } from '../types/types.service';
 import { ElementToPracticeService } from './element-to-practice.service';
 import { TestService } from '../test/test.service';
+import { PracticeListsService } from '../practice-lists/practice-lists.service';
 
 @Component({
   selector: 'app-elements-to-practice',
@@ -65,81 +66,15 @@ export class ElementsToPracticeComponent implements OnInit {
       selectOptions: [],
       intialValue: [],
     },
-    // {
-    //   type: 'subForm',
-    //   label: '',
-    //   key: 'verbInfo',
-    //   subForm: [
-    //     {
-    //       // type: 'switch',
-    //       // label: 'Irregular',
-    //       // key: 'irregular',
-    //       // placeholder: 'Irregular',
-    //       // switchInfo: {
-    //       //   checked: 'Irregular',
-    //       //   unChecked: 'Regular',
-    //       // }
-    //       type: 'select',
-    //       label: 'Irregular',
-    //       key: 'irregular',
-    //       placeholder: 'Irregular',
-    //       intialValue: '',
-    //       selectOptions: [
-    //         {
-    //           id: false,
-    //           name: 'Regular',
-    //         },
-    //         {
-    //           id: true,
-    //           name: 'Irregular',
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       type: 'select',
-    //       label: 'Type',
-    //       key: 'wordType',
-    //       placeholder: 'Type',
-    //       // intialValue: this.verbId
-    //       intialValue: '',
-    //     },
-    //     {
-    //       type: 'text',
-    //       label: 'Simple Present',
-    //       key: 'simplePresent',
-    //       placeholder: 'Simple Present',
-    //     },
-    //     {
-    //       type: 'text',
-    //       label: 'Simple Past',
-    //       key: 'simplePast',
-    //       placeholder: 'Simple Past',
-    //     },
-    //     {
-    //       type: 'text',
-    //       label: 'PastParticiple',
-    //       key: 'pastParticiple',
-    //       placeholder: 'Past Participle',
-    //     },
-    //   ],
-    // },
   ];
 
-  // public verbInfoKey: string = 'verbInfo';
+  public verbInfoKey: string = 'verbInfo';
 
   public tableInfo: Array<ITableItem> = [
-    // {
-    //   header: 'Type',
-    //   key: `${this.verbInfoKey}.wordType.name`
-    // },
     {
       header: 'Type',
       key: `type.name`,
     },
-    // {
-    //   header: 'Irregular',
-    //   key: `${this.verbInfoKey}.irregular`,
-    // },
     {
       header: 'Basic',
       key: 'en',
@@ -148,29 +83,13 @@ export class ElementsToPracticeComponent implements OnInit {
       header: 'Meanings',
       key: 'meanings',
     },
-    // {
-    //   header: 'Simple Present',
-    //   key: `${this.verbInfoKey}.simplePresent`
-    // },
-    // {
-    //   header: 'Simple Past',
-    //   key: `${this.verbInfoKey}.simplePast`,
-    // },
-    // {
-    //   header: 'Past Participle',
-    //   key: `${this.verbInfoKey}.pastParticiple`,
-    // },
-    // {
-    //   header: 'Meaning',
-    //   key: 'es'
-    // },
   ];
 
   public page: IPageTableInfo | any = {
     index: 1,
     size: 10,
   };
-  // public itemList: Array<IWord> = [];
+  
   public itemList: Array<any> = [];
   public elementsToPractice: Array<IElementToPractice2> = [];
 
@@ -180,6 +99,7 @@ export class ElementsToPracticeComponent implements OnInit {
     private _router: Router,
     private _typeSvc: TypeService,
     private _elementToPracticeSvc: ElementToPracticeService,
+    private _practiceListsSvc: PracticeListsService,
     private _notificationSvc: NzNotificationService
   ) {}
 
@@ -192,13 +112,10 @@ export class ElementsToPracticeComponent implements OnInit {
     this._elementToPracticeSvc
       .getFilteredElementsToPractice(query)
       .subscribe((elementsToPractice) => {
-        // console.log({ elementsToPractice });
         this.elementsToPractice = elementsToPractice;
         if (this.types.length === 0) {this.getTypes()} else {
           this.getElementsToPracticeTypes(this.types);
-          // localStorage.removeItem(localStorageLabels.selectedListOfETP);
         }
-        // this.itemList = elementsToPractice;
       });
   }
 
@@ -211,7 +128,6 @@ export class ElementsToPracticeComponent implements OnInit {
           const { name, id, father } = typeItem;
           return this.filterFormFields[!father ? 1 : 2].selectOptions?.push({ name, id });
         })
-        // console.log({ types, filterFormFields: this.filterFormFields }) ;
       },
       (error) => {
         console.log({ error });
@@ -238,7 +154,6 @@ export class ElementsToPracticeComponent implements OnInit {
     .deleteElementToPractice(id)
     .then(
       (deleteResponse) => {
-        // console.log({deleteResponse});
         if (!all) {
           const selectedList: IElementToPractice2[] = JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]');
           const selectedIndex: number = selectedList.findIndex(item => item.id === id);
@@ -248,6 +163,33 @@ export class ElementsToPracticeComponent implements OnInit {
           }
           this._notificationSvc.success('Success', 'Element to practice deleted successfully.');
         }
+        // this._practiceListsSvc.getFilteredPracticeList({ list: [id] }).subscribe(
+        //   (practiceLists) => {
+        //     practiceLists.forEach( 
+        //       practiceListItem => {
+        //         if (practiceListItem.list.length > 1) {
+        //           const { list } = practiceListItem;
+        //           list.splice(list.findIndex( item => item === id), 1);
+        //           this._practiceListsSvc.updatePracticeList(practiceListItem.id, { ...practiceListItem, list })
+        //         } else {
+        //           this._practiceListsSvc.deletePracticeList(id)
+        //             .then( 
+        //               () => this._notificationSvc.success(
+        //                   'Practice list deleted successfully',
+        //                   `The practice list ${ practiceListItem.title.toUpperCase() } was deleted successfully.`
+        //                 ) 
+        //             )
+        //             .catch(
+        //               () => this._notificationSvc.error(
+        //                   'There was an error',
+        //                   `Something went wrong so we were not able to delete the practice list ${practiceListItem.title.toUpperCase()} `
+        //                 )
+        //             )
+        //         }
+        //       }
+        //     )
+        //   }
+        // )
       }
     )
     .catch(
@@ -260,7 +202,6 @@ export class ElementsToPracticeComponent implements OnInit {
 
   
   public deleteAll(event: any): void {
-    // console.log({ deleteAllEvent: event });
     JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]').forEach((item: any) => this.elementToPracticeDelete(item.id, true));
     localStorage.removeItem(localStorageLabels.selectedListOfETP);
     this._notificationSvc.success('Success', 'All the selected elements to practice were deleted successfully.');

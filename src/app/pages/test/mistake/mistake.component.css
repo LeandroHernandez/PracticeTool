@@ -57,6 +57,17 @@
   font-weight: 600;
 }
 
+.verbInfo_section {
+  padding: 10px;
+  display: grid;
+  gap: 5px;
+
+  span:first-child {
+    font-size: 10px;
+    color: var(--accent);
+  }
+}
+
 .meanings {
   display: flex;
   flex-direction: column;

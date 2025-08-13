@@ -24,14 +24,15 @@
                 <div class="field_section">
                   <h6 class="field_title" >{{ useItem.name }}</h6>
                   <div class="field_content">
-                    @if (useItem.verbInfo && getEnteredAndCorrect(mistake)[0].verbInfo !== getEnteredAndCorrect(mistake)[1].verbInfo) {
+                    <!-- @if (useItem.verbInfo && getEnteredAndCorrect(mistake)[0].verbInfo !== getEnteredAndCorrect(mistake)[1].verbInfo) { -->
+                    @if (useItem.verbInfo) {
                       <div class="verbInfo_section">
                         <div class="irregular">
                           <span>Irregular: </span>
-                          <span>{{ useItem.verbInfo.irregular }}</span>
+                          <span>{{ useItem.verbInfo.irregular ? 'Verdadero': 'Falso'}}</span>
                         </div>
                         <div class="simplePast">
-                          <span>SimplePast: </span>
+                          <span>Simple Past: </span>
                           <span>{{ useItem.verbInfo.simplePast }}</span>
                         </div>
                         <div class="pastParticiple">

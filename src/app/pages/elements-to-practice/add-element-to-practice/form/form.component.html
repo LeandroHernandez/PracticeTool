@@ -56,7 +56,7 @@
 
     <div formArrayName="uses" class="uses_div">
       <!-- @for (group of uses.controls; track $index) { -->
-      @for (group of uses.controls; track group.value.id; let i = $index) {
+      @for (group of uses && uses.controls.length > 0 ? uses.controls : []; track group.value.id; let i = $index) {
       <div class="use_container" [formGroupName]="i">
         <header>
           <h6>

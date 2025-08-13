@@ -89,6 +89,7 @@ export class FormComponent implements OnInit {
     this._testSvc.etp$.subscribe((etpItem) => {
       // console.log({ etpItem });
       if (!etpItem) return;
+      this.form.get('uses')?.reset();
       // this.etpItem = etpItem;
       const { content } = etpItem;
       if (!content) return;

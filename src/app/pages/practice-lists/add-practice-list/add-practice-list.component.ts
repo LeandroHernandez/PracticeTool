@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { TableComponent } from '../../components/table/table.component';
 // import { IFilterFormField, ITableItem } from '../../../interfaces';
-import { ElementToPracticeService } from '../../components/add-element-to-prectice/element-to-practice.service';
+import { ElementToPracticeService } from '../../elements-to-practice/element-to-practice.service';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
 import { PracticeListsService } from '../practice-lists.service';
