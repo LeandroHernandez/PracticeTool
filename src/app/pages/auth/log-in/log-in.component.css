@@ -1,0 +1,139 @@
+
+.logIn-container {
+    --special-color: rgb(211, 212, 206);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+.section {
+    height: 100%;
+    width: calc(45% - 3rem);
+    display: grid;
+    gap: 2rem;
+    justify-content: center;
+    align-items: end;
+}
+
+.header-section {
+    align-self: self-start;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.h3-header-logIn {
+    font-size: 1.7rem;
+    font-weight: 600;
+}
+
+.form {
+    display: grid;
+    gap: 1rem;
+    text-align: center;
+    width: 80%;
+    margin: auto;
+}
+
+.title-form {
+    font-size: 4rem;
+    font-weight: 600;
+    line-height: fit-content;
+}
+
+.subtitle-form {
+    font-size: .9rem;
+
+    .span-subtitle {
+        font-size: 1rem;
+        /* color: var(--accent); */
+    }
+}
+
+.fieldset {
+    width: 100%;
+    text-align: end;
+
+    .input {
+        width: 100%;
+        margin-bottom: 1rem;
+        border: .15rem solid var(--special-color);
+        outline: none;
+        border-radius: .5rem;
+        padding: .5rem;
+        background-color: var(--primary);
+    }
+}
+
+.span-or {
+    position: relative;
+    width: fit-content;
+    margin: auto;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -3.5rem;
+        transform: translateY(-50%);
+        color: rgba(211, 212, 206, 0.7);
+        border: .15rem solid ;
+        border-radius: .1rem;
+        height: .1rem;
+        width: 3rem;
+
+        box-shadow: 5rem 0 0 ;
+    }
+}
+
+.span-url {
+    cursor: pointer;
+    color: var(--accent);
+}
+
+[class^="button"] {
+    cursor: pointer;
+    border: 2rem;
+    border-radius: 2rem;
+    padding: .5rem 1rem;
+    background-color: var(--primary);
+    border: .15rem solid var(--special-color);
+
+    transition: .2s transform ease-in;
+
+    &:not(.button-header-logIn):hover {
+        transform: scale(105%);
+    }
+}
+
+.button-header-logIn {
+    cursor: not-allowed;
+}
+
+.button-google {
+    border-radius: .5rem;
+}
+
+.button-submit {
+    border: none;
+    background-color: var(--accent);
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.footer-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+
+    .bi {
+        cursor: not-allowed;
+        color: rgba(0, 0, 0, 0.7);
+        font-size: 1.4rem;
+    }
+}

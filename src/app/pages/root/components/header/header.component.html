@@ -1,0 +1,25 @@
+<!-- <p>header works!</p> -->
+
+<div class="container_div">
+    <button type="button" class="btn menu_btn" title="Menu" (click)="changeMenu.emit(true)" >
+        <i class="bi bi-list"></i>
+    </button>
+
+    <h1>Practice Tool</h1>
+
+    <button 
+      type="button"
+      class="btn"
+      data-bs-toggle="button"
+      title="options"
+      nz-popover
+      nzPopoverTitle="Log out"
+      nzPopoverTrigger="click"
+      [nzPopoverContent]="contentTemplate"
+    >
+        <i class="bi bi-gear"></i>
+    </button>
+    <ng-template #contentTemplate>
+      <a (click)="logOut()">Log out</a>
+    </ng-template>
+</div>

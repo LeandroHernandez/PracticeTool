@@ -1,0 +1,151 @@
+<!-- <p>table works!</p> -->
+<main class="main">
+  <div class="actual_selection">
+    <div class="selectedItem_div">
+      @if (actualSelectedItems.length > 0) {
+        <span class="selectedItem_span"> You have selected <span class="number" > {{actualSelectedItems.length}} </span> items </span>
+        <button class="button clear" (click)="clearSelectedItems()" title="Clear selected items">
+          Clear <i class="bi bi-clear"></i>
+        </button>
+      }
+    </div>
+  </div>
+  <div class="filters_section">
+    <div class="filterButton_div">
+      <button class="button show" (click)="showFiltersModal()" title="Filter">
+        Filter <i class="bi bi-filter"></i>
+      </button>
+      @if (actualSelectedFilters) {
+        <button class="button clear" (click)="clearFilters()" title="Clear Filters">
+          Clear <i class="bi bi-clear"></i>
+        </button>
+      }
+    </div>
+
+    <!-- <app-filters [filterFormFields]="filterFormFields" (valueFormEmitter)="filterAction.emit($event)" ></app-filters> -->
+
+    @if ( selectedListOfETP ) {
+    <button
+      class="button deleteAll"
+      nz-popconfirm
+      nzPopconfirmTitle="Sure to delete all of selected items?"
+      (nzOnConfirm)="deleteAllAction.emit(true)"
+      title="Delete all selection"
+    >
+      Delete selection
+      <i class="bi bi-trash"></i>
+    </button>
+    } @else {
+      <span></span>
+    }
+  </div>
+  <div class="table_container">
+    <table class="table">
+      <thead class="thead">
+        <tr class="tr">
+          <!-- [nzChecked]="checked" -->
+          <th
+            class="th"
+            [nzChecked]="checked"
+            [nzIndeterminate]="indeterminate"
+            nzLabel="Select all"
+            (nzCheckedChange)="onAllChecked($event)"
+          ></th>
+          <th class="th">#</th>
+          @for(item of tableInfo; track $index) {
+          <th class="th">
+            {{ item.header }}
+          </th>
+          }
+          <th class="th">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="tbody">
+        @for(item of paginatedItems; track item.id) {
+          <tr class="tr {{ ($index + 1) % 2 === 0 ? 'pair' : '' }} ">
+            <td
+              class="td"
+              [nzChecked]="setOfCheckedId.has(item.id)"
+              [nzDisabled]="item.disabled"
+              [nzLabel]="item.name"
+              (nzCheckedChange)="onItemChecked(item.id, $event)"
+            ></td>
+            <td class="td">{{ getItemIndex(item.id) }}</td>
+            @for(keyItem of tableInfo; track keyItem) {
+            <td class="td {{ getClass(item, keyItem) }}">
+              @if (keyItem.key === 'meanings') {
+                @if ( item.uses ) {
+                  @for (use of item.uses; track $index; let i = $index) {
+                    <span>
+                      [
+                      <span class="useName">{{ use.name }}:</span>
+                    </span>
+                    @for (meaning of use.meanings; track $index; let j = $index) {
+                      {{ meaning }}
+                      @if (use.meanings.length > 1 && j + 1 < use.meanings.length) {
+                        <span> - </span>
+                      }
+                    }
+                    <span>]</span>
+                  }
+                } 
+                @else {
+                  @for (meaning of item[keyItem.key]; track $index; let i = $index) {
+                    {{ meaning }}
+                    @if (item[keyItem.key].length > 1 && i + 1 < item[keyItem.key].length) {
+                      <span> - </span>
+                    }
+                  }
+                }
+              } 
+              @else if ( keyItem.key ==='list' ) {
+                <!-- <div class="list_container">
+                  @for (etpItem of item[keyItem.key]; track $index) {
+                    <span class="list_item"> {{etpItem.en}} </span>
+                  }
+                </div> -->
+                <span> {{ item.list.length }} </span>
+              } 
+              @else {
+                {{ getValue(item, keyItem) }}
+              }
+            </td>
+            }
+            <td class="td actions_td">
+              <i
+                class="bi bi-pencil-square"
+                title="Edit Word"
+                (click)="editAction.emit(item.id)"
+              ></i>
+              <i
+                nz-popconfirm
+                nzPopconfirmTitle="Sure to delete?"
+                (nzOnConfirm)="deleteAction.emit(item.id)"
+                class="bi bi-x-circle"
+                title="Delete Word"
+              ></i>
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+    @if ( paginatedItems.length === 0 ) {
+      <p class="empty_p">There are not items to show</p>
+    }
+  </div>
+  <div class="paginator">
+    <span class="span itemListLength"> {{ itemList.length > paginatedItems.length ? itemList.length + ' items' : ''}} </span>
+    <nz-pagination
+      [(nzPageIndex)]="page.index"
+      [(nzPageSize)]="page.size"
+      [nzPageSizeOptions]="[5, 10, 20, 30, 40, 50]"
+      [nzTotal]="itemList.length"
+      [nzSize]="'default'"
+      nzShowSizeChanger
+      nzShowQuickJumper
+      (nzPageIndexChange)="paginationChange()"
+      (nzPageSizeChange)="paginationChange()"
+    ></nz-pagination>
+  </div>
+</main>

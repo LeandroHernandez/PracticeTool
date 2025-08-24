@@ -1,0 +1,19 @@
+<!-- <p>root works!</p> -->
+
+<main class="main">
+  <div class="main_contianer">
+    <div class="header">
+      <app-header (changeMenu)="showNav = !showNav"></app-header>
+    </div>
+    <section class="content_section">
+      @if (showNav) {
+        <div class="nav">
+          <app-nav></app-nav>
+        </div>
+      }
+      <div class="content" (click)="onContentClick($event)">
+        <router-outlet></router-outlet>
+      </div>
+    </section>
+  </div>
+</main> 

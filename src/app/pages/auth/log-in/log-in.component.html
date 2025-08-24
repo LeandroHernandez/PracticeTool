@@ -1,0 +1,39 @@
+<!-- <p>log-in works!</p> -->
+
+<div class="logIn-container">
+    <section class="section">
+        <header class="header-section">
+            <h3 class="h3-header-logIn">Log In</h3>
+            <button type="button" class="button-header-logIn" [title]="notEnabledTitle"> 
+                <!-- <img src="../../../../assets/english-flat.png" alt="English" class="img"> En <i class="bi bi-chevron-down"></i>  -->
+                English <i class="bi bi-chevron-down"></i> 
+            </button>
+        </header>
+        <form class="form">
+            <header class="header-form">
+                <h4 class="title-form">Hi Student</h4>
+                <h5 class="subtitle-form">Welcome to <span class="span-subtitle">PRACTICE TOOL</span> </h5>
+            </header>
+
+            <fieldset class="fieldset">
+                <input type="email" placeholder="Email" class="input">
+                <input type="password" placeholder="password" class="input">
+                <span class="span-url" title="Ask for a new password" > Forgot password? </span>
+            </fieldset>
+
+            <span class="span-or"> or </span>
+
+            <button type="button" class="button-google" (click)="googleAuth()"> Login With Google </button>
+            <button type="submit" class="button-submit">Login</button>
+
+            <span> Don't have an account? <span class="span-url" title="Let's do it" [routerLink]="[signUpUrl]" > Sign up </span> </span>
+
+        </form>
+        <footer class="footer-section">
+            <i class="bi bi-facebook" [title]="notEnabledTitle"></i>
+            <i class="bi bi-twitter" [title]="notEnabledTitle"></i>
+            <i class="bi bi-linkedin" [title]="notEnabledTitle"></i>
+            <i class="bi bi-instagram" [title]="notEnabledTitle"></i>
+        </footer>
+    </section>
+</div>

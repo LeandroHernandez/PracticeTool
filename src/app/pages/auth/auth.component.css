@@ -1,0 +1,75 @@
+
+.main {
+
+    /* --auth-bg: url('../../../assets/road.jpg'); */
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    background-color: rgb(211, 212, 206);
+    padding: clamp(1rem, 5vw, 10rem);
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 60%;
+        /* background-image: var(--auth-bg); */
+        background-color: var(--secondary);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+    }
+}
+
+.section {
+    background-color: var(--primary);
+    border-radius: 3rem;
+    padding: .5rem;
+    height: 100%;
+    /* width: 100%; */
+    max-width: 100%;
+    aspect-ratio: 5/3;
+    position: relative;
+
+    z-index: 1;
+}
+
+.card {
+    position: absolute;
+    top: .5rem;
+    left: .5rem;
+    /* right: .5rem; */
+    bottom: .5rem;
+    width: calc(55% - .5rem);
+    border-radius: 3rem;
+    /* background-image: var(--auth-bg); */
+    background-color: var(--secondary);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: clamp(.5rem, 2.5vw, 5rem);
+
+    z-index: 1;
+    transition: .2s left ease-in-out;
+    
+    /* clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%); */
+}
+
+.sign-up {
+  left: calc(45%); 
+}
+
+.router-components {
+    height: 100%;
+    width: 100%;
+    border-radius: 3rem;
+    padding: clamp(.5rem, 2.5vw, 5rem);
+}
