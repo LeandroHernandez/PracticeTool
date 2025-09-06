@@ -11,24 +11,80 @@
         </header>
         <form [formGroup]="form" (ngSubmit)="submit()" class="form">
             <header class="header-form">
-                <h4 class="title-form">Hi Student</h4>
+                <h4 class="title-form">You Ready?</h4>
                 <h5 class="subtitle-form">Welcome to <span class="span-subtitle">PRACTICE TOOL</span> </h5>
             </header>
 
             <fieldset class="fieldset">
-                <input type="text" placeholder="Names" formControlName="names" class="input">
-                <input type="text" placeholder="Lastnames" formControlName="lastnames" class="input">
-                <input type="email" placeholder="Email" formControlName="email" class="input">
-                <input type="password" placeholder="Password" formControlName="password" class="input">
-                <span class="span-url" title="Ask for a new password" > Forgot password? </span>
+                <div class="input-box">
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters('Names'); track $index) {
+                                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            }
+                        </div>
+                        <input type="text" formControlName="names" placeholder="" class="input">
+                    </label>
+                    @if ( showErrors && getControlErrors('names').length > 0 ) {
+                        <p class="p-error">Please enter a valid name between 2 and 30 characters long.</p>
+                    }
+                </div>
+                <div class="input-box">
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters('Last names'); track $index) {
+                                <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
+                            }
+                        </div>
+                        <input type="text" formControlName="lastnames" placeholder="" class="input">
+                    </label>
+                    @if ( showErrors && getControlErrors('lastnames').length > 0 ) {
+                        <p class="p-error">Please enter a valid lastname between 2 and 30 characters long.</p>
+                    }
+                </div>
+                <div class="input-box">
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters('Email'); track $index) {
+                                <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
+                            }
+                        </div>
+                        <input type="email" formControlName="email" placeholder="" class="input">
+                    </label>
+                    @if ( showErrors && getControlErrors('email').length > 0 ) {
+                        <p class="p-error">Please enter a valid email with a maximum of 30 characters.</p>
+                    }
+                </div>
+                <div class="input-box">
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters('Password'); track $index) {
+                                <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
+                            }
+                        </div>
+                        <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder="" class="input">
+                        <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" (click)="showPassword = !showPassword"></i>
+                    </label>
+                    @if ( showErrors && getControlErrors('password').length > 0 ) {
+                        <p class="p-error">Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.</p>
+                    }
+                </div>
+                <!-- <span class="span-url" title="Ask for a new password" > Forgot password? </span> -->
             </fieldset>
 
-            <span class="span-or"> or </span>
+            <!-- <span class="span-or"> or </span> -->
 
-            <button type="button" class="button-google" (click)="googleAuth()" > Sign Up With Google </button>
+            <!-- <button
+                type="button"
+                class="button-google"
+                (click)="googleAuth()"
+            > 
+                Sign Up With Google 
+                <div class="div-google"></div>
+            </button> -->
             <button type="submit" class="button-submit">Sign Up</button>
 
-            <span> Do you already have an account? <span class="span-url" title="Let's do it" [routerLink]="[logInUrl]" > Login </span> </span>
+            <span class="log-in-span" > Do you already have an account? <span class="span-url" title="Let's do it" [routerLink]="[logInUrl]" > Login </span> </span>
 
         </form>
         <footer class="footer-section">

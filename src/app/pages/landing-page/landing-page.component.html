@@ -1,1 +1,65 @@
-<p>landing-page works!</p>
+<!-- <p>landing-page works!</p> -->
+
+<main class="main" id="main">
+    <header class="header-main">
+        <div class="app-tittle-header">
+            <img src="images/pt-logo.webp" alt="Logo" class="img-tittle-header">
+            <h2>Practice Tool</h2>
+        </div>
+
+        <nav class="nav">
+            <ul class="{{ navShow ? 'ul-nav-active': 'ul-nav' }}">
+                <li class="li-nav"> <a [routerLink]="[baseRoute]" fragment="main" class="a-nav"> Home </a></li>
+                <li class="li-nav"> <a [routerLink]="[baseRoute]" fragment="features" class="a-nav"> Features </a></li>
+                <li class="li-nav"> <a [routerLink]="[baseRoute]" fragment="reviews" class="a-nav"> Reviews </a></li>
+                <li class="li-nav"> <a [routerLink]="[baseRoute]" fragment="pricing" class="a-nav"> Pricing </a></li>
+                <li class="li-nav"><button [routerLink]="signInRoute" class="button-nav-signIn">Sign In</button></li>
+                <li class="li-nav"><button [routerLink]="signUpRoute" class="button-nav-signUp">Get Started</button></li>
+            </ul>
+        </nav>
+        <i class="bi bi-list" (click)="navShow = !navShow" ></i>
+    </header>
+
+    <section id="home" class="section-home">
+        <app-home></app-home>
+    </section>
+
+    <section id="features" class="section-features">
+        <app-features></app-features>
+    </section>
+
+    <section id="reviews" class="section-reviews">
+        <app-reviews></app-reviews>
+    </section>
+    <section id="pricing" class="section-pricing">
+        <app-pricing></app-pricing>
+    </section>
+
+    <footer class="footer-main">
+        <div class="content-footer">
+            <div class="pt-container">
+                <div class="app-tittle-header">
+                    <img src="images/pt-logo.webp" alt="Logo" class="img-tittle-header">
+                    <h2>Practice Tool</h2>
+                </div>
+                <p class="p-footer">The most effective way to learn and master English vocabulary.</p>
+            </div>
+
+            <div class="lists-footer">
+                @for (list of footerLists; track $index) {
+                    <div class="list-footer">
+                        <strong class="tittle-footer-list"> {{ list.tittle }} </strong>
+                        <ul class="ul-footer">
+                            @for (item of list.items; track $index) {
+                                <li class="li-footer"> <a [routerLink]="[baseRoute]" fragment="{{item.route}}" class="a-footer"> {{ item.label }} </a> </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                <div></div>
+            </div>
+        </div>
+
+        <p class="p-footer-label">© 2025 Practice Tool. All rights reserved.</p>
+    </footer>
+</main>

@@ -26,7 +26,7 @@ export class HeaderComponent {
     return this._authSvc.logOut()
     .then(() => {
       this._nzNotificationSvc.success('Log out', 'Come back soon.');
-      return this._router.navigateByUrl(`/${RoutesApp.home}`)
+      return this._router.navigateByUrl(`/${RoutesApp.landingPage}`)
     })
     .catch(error => this.error(error));
   }

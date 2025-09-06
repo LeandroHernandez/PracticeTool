@@ -17,6 +17,15 @@
   --accent: #f9b41a;
   --accent2: #875c49;
   --accent3: #90939f;
+
+
+  /* error-color */
+  --error-color: rgba(255, 77, 80);
+  --error-color-bg: rgba(255, 77, 80, 0.1);
+
+  scroll-behavior: smooth;
+
+  --padding: 1vw 2.5vw;
 }
 
 * {

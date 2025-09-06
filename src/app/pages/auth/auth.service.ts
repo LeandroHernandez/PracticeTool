@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { 
    Auth,
+   updatePassword,
    createUserWithEmailAndPassword,
    signInWithEmailAndPassword,
    signInWithPopup,
@@ -39,5 +40,9 @@ export class AuthService {
 
   userState(): Observable<User | null> {
     return authState(this.auth);
+  }
+
+  changePassword(user: User, password: string): Promise<void> {
+    return updatePassword(user, password);
   }
 }

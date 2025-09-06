@@ -9,24 +9,56 @@
                 English <i class="bi bi-chevron-down"></i> 
             </button>
         </header>
-        <form class="form">
+        <form class="form" [formGroup]="form" (ngSubmit)="submit()">
             <header class="header-form">
                 <h4 class="title-form">Hi Student</h4>
                 <h5 class="subtitle-form">Welcome to <span class="span-subtitle">PRACTICE TOOL</span> </h5>
             </header>
 
             <fieldset class="fieldset">
-                <input type="email" placeholder="Email" class="input">
-                <input type="password" placeholder="password" class="input">
-                <span class="span-url" title="Ask for a new password" > Forgot password? </span>
+                <div class="input-box">
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters('Email'); track $index) {
+                                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            }
+                        </div>
+                        <input type="email" formControlName="email" placeholder="" class="input">
+                    </label>
+                    @if ( showErrors && getControlErrors('email').length > 0 ) {
+                        <p class="p-error">Please enter a valid email with a maximum of 30 characters.</p>
+                    }
+                </div>
+                <div class="input-box">
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters('Password'); track $index) {
+                                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            }
+                        </div>
+                        <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder="" class="input">
+                        <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" (click)="showPassword = !showPassword"></i>
+                    </label>
+                    @if ( showErrors && getControlErrors('password').length > 0 ) {
+                        <p class="p-error">Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.</p>
+                    }
+                </div>
+                <span class="span-url forgot-password" title="Ask for a new password" > Forgot password? </span>
             </fieldset>
 
             <span class="span-or"> or </span>
 
-            <button type="button" class="button-google" (click)="googleAuth()"> Login With Google </button>
+            <button
+                type="button"
+                class="button-google"
+                (click)="googleAuth()"
+            > 
+                Login With Google 
+                <div class="div-google"></div>
+            </button>
             <button type="submit" class="button-submit">Login</button>
 
-            <span> Don't have an account? <span class="span-url" title="Let's do it" [routerLink]="[signUpUrl]" > Sign up </span> </span>
+            <span class="sign-up-span" > Don't have an account? <span class="span-url" title="Let's do it" [routerLink]="[signUpUrl]" > Sign up </span> </span>
 
         </form>
         <footer class="footer-section">

@@ -1,0 +1,47 @@
+
+.pricing-container {
+    background-color: var(--secondary);
+    color: var(--primary);
+    padding: var(--padding-section);
+
+    text-align: center;
+    align-content: center
+}
+
+.header-pricing {
+    width: 45rem;
+    max-width: 100%;
+    margin: auto;
+    font-size: clamp(1rem, 1.5vw, 1.3rem);
+    margin-bottom: 2rem;
+
+    [class*="title"] {
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
+        font-weight: 600;
+        margin-bottom: clamp(.7rem, 1.5vw, 1rem);
+        color: var(--primary);
+    }
+}
+
+.button-pricing {
+    display: block;
+    margin: auto;
+    outline: none;
+    border: none;
+    padding: clamp(.1rem, .4vw, .3rem) clamp(.3rem, 1.2vw, 1rem);
+    /* border-radius: .1rem rgba(0, 0, 0, 0.4) solid; */
+    border-radius: .3rem;
+    cursor: pointer;
+    font-size: clamp(.7rem, 1.5vw, 1.1rem);
+    color: var(--secondary);
+    background-color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    
+    &:hover {
+        background-color: var(--accent);
+        color: var(--primary);
+        border-color: var(--accent);
+    }
+    
+}

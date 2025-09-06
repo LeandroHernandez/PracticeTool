@@ -20,7 +20,7 @@ export const authGuard: CanActivateChildFn = (route, state) => {
       if (user) {
         return true; // ✅ Usuario autenticado → acceso permitido
       } else {
-        router.navigate([`/${RoutesApp.home}`]); // 🚫 Redirigir a la Landing Page
+        router.navigate([`/${RoutesApp.landingPage}`]); // 🚫 Redirigir a la Landing Page
         return false;
       }
     })

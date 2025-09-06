@@ -1,6 +1,7 @@
 
 export enum RoutesApp {
     root = '',
+    landingPage = 'landing-page',
     auth = 'auth',
     logIn = 'log-in',
     signUp = 'sign-up',

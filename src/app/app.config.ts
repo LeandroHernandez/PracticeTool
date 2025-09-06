@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../enviroments/enviroment';
@@ -18,7 +18,10 @@ registerLocaleData(en);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(routes, withInMemoryScrolling({
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled'
+    })),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()), provideNzI18n(en_US), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient()

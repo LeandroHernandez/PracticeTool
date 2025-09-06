@@ -8,6 +8,8 @@ import { AuthService } from '../auth.service';
 import { UsersService } from '../../root/pages/users';
 
 import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
+import { firebaseErrors } from '../../../constants/firebase-errors';
+import { validateComplexPassword } from '../validate-complex-password';
 
 @Component({
   selector: 'app-sign-up',
@@ -22,6 +24,9 @@ export class SignUpComponent {
 
   public form: FormGroup;
 
+  public showErrors: boolean = false;
+  public showPassword: boolean = false;
+
   constructor(
       private _fb: FormBuilder, 
       private _router: Router, 
@@ -29,36 +34,6 @@ export class SignUpComponent {
       private _userSvc: UsersService, 
       private _nzNotificationSvc: NzNotificationService
     ) {
-    function validateComplexPassword(): ValidatorFn {
-      return (control: AbstractControl): ValidationErrors | null => {
-        const value = control.value;
-        
-        if (!value) {
-          // No es un error si el campo no tiene valor (puedes combinar esto con el validador `required`)
-          return null;
-        }
-        
-        // Expresión regular para los requisitos
-        const hasUpperCase = /[A-Z]/.test(value);
-        const hasLowerCase = /[a-z]/.test(value);
-        const hasNumber = /[0-9]/.test(value);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value); // Ajusta los caracteres según tus necesidades
-        
-        if (hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar) {
-          return null; // El password es válido
-        } else {
-          // Devolvemos un objeto de error indicando qué falló
-          return {
-            complexPassword: {
-              hasUpperCase,
-              hasLowerCase,
-              hasNumber,
-              hasSpecialChar,
-            },
-          };
-        }
-      };
-    }
     this.form = this._fb.group({
       email: ['', [ Validators.required, Validators.email, Validators.maxLength(30) ]],
       names: ['', [ Validators.required, Validators.minLength(2), Validators.maxLength(30) ]],
@@ -70,32 +45,52 @@ export class SignUpComponent {
       state: [true]
     });
   }
-
-  public invalidForm(): NzNotificationRef {
-    return this._nzNotificationSvc.warning('Invalid Form', 'The form is not valid, please check out the values.')
+  
+  public getControlErrors(control: string): Array<string> {
+    return Object.keys(this.form.get(control)?.errors ?? {});
   }
 
-  public success(successResponse: any): Promise<boolean> {
+  public letters(word: string): string[] {
+    return word.split('');
+  }
+
+  public invalidForm(): NzNotificationRef {
+    this.showErrors = true;
+    return this._nzNotificationSvc.warning('Invalid Form', 'The form is not valid, please check out the values.');
+  }
+
+  public success(successResponse: any, byProvider?: boolean): Promise<boolean> {
     console.log({ successResponse });
 
     this._nzNotificationSvc.success('Success', 'You have been reistered successfully.');
 
+    // return this._router.navigateByUrl(`/${RoutesApp.auth}/${RoutesApp.logIn}`);
+    return this._router.navigateByUrl( !byProvider ? `/${RoutesApp.auth}/${RoutesApp.logIn}` : `/${RoutesApp.dashboard}`);
+  }
+
+  public emailAlreadyInUseError (): Promise<boolean> {
+
+    this._nzNotificationSvc.warning('Email already in use', `Actually you already have an account, let's log in.`);
+
     return this._router.navigateByUrl(`/${RoutesApp.auth}/${RoutesApp.logIn}`);
   }
 
-  public error(errorResponse: any): NzNotificationRef {
+  public error(errorResponse: any, message?: string): NzNotificationRef | any {
     console.log({ errorResponse });
 
-    return this._nzNotificationSvc.error('error', 'Something went wrong, please try again.');
+    if (errorResponse.code === firebaseErrors.emailAlreadyInUse) return this.emailAlreadyInUseError();
+
+    return this._nzNotificationSvc.error('error', message ?? 'Something went wrong, please try again.');
   }
 
   public googleAuth(): Promise<boolean | NzNotificationRef> {
     return this._authSvc.googleAuth()
-    .then(googleAuthResponse => this.success(googleAuthResponse))
+    .then(googleAuthResponse => this.success(googleAuthResponse, true))
     .catch(error => this.error(error));
   }
 
   public submit(): Promise<boolean | NzNotificationRef> | NzNotificationRef {
+    console.log({ form: this.form });
     if (this.form.invalid) return this.invalidForm();
     
     const { email, password } = this.form.value;

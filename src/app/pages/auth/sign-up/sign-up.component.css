@@ -12,9 +12,8 @@
     width: calc(45% - 3rem);
     display: grid;
     gap: 2rem;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: end;
-    overflow-y: scroll;
 }
 
 .header-section {
@@ -27,7 +26,7 @@
 }
 
 .h3-header-signUp {
-    font-size: 1.7rem;
+    font-size: clamp(1rem, 3vw, 1.7rem);
     font-weight: 600;
 }
 
@@ -35,64 +34,104 @@
     display: grid;
     gap: 1rem;
     text-align: center;
-    width: 80%;
+    width: clamp(min(100%, min-content), 90%, 90%);
     margin: auto;
 }
 
 .title-form {
-    font-size: 4rem;
+    font-size: clamp(1.9rem, 5vw, 4rem);
     font-weight: 600;
     line-height: fit-content;
 }
 
 .subtitle-form {
-    font-size: .9rem;
+    font-size: clamp(.7rem, 2vw, .9rem);
 
     .span-subtitle {
-        font-size: 1rem;
+        font-size: clamp(.8rem, 2vw, 1rem);
         /* color: var(--accent); */
     }
 }
 
+
 .fieldset {
     width: 100%;
-    text-align: end;
+    /* text-align: end; */
+    display: grid;
+    gap: 1rem;
 
-    .input {
-        width: 100%;
-        margin-bottom: 1rem;
-        border: .15rem solid var(--special-color);
-        outline: none;
-        border-radius: .5rem;
-        padding: .5rem;
-        background-color: var(--primary);
+    .input-box {
+
+        position: relative;
+        display: grid;
+        gap: .2rem;
+
+        &:has(.p-error) .input {
+            border-color: var(--error-color-bg);
+        }
+
+        &:has(.input:focus) .span-letter, &:has(.input:not(:placeholder-shown)) .span-letter {
+            border-bottom: .1rem var(--secondary);
+            transform: translateY(-100%);
+            color: var(--accent);
+        }
+
+        .label-input {
+            position: relative;
+
+            .span-label-div {
+                position: absolute;
+                top: .5rem;
+                bottom: .5rem;
+                left: .7rem;
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                /* gap: .05rem; */
+                color: #808080;
+            }
+        }
+
+        .input {
+            width: 100%;
+            border: .15rem solid var(--special-color);
+            outline: none;
+            border-radius: .5rem;
+            padding: .5rem;
+            background-color: var(--primary);
+        }
+    
+        .p-error {
+            color: var(--error-color);
+            border-radius: .2rem;
+            font-size: clamp(.6rem, 1vw, .8rem);
+        }
     }
 }
 
-.span-or {
+[class^="bi bi-eye"] {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: .5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--accent);
+}
+
+.span-letter {
+    transition: .2s ease;
+    transition-property: transform, color;
+    background-color: var(--primary);
+    padding: .0 .05rem;
+    transition-delay: calc(var(--i) * 50ms);
     position: relative;
-    width: fit-content;
-    margin: auto;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: -3.5rem;
-        transform: translateY(-50%);
-        color: rgba(211, 212, 206, 0.7);
-        border: .15rem solid ;
-        border-radius: .1rem;
-        height: .1rem;
-        width: 3rem;
-
-        box-shadow: 5rem 0 0 ;
-    }
 }
 
 .span-url {
     cursor: pointer;
     color: var(--accent);
+    justify-self: end;
 }
 
 [class^="button"] {
@@ -102,6 +141,7 @@
     padding: .5rem 1rem;
     background-color: var(--primary);
     border: .15rem solid var(--special-color);
+    font-size: clamp(.6rem, 1vw, .9rem);
 
     transition: .2s transform ease-in;
 
@@ -114,15 +154,15 @@
     cursor: not-allowed;
 }
 
-.button-google {
-    border-radius: .5rem;
-}
-
 .button-submit {
     border: none;
     background-color: var(--accent);
     color: var(--primary);
     font-weight: 500;
+}
+
+.log-in-span {
+    font-size: clamp(.5rem, 2vw, .9rem);
 }
 
 .footer-section {
@@ -135,6 +175,14 @@
     .bi {
         cursor: not-allowed;
         color: rgba(0, 0, 0, 0.7);
-        font-size: 1.4rem;
+        font-size: clamp(1rem, 2vw, 1.4rem);
     }
+}
+
+@media (max-width: 800px) {
+    
+    .section {
+        width: 100%;
+    }
+
 }
