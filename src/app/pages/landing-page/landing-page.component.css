@@ -1,26 +1,29 @@
 
-.main {
+[class^="main"] {
     background-color: white;
     --border: .1rem rgba(0, 0, 0, 0.2) solid;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
+    overflow-x: clip;
 }
 
 .header-main {
     width: 100%;
     background-color: rgba(243, 244, 238, 0.5);
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
-    padding: var(--padding);
+    /* padding: var(--padding); */
+    padding: 2vh 2.5vw;
     backdrop-filter: blur(.5rem);
     border-bottom: var(--border);
     z-index: 1;
 
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    height: var(--hh);
+    /* height: var(--hh); */
 
     [class^="ul-nav"] {
         list-style: none;
@@ -38,6 +41,11 @@
             &:hover {
                 color: var(--accent);
             }
+        }
+
+        .a-nav.active {
+            color: var(--accent);
+            border-bottom: .2rem var(--accent) solid;
         }
 
         [class^="button"] {
@@ -68,12 +76,23 @@
             color: var(--secondary);
             font-weight: 400;
         }
+        
+        .form-select {
+            outline: none;
+            padding: .1rem .5rem;
+            background-color: var(--primary);
+            font-size: 1rem;
+            height: 100%;
+            border-radius: .3rem;
+            border-color: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
     }
 
     .bi-list {
         display: none;
         cursor: pointer;
-        font-size: 1.5rem;
+        font-size: 1lh;
         color: var(--primary);
         background-color: var(--accent);
         border-radius: .3rem;
@@ -81,12 +100,6 @@
         width: 1lh; */
         height: min-content;
         width: 1lh;
-
-        &::before {
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
-        }
     }
 }
 
@@ -102,9 +115,9 @@
     height: 1.2lh;
 }
 
-[class^="section"] {
+/* [class^="section"] {
     min-height: calc(100vh - var(--hh));
-}
+} */
 
 .footer-main {
     background-color: var(--primary);
@@ -171,12 +184,11 @@
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 950px) {
     .header-main {
         
         [class^="ul-nav"] {
             display: none;
-            --hh: 48.38px;
             position: fixed;
             top: var(--hh);
             left: 0;
@@ -185,8 +197,9 @@
             height: calc(100vh - var(--hh));
             background-color: rgba(243, 244, 238, 0.8);
             flex-direction: column;
-            justify-content: start;
+            justify-content: space-evenly;
             padding-top: 2rem;
+            padding-bottom: 20vh;
 
         }
         z-index: 1;

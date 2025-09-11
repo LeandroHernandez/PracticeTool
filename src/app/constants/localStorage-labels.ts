@@ -6,4 +6,5 @@ export enum localStorageLabels {
   selectedListOfKinds = 'selectedListOfKinds',
   filerBodyETP = 'filerBodyETP',
   filerBodyPL = 'filerBodyPL',
+  localCurrentLanguage = 'localCurrentLanguage',
 }

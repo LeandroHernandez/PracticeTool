@@ -11,7 +11,7 @@
     gap: 2rem;
 }
 
-.header-reviews {
+/* .header-reviews {
     text-align: center;
 
     .h4-section-title-reviews {
@@ -26,7 +26,7 @@
         width: 50rem;
         max-width: 100%;
     }
-}
+} */
 
 .cards-reviews {
     width: 100%;
@@ -100,4 +100,73 @@
             background-color: var(--accent);
         }
     }
+}
+
+@supports ( animation-timeline: auto ) {
+    
+    .cards-reviews .card-review {
+        animation-name: from-bottom;
+
+        .stars-card {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start;
+            align-items: center;
+            gap: .2rem;
+
+            .star-card {
+                height: 1.3rem;
+                aspect-ratio: 1/1;
+                background-image: url(/icons/star-icon.svg);
+                background-size: 150%;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+
+        .p-card {
+            font-size: 1rem;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+
+            .span-user-card {
+                background-color: var(--secondary);
+                height: 100%;
+                aspect-ratio: 1/1;
+                border-radius: 50%;
+                color: var(--primary);
+                font-size: 1.1rem;
+
+                text-align: center;
+                align-content: center;
+
+            }
+
+            [class^="strong"] {
+                font-size: 1rem;
+                font-weight: 500;
+            }
+
+            [class^="p"] {
+                font-size: .9rem;
+            }
+        }
+
+        &:nth-child(2) {
+            animation-name: from-top;
+
+            .user-card .span-user-card {
+                background-color: var(--accent);
+            }
+        }
+
+        &:last-child {
+            animation-name: from-right;
+        }
+    }
+    
 }

@@ -2,8 +2,8 @@
 
 <div class="features-container">
     <header class="header-features">
-        <h4 class="h4-section-title-features">Everything you need to excel</h4>
-        <p class="p-header-features">Our comprehensive platform combines proven learning methods with modern technology</p>
+        <h4 class="h4-section-title-features">{{ currentLanguage === 'en' ? 'Everything you need to excel' : 'Todo lo que necesitas para sobresalir'}}</h4>
+        <p class="p-header-features">{{ currentLanguage === 'en' ? 'Our comprehensive platform combines proven learning methods with modern technology' : 'Nuestra plataforma combina métodos de aprendizaje probados con tecnología moderna.'}}</p>
     </header>
     
     <div class="cards-features">
@@ -13,8 +13,8 @@
                 <img src="icons/brain-icon.svg" alt="brain-icon" class="img-icon-card">
             </span>
             <div class="texts-card">
-                <h6 class="h6-card"> Interactive Quizzes </h6>
-                <p class="p-card">Adaptive quizzes that adjust to your learning pace and focus on words you need to practice most</p>
+                <h6 class="h6-card"> {{ currentLanguage === 'en' ? 'Interactive Quizzes' : 'Pruebas Interactivas'}} </h6>
+                <p class="p-card"> {{ currentLanguage === 'en' ? 'Adaptive quizzes that adjust to your learning pace and focus on words you need to practice most' : 'Cuestionarios adaptativos que se ajustan a tu ritmo de aprendizaje y se centran en las palabras que más necesitas practicar.'}}</p>
             </div>
         </div>
     
@@ -23,8 +23,8 @@
                 <img src="icons/trophy-icon.svg" alt="trophy-icon" class="img-icon-card">
             </span>
             <div class="texts-card">
-                <h6 class="h6-card"> Gamified Learning </h6>
-                <p class="p-card">Earn points, unlock achievements, and compete with friends while building your vocabulary</p>
+                <h6 class="h6-card"> {{ currentLanguage === 'en' ? 'Gamified Learning' : 'Aprendizaje didactico'}} </h6>
+                <p class="p-card"> {{ currentLanguage === 'en' ? 'Earn points, unlock achievements, and compete with friends while building your vocabulary' : 'Gana puntos, desbloquea logros y compite con amigos mientras amplías tu vocabulario.'}} </p>
             </div>
         </div>
     
@@ -33,8 +33,8 @@
                 <img src="icons/users-icon.svg" alt="users-icon" class="img-icon-card">
             </span>
             <div class="texts-card">
-                <h6 class="h6-card"> Progress Tracking </h6>
-                <p class="p-card">Detailed analytics show your learning progress, strengths, and areas for improvement</p>
+                <h6 class="h6-card"> {{ currentLanguage ? 'Progress Tracking' : 'Seguimiento del progreso'}} </h6>
+                <p class="p-card"> {{ currentLanguage ? 'Detailed analytics show your learning progress, strengths, and areas for improvement' : 'Los análisis detallados muestran su progreso de aprendizaje, sus fortalezas y áreas de mejora.'}} </p>
             </div>
         </div>
     
@@ -42,27 +42,28 @@
 
     <div class="additional">
         <div class="points">
-            <h5 class="h5-points">Learn smarter, not harder</h5>
+            <h5 class="h5-points">{{ currentLanguage === 'en' ? 'Learn smarter, not harder' : 'Aprenda de forma más inteligente, no más difícil'}}</h5>
             <ul class="ul-points">
                 <li class="li-point">
-                    <strong class="tittle-li">Spaced Repetition</strong>
-                    <p class="p-li">Review words at optimal intervals for long-term retention</p>
+                    <strong class="tittle-li">{{ currentLanguage === 'en' ? 'Spaced Repetition' : 'Repetición espaciada' }}</strong>
+                    <p class="p-li"> {{ currentLanguage === 'en' ? 'Review words at optimal intervals for long-term retention': 'Revisar palabras a intervalos óptimos para una retención a largo plazo' }} </p>
                 </li>
                 <li class="li-point">
-                    <strong class="tittle-li">Contextual Learning</strong>
-                    <p class="p-li">Learn words in real sentences and situations</p>
+                    <strong class="tittle-li">{{ currentLanguage === 'en' ? 'Contextual Learning' : 'Aprendizaje contextual'}}</strong>
+                    <p class="p-li">{{ currentLanguage === 'en' ? 'Learn words in real sentences and situations' : 'Aprenda palabras en oraciones y situaciones reales.'}}</p>
                 </li>
                 <li class="li-point">
-                    <strong class="tittle-li">Personalized Path</strong>
-                    <p class="p-li">AI-powered curriculum adapts to your learning style</p>
+                    <strong class="tittle-li">{{ currentLanguage === 'en' ? 'Personalized Path' : 'Ruta personalizada'}}</strong>
+                    <p class="p-li">{{ currentLanguage === 'en' ? 'AI-powered curriculum adapts to your learning style' : 'El plan de estudios impulsado por IA se adapta a tu estilo de aprendizaje'}}</p>
                 </li>
             </ul>
         </div>
         <div class="other-additional">
             <strong class="strong-other">2,500+</strong>
-            <p class="p-other">Essential English words</p>
-            <strong class="strong-other">15 min</strong>
-            <p class="p-other">Daily practice recommended</p>
+            <p class="p-other">{{ currentLanguage === 'en' ? 'Essential English words' : 'Palabras esenciales en inglés'}}</p>
+            <!-- <strong class="strong-other">15 min</strong> -->
+            <strong class="strong-other">40 min</strong>
+            <p class="p-other">{{ currentLanguage === 'en' ? 'Daily practice recommended' : 'Se recomienda la práctica diaria'}}</p>
         </div>
     </div>
 </div>

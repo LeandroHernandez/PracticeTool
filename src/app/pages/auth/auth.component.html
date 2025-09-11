@@ -2,15 +2,19 @@
 
 <main [class]="'main-' + route">
     <section class="section">
-        <div [class]="'card ' + route ">
-            <header class="header-card">
-                <h6 class="h6-card"> PRACTICE TOOL </h6>
-                <div class="actions-card">
-                    <button class="button-card-auth {{route === 'sign-up' ? 'active' : ''}}" [routerLink]="['/auth/sign-up']" > Sign Up </button>
-                    <button class="button-card-auth {{route === 'log-in' ? 'active' : ''}}" [routerLink]="['/auth/log-in']" > Log In </button>
-                </div>
-            </header>
-            <!-- <footer class="fotter-card"></footer> -->
+        <div [class]="'card-container ' + route">
+            <div class="card-bg"></div>
+            <div class="card-bg2"></div>
+            <div class="card">
+                <header class="header-card">
+                    <h6 class="h6-card"> PRACTICE TOOL </h6>
+                    <div class="actions-card">
+                        <button class="button-card-auth {{route === 'sign-up' ? 'active' : ''}}" [routerLink]="['/auth/sign-up']" > Sign Up </button>
+                        <button class="button-card-auth {{route === 'log-in' ? 'active' : ''}}" [routerLink]="['/auth/log-in']" > Log In </button>
+                    </div>
+                </header>
+                <!-- <footer class="fotter-card"></footer> -->
+            </div>
         </div>
         <div class="router-components">
             <router-outlet></router-outlet>

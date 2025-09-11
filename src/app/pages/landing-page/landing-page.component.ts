@@ -1,21 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { RoutesApp } from '../../constants';
+import { localStorageLabels, RoutesApp } from '../../constants';
 import { FeaturesComponent, HomeComponent, PricingComponent, ReviewsComponent } from './components';
+import { ObserveSectionDirective } from './observe-section.directive';
+import { FormsModule } from '@angular/forms';
+
+interface IEnEs {
+  en: string;
+  es: string;
+}
 
 interface Iitem {
   route: string;
-  label: string;
+  label: IEnEs;
 }
 
 interface IFooterList {
-  tittle: string;
+  tittle: IEnEs;
   items: Iitem[];
 }
 
 @Component({
   selector: 'app-landing-page',
-  imports: [RouterLink, FeaturesComponent, HomeComponent, PricingComponent, ReviewsComponent],
+  imports: [RouterLink, FormsModule, FeaturesComponent, HomeComponent, PricingComponent, ReviewsComponent, ObserveSectionDirective],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css'
 })
@@ -27,52 +34,52 @@ export class LandingPageComponent {
 
   public footerLists: IFooterList[] = [
     {
-      tittle: 'Product',
+      tittle: { en: 'Product', es: 'Producto' },
       items: [
         {
-          label: 'Features',
+          label: { en: 'Features', es: 'Caracteristicas' },
           route: 'features',
         },
         {
-          label: 'Pricing',
+          label: { en: 'Pricing', es: 'Precios' },
           route: 'pricing',
         },
         {
-          label: 'Mobile App',
+          label: { en: 'Mobile App', es: 'Aplicación Mobil' },
           route: '',
         },
       ]
     },
     {
-      tittle: 'Support',
+      tittle: { en: 'Support', es: 'Soporte' },
       items: [
         {
-          label: 'Help Center',
+          label: { en: 'Help Center', es: 'Centro de Ayuda' },
           route: '',
         },
         {
-          label: 'Contact Us',
+          label: { en: 'Contact Us', es: 'Contactanos' },
           route: '',
         },
         {
-          label: 'Community',
+          label: { en: 'Community', es: 'Comunidad' },
           route: '',
         },
       ]
     },
     {
-      tittle: 'Company',
+      tittle: { en: 'Company', es: 'Empresa' },
       items: [
         {
-          label: 'About',
+          label: { en: 'About', es: 'Acerca' },
           route: '',
         },
         {
-          label: 'Blog',
+          label: { en: 'Blog', es: 'Blog' },
           route: '',
         },
         {
-          label: 'Privacy',
+          label: { en: 'Privacy', es: 'Privacidad' },
           route: '',
         },
       ]
@@ -80,5 +87,15 @@ export class LandingPageComponent {
   ]
 
   public navShow: boolean = true;
+  public activeSection: string = 'home';
+  public currentLanguage: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  
+  get localLanguage(): string {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  }
+
+  public languageChange(val: string): void {
+    return localStorage.setItem(localStorageLabels.localCurrentLanguage, val);
+  };
 
 }

@@ -26,14 +26,15 @@
   scroll-behavior: smooth;
 
   --padding: 1vw 2.5vw;
+  --padding-section: 5rem 2.5vw;
+  --hh: 73.31px;
 }
 
 * {
-    /* box-sizing: border-box; */
     margin: 0;
     padding: 0;
+    
 }
-
 
 body {
     font-family: var(--font-family);
@@ -101,4 +102,204 @@ ul {
 
 .ant-switch-checked .ant-switch-handle::before {
   background-color: var(--secondary);
+}
+
+.main-landing-page [class^="header-"] {
+    
+    text-align: center;
+    max-width: 100%;
+    
+    [class^="h4-section-title-"] {
+
+        font-size: clamp(1.3rem, 3vw, 2.7rem);
+        font-weight: 600;
+        margin-bottom: clamp(.7rem, 1.5vw, 1rem);
+
+        & + [class^="p-header-"] {
+            
+            margin: auto;
+            font-size: clamp(.85rem, 1.5vw, 1.3rem);
+            width: 50rem;
+            max-width: 100%;
+            
+        }
+    }
+}
+
+@supports (animation-timeline: auto) {
+    
+    .main-landing-page {
+
+        * {
+            view-timeline-axis: block;
+            animation-range: entry 15% cover 50%;
+            animation-fill-mode: both;
+            
+        }
+        
+        [class^="h4-section-title-"] {
+            view-timeline-name: --header-title;
+            animation-timeline: --header-title;
+            animation-name: from-right;
+            
+            & + [class^="p-header"] {
+                view-timeline-name: --header-p;
+                animation-timeline: --header-p;
+                animation-name: from-left;
+            }
+        }
+        
+        [class^="cards-"]:has( [class^="card-"] ) [class^="card-"] {
+            view-timeline-name: --card;
+            animation-timeline: --card;
+        }
+        
+    }
+    
+    @supports not (overflow-x: clip) {
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+    }
+    
+    @keyframes show {
+        from {
+            opacity: 0;
+            transform: scale(.25);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes appear {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes hide {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+    
+    @keyframes hide-to-right {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(50%);
+        }
+    }
+    
+    @keyframes hide-from-left {
+        from {
+            transform: translateX(0) scaleX(1);
+        }
+        to {
+            transform: translateX(50%) scaleX(0);
+        }
+    }
+    
+    @keyframes from-left {
+        from {
+            opacity: 0;
+            transform: translateX(-75%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes to-left {
+      from {
+        opacity: 1;
+        transform: translatex(0);
+      }
+      to {
+        opacity: 0;
+        transform: translatex(-75%);
+      }
+    }
+    
+    @keyframes from-right {
+        from {
+            opacity: 0;
+            transform: translateX(75%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes to-right {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(75%);
+      }
+    }
+    
+    
+    @keyframes from-top {
+        from {
+            opacity: 0;
+            transform: translateY(-75%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes to-top {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-75%);
+      }
+    }
+    
+    @keyframes from-bottom {
+        from {
+            opacity: 0;
+            transform: translateY(75%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes to-bottom {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(75%);
+      }
+    }
+
 }

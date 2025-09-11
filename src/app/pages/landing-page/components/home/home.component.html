@@ -1,11 +1,12 @@
 <!-- <p>home works!</p> -->
 
-<div class="home-container">
-    <h3 class="h3-home">Master English Vocabulary with <span class="span-h3-home">Interactive Learning</span></h3>
-    <p class="p-home"> Build your English vocabulary through engaging games, personalized quizzes, and proven learning techniques. Track your progress and achieve fluency faster than ever before. </p>
+<div class="home-container container-{{currentLanguage}}">
+    <h3 class="h3-home"> {{ currentLanguage == 'en' ? 'Master English Vocabulary with' : 'Domina el Vocabulario en Inglés con' }} <span class="span-h3-home"> {{ currentLanguage == 'en' ? 'Interactive Learning' : 'aprendizaje interactivo' }} </span></h3>
+    <p class="p-home"> {{ currentLanguage === 'en' ? 'Build your English vocabulary through engaging games, personalized quizzes, and proven learning techniques. Track your progress and achieve fluency faster than ever before.' : '
+Mejora tu vocabulario en inglés con juegos atractivos, cuestionarios personalizados y técnicas de aprendizaje comprobadas. Monitorea tu progreso y alcanza la fluidez más rápido que nunca.' }} </p>
     <div class="actions-home">
-        <button class="button-home">Start Learning Free <i class="bi bi-arrow-right-short"></i> </button>
-        <button class="button-home"><i class="bi bi-caret-right"></i> Watch Demo </button>
+        <button class="button-home"> {{ currentLanguage === 'en' ? 'Start Learning Free' : 'Empieza a Aprender Gratis' }} <i class="bi bi-arrow-right-short"></i> </button>
+        <button class="button-home"><i class="bi bi-caret-right"></i> {{ currentLanguage === 'en' ? 'Watch Demo' : 'Ver Demo' }} </button>
     </div>
-    <span class="span-home-footer">No credit card required • 7-day free trial</span>
+    <span class="span-home-footer"> {{ currentLanguage === 'en' ? 'No credit card required • 7-day free trial' : 'No se requiere tarjeta de crédito • Prueba gratuita de 7 días' }} </span>
 </div>

@@ -1,23 +1,25 @@
 
 .home-container {
-    background-color: rgba(243, 244, 238, 0.8);
-    height: calc(90vh - 48.38px);
+    background-color: rgba(243, 244, 238);
+    height: calc(calc(100vh - 5vw) - var(--hh));
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: end;
+    justify-content: center;
     gap: 2rem;
-    padding-bottom: 10rem;
+    /* padding-bottom: 10rem; */
+    margin-top: var(--hh);
+    padding: 0 2.5vw;
 }
 
 .h3-home {
-    font-size: clamp(1.2rem, 4.5vw, 4rem);
+    font-size: clamp(1.7rem, 4.5vw, 4rem);
     font-weight: 700;
     width: 60rem;
     max-width: 100%;
     text-align: center;
-    line-height: clamp( 1.3rem, 5vw, 4.5rem);
-
+    line-height: clamp( 1.5lh, 5vw, 3.5lh);
+    
     .span-h3-home {
         color: var(--accent);
     }
@@ -27,7 +29,7 @@
     width: 48rem;
     max-width: 100%;
     text-align: center;
-    font-size: clamp(.85rem, 1.5vw, 1.2rem);
+    font-size: clamp(.9rem, 1.5vw, 1.2rem);
 }
 
 .actions-home {
@@ -41,11 +43,11 @@
     .button-home {
         outline: none;
         border: none;
-        padding: clamp(.1rem, .4vw, .3rem) clamp(.3rem, 1.2vw, 1rem);
+        padding: clamp(.4rem, .4vw, .3rem) clamp(.8rem, 1.2vw, 1rem);
         /* border-radius: .1rem rgba(0, 0, 0, 0.4) solid; */
         border-radius: .3rem;
         cursor: pointer;
-        font-size: clamp(.7rem, 1.5vw, 1.1rem);
+        font-size: clamp(1rem, 1.5vw, 1.1rem);
         color: var(--primary);
         background-color: var(--secondary);
         font-weight: 600;
@@ -54,7 +56,7 @@
         transition-property: color, background-color, border-color;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: clamp(.5rem, 1vw, 1rem);
 
         .bi {
             font-size: clamp(.9rem, 1.7vw, 1.5rem);
@@ -75,5 +77,48 @@
 }
 
 .span-home-footer {
+    font-size: clamp(.75rem, 1.5vw, 1.2rem);
     transform: translateY(-50%);
+}
+
+.container-es {
+    .h3-home {
+        width: 70rem;
+    }
+}
+
+@supports (animation-timeline: auto) {
+
+    .home-container {
+        view-timeline-name: --home-section;
+        
+        .h3-home {
+            animation-name: to-left;
+            animation-timeline: --home-section;
+            animation-range: exit 5% exit 30%;
+        }
+        
+        .p-home {
+            animation-name: hide;
+            animation-timeline: --home-section;
+            animation-range: exit 20% exit 50%;
+        }
+    }
+    
+    .button-home {
+        animation-name: to-top;
+        animation-timeline: --home-section;
+        animation-range: exit 25% exit 60%;
+        
+        &:last-child {
+            animation-name: to-right;
+        }
+    }
+
+    .span-home-footer {
+        animation-name: hide;
+        animation-timeline: --home-section;
+        animation-range: exit 30% exit 70%;
+    }
+    
 }

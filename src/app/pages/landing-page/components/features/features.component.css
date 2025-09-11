@@ -1,7 +1,6 @@
 
 .features-container {
     background-color: #f8f8f5;
-    /* height: 100vh; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9,7 +8,7 @@
     padding: var(--padding-section);
 }
 
-.header-features {
+/* .header-features {
     text-align: center;
 
     .h4-section-title-features {
@@ -24,7 +23,7 @@
         width: 50rem;
         max-width: 100%;
     }
-}
+} */
 
 .cards-features {
     display: grid;
@@ -60,10 +59,13 @@
             height: 100%;
         }
     }
-
-    &:nth-last-child(2) .span-icon-card {
+    
+    
+    &:nth-child(2) .span-icon-card {
         background-color: var(--accent);
     }
+    
+    
 
     .texts-card {
         .h6-card {
@@ -81,20 +83,20 @@
     .points {
         
         .h5-points {
-            font-size: clamp(.7rem, 2.5vw, 1.7rem);
+            font-size: clamp(1.2rem, 2.5vw, 1.7rem);
             font-weight: 600;
             margin-bottom: 1rem;
         }
-
+        
         .ul-points {
-            padding-left: 2vw;
+            padding-left: 2rem;
             list-style: none;
-
+            
             display: flex;
             flex-direction: column;
             align-items: space-between;
             gap: 1rem;
-
+            
             .li-point {
                 position: relative;
 
@@ -120,7 +122,6 @@
     }
 
     .other-additional {
-        /* background-color: rgba(249, 178, 26, 0.2); */
         background-color: var(--secondary);
         color: var(--primary);
         border-radius: 1rem;
@@ -132,10 +133,80 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-
+        
         .strong-other {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 5vw, 2.5rem);
             color: var(--accent);
         }
     }
 }
+
+@supports (animation-timeline: auto) {
+    
+    .card-feature {
+        &:first-child {
+            animation-range: entry 10% cover 20%;
+            animation-name: from-left;
+            
+            .span-icon-card {
+                animation-range: entry 10% cover 40%;
+                view-timeline-name: --card-span-icon;
+                animation-timeline: --card-span-icon;
+                animation-name: from-top;
+                
+            }
+        }
+        
+        &:nth-child(2) {
+
+            overflow-x: clip;
+
+            .span-icon-card [class^="img"] {
+                view-timeline-name: --card-icon;
+                animation-timeline: --card-icon;
+                animation-name: from-left;
+            }
+            
+            .texts-card {
+                animation-range: entry 10% cover 25%;
+                view-timeline-name: --card-texts;
+                animation-timeline: --card-texts;
+                animation-name: from-right;
+            }
+        } 
+        
+        
+        &:last-child {
+            animation-name: from-right;
+        }
+    }
+    
+    
+    .additional {
+        .points {
+            
+            .h5-points {
+                animation-range: entry 10% cover 35%;
+                view-timeline-name: --points-tittle;
+                animation-timeline: --points-tittle;
+                animation-name: from-left;
+            }
+            
+            .ul-points .li-point {
+                animation-range: entry 10% cover 20%;
+                view-timeline-name: --points-tittle;
+                animation-timeline: --points-tittle;
+                animation-name: from-right;
+            }
+        }
+        
+        .other-additional {
+            animation-range: entry 10% cover 30%;
+            view-timeline-name: --other-additional;
+            animation-timeline: --other-additional;
+            animation-name: appear;
+        }
+    }
+    
+}
+
