@@ -20,7 +20,7 @@ import {
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { IPracticeList } from '../../../../interfaces';
-import { DbCollections } from '../../../../constants';
+import { DbCollections } from '../../../../enums';
 
 @Injectable({
   providedIn: 'root'

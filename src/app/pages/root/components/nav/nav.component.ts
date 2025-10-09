@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { INavItem } from '../../../../interfaces';
-import { RoutesApp } from '../../../../constants';
+import { RoutesApp } from '../../../../enums';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -36,6 +36,18 @@ export class NavComponent {
     //   route: RoutesApp.expressions,
     //   icon: 'translate'
     // },
+    {
+      label: 'Roles',
+      title: 'Roles',
+      route: RoutesApp.roles,
+      icon: 'columns'
+    },
+    {
+      label: 'Users',
+      title: 'Users',
+      route: RoutesApp.users,
+      icon: 'people-fill'
+    },
     {
       label: 'Dashboard',
       title: 'Dashboard',

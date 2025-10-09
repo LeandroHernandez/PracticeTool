@@ -1,7 +1,7 @@
 import { IRole } from "./role.interface";
 
 export interface IUser {
-    id?: string,
+    id: string,
     email: string,
     names: string,
     lastnames: string,
@@ -11,3 +11,7 @@ export interface IUser {
     lastUpdate: Date,
     state: boolean
 }
+
+export type TUser = Omit<IUser, 'id'>;
+
+export type TUserChangeState = Pick<IUser, 'id' | 'state'>;

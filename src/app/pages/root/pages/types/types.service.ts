@@ -14,7 +14,7 @@ import {
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { IType } from '../../../../interfaces';
-import { DbCollections } from '../../../../constants';
+import { DbCollections } from '../../../../enums';
 
 @Injectable({
   providedIn: 'root',

@@ -1,12 +1,119 @@
 <!-- <p>home works!</p> -->
 
 <div class="home-container container-{{currentLanguage}}">
-    <h3 class="h3-home"> {{ currentLanguage == 'en' ? 'Master English Vocabulary with' : 'Domina el Vocabulario en Inglés con' }} <span class="span-h3-home"> {{ currentLanguage == 'en' ? 'Interactive Learning' : 'aprendizaje interactivo' }} </span></h3>
-    <p class="p-home"> {{ currentLanguage === 'en' ? 'Build your English vocabulary through engaging games, personalized quizzes, and proven learning techniques. Track your progress and achieve fluency faster than ever before.' : '
-Mejora tu vocabulario en inglés con juegos atractivos, cuestionarios personalizados y técnicas de aprendizaje comprobadas. Monitorea tu progreso y alcanza la fluidez más rápido que nunca.' }} </p>
-    <div class="actions-home">
-        <button class="button-home"> {{ currentLanguage === 'en' ? 'Start Learning Free' : 'Empieza a Aprender Gratis' }} <i class="bi bi-arrow-right-short"></i> </button>
-        <button class="button-home"><i class="bi bi-caret-right"></i> {{ currentLanguage === 'en' ? 'Watch Demo' : 'Ver Demo' }} </button>
+
+    <div class="content-home">
+        <h3 class="h3-home"> {{ currentLanguage == 'en' ? 'Master English Vocabulary with' : 'Domina el Vocabulario en Inglés con' }} <span class="span-h3-home"> {{ currentLanguage == 'en' ? 'Interactive Learning' : 'aprendizaje interactivo' }} </span></h3>
+        <p class="p-home"> {{ currentLanguage === 'en' ? 'Build your English vocabulary through engaging games, personalized quizzes, and proven learning techniques. Track your progress and achieve fluency faster than ever before.' : '
+    Mejora tu vocabulario en inglés con juegos atractivos, cuestionarios personalizados y técnicas de aprendizaje comprobadas. Monitorea tu progreso y alcanza la fluidez más rápido que nunca.' }} </p>
+        <div class="actions-home">
+            <div class="button-container">
+                <button class="button-home"> {{ currentLanguage === 'en' ? 'Start Learning Free' : 'Empieza a Aprender Gratis' }} <i class="bi bi-arrow-right-short"></i> </button>
+            </div>
+            <div class="button-container">
+                <button class="button-home"><i class="bi bi-caret-right"></i> {{ currentLanguage === 'en' ? 'Watch Demo' : 'Ver Demo' }} </button>
+            </div>
+        </div>
+        <!-- <span class="span-home-footer"> {{ currentLanguage === 'en' ? 'No credit card required • 7-day free trial' : 'No se requiere tarjeta de crédito • Prueba gratuita de 7 días' }} </span> -->
     </div>
-    <span class="span-home-footer"> {{ currentLanguage === 'en' ? 'No credit card required • 7-day free trial' : 'No se requiere tarjeta de crédito • Prueba gratuita de 7 días' }} </span>
+
+    <div class="video-home-container">
+        <!-- <video src="videos/landing-page-home.mp4" class="video-home" autoplay loop></video> -->
+        <video
+            class="video-home"
+            autoplay
+            loop
+            muted
+            playsinline
+            preload="auto"
+            poster="images/landing-page/video-poster.webp"
+        >
+        <source src="videos/landing-page-home.webm" type="video/webm" >
+        <!-- <source src="videos/landing-page-home.mp4" type="video/mp4" > -->
+    </video>
+    </div>
+    <div class="video-home-container-clone"></div>
+
+    <div class="corner">
+        <!-- <div class="p-corner-container">
+            <p class="p-corner">
+                Practice Tool Practice Tool Practice Tool Practice Tool Practice Tool Practice Tool
+            </p>
+            <p class="p-corner">
+                Practice Tool Practice Tool Practice Tool Practice Tool Practice Tool Practice Tool
+            </p>
+        </div> -->
+        <div  class="corner-bg-container">
+            <div class="corner-bg"></div>
+        </div >
+        <div class="corner-astronaut-container">
+            <div class=" corner-astronaut-box" >
+                <div class="corner-astronaut" style=" --astronaut-url: url(/images/landing-page/flat-en.webp) " ></div>
+                <div class="corner-astronaut" style=" --astronaut-url: url(/images/landing-page/flat-es.webp) " ></div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<svg width="0" height="0">
+    <clipPath id="svg-path-video" clipPathUnits="objectBoundingBox">
+        <path d="
+            M
+            0 .52
+            A .04 .07 0 0 1 .025 .45
+            L .43 .45
+            A .05 .05 0 0 0 .455 .42
+            L.52 .2625
+            A .02 .08 0 0 0 .53 .21
+            L.53 .05
+            A .03 .06 0 0 1 .56 0
+            L.98 0
+            A .03 .06 0 0 1 1 .04
+            L1 .45
+            A .03 .08 0 0 1 .985 .545
+            L.7 .98
+            A .05 .06 0 0 1 .675 1
+            L.025 1
+            A .03 .06 0 0 1 0 .95
+            Z
+            "
+        ></path>
+    </clipPath>
+</svg>
+
+<svg width="0" height="0">
+    <clipPath id="svg-path-video-mobile" clipPathUnits="objectBoundingBox">
+        <path d="
+            M
+            0 .04
+            A .03 .06 0 0 1 .02 0
+            L.98 0
+            A .03 .06 0 0 1 1 .04
+            L1 .45
+            A .03 .08 0 0 1 .985 .545
+            L.7 .98
+            A .05 .06 0 0 1 .675 1
+            L.025 1
+            A .03 .06 0 0 1 0 .95
+            Z
+            "
+        ></path>
+    </clipPath>
+</svg>
+
+<svg width="0" height="0">
+    <clipPath id="svg-path-corner" clipPathUnits="objectBoundingBox">
+        <path d="
+            M
+            .1 1
+            A .05 .08 0 0 1 .1 .85
+            L .85 .1
+            A .085 .1 0 0 1 1 .15
+            L 1 .95
+            A .05 .08 0 0 1 .95 1
+            Z
+            "
+        ></path>
+    </clipPath>
+</svg>
+

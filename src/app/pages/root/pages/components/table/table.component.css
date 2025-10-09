@@ -2,12 +2,12 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.2rem;
   /* overflow-x: auto; */
 }
 
 .actual_selection {
-  min-height: 26px;
+  min-height: 2.4rem;
   display: flex;
   justify-content: center;
 
@@ -18,42 +18,81 @@
 
 .selectedItem_div {
   min-height: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: .5rem;
 }
 
 .selectedItem_span {
   font-size: 1rem;
   font-weight: 700;
+
+  .number {
+    font-size: 1.2rem;
+  }
 }
 
-.clear {
-  background-color: var(--accent);
-  color: var(--secondary);
-  padding: 3px 5px;
-  border: none;
+.button-clear {
   outline: none;
-  border-radius: 10px;
+  background-color: var(--primary);
+  color: var(--secondary-bg);
+  padding: .2rem .5rem;
+  border: .15rem solid var(--secondary-bg);
+  border-radius: .5rem;
+  font-size: 1rem;
+  font-weight: 600;
+
+  transition: .2s ease;
+  transition-property: transform, background-color, color, border-color;
+
+  &:hover {
+    background-color: var(--primary);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 }
 
 .filters_section {
+  min-height: 42px;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 1.2rem;
 
-  & .button {
+  [class^="button"] {
     cursor: pointer;
-    font-size: 16px;
-    padding: 6px 12px;
+    font-size: 1rem;
+    padding: .4rem .8rem;
     border: none;
-    border-radius: 5px;
-    background-color: var(--accent3);
+    border-radius: .4rem;
+    background-color: #d6d7dc;
     color: var(--secondary);
+    font-weight: 500;
+    border: .15rem solid var(--secondary);
+
+    .bi-filter::before {
+      font-size: 1.1rem;
+    }
   }
 
-  .deleteAll {
-    background-color: var(--secondary);
-    color: var(--primary);
+  .button-delete-all {
+    border: .15rem dashed var(--error-color);
+    background-color: var(--primary);
+    color: var(--error-color);
+    font-weight: 500;
+    
+    transition: .2s ease allow-discrete;
+    transition-property: transform, background-color, color, border-style;
+    
+    &:hover {
+      font-weight: auto;
+      background-color: var(--error-color);
+      color: var(--primary);
+      border-style: solid;
+    }
   }
 }
 
@@ -65,8 +104,9 @@
   gap: 10px;
 
   .clear {
-    background-color: var(--accent);
-    color: var(--secondary);
+    background-color: var(--secondary-bg);
+    color: var(--primary);
+    border: none;
   }
 }
 
@@ -82,6 +122,7 @@
 }
 
 .thead {
+  font-size: 1.1rem;
   background-color: var(--secondary);
   color: var(--primary);
 }
@@ -101,7 +142,7 @@
 }
 
 .th {
-  padding: 15px;
+  padding: 1.4rem;
 }
 
 .td {
@@ -119,9 +160,9 @@
   justify-content: center;
   align-items: center;
 
-  & i {
+  .bi {
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     width: 25.14px;
     border-radius: 10%;
 
@@ -135,6 +176,10 @@
       border-radius: 20%;
     }
   }
+
+  .bi-x-circle {
+    color: var(--error-color);
+  }
 }
 
 .empty {
@@ -147,8 +192,8 @@
   font-weight: 700;
 }
 
-.empty_p {
-  padding: 20px;
+.empty-p, .loading-p {
+  padding: 1.2rem;
   text-align: center;
   font-size: 1rem;
   background-color: rgba(26, 24, 53, 0.1);
@@ -158,9 +203,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 1.2rem;
 }
 
 .itemListLength {
   font-weight: 600;
+}
+
+.div-state {
+  background-color: var(--primary);
+  border-radius: 1rem;
+  padding: .2rem;
+  width: fit-content;
+  margin: auto;
 }

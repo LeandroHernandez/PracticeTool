@@ -28,7 +28,7 @@ export class ContentHeaderComponent {
     });
 
     const instance = modal.getContentComponent();
-    if (this.contentHeaderInfo?.test.practiceList) instance.practiceList = true;
+    if (this.contentHeaderInfo?.test?.practiceList) instance.practiceList = true;
 
     instance.closeEmitter.subscribe(() => modal.close());
   }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { localStorageLabels } from '../../enums';
 
 @Component({
   selector: 'app-auth',
@@ -15,6 +16,10 @@ export class AuthComponent {
 
   get route(): string {
     return this.url[this.url.length - 1];
+  }
+  
+  get localLanguage(): string {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   }
 
   constructor (private _router: Router) {}

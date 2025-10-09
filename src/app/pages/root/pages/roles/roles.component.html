@@ -1,1 +1,22 @@
-<p>roles works!</p>
+<!-- <p>roles works!</p> -->
+
+<main class="main">
+  <div class="content-header">
+    <app-content-header
+      [contentHeaderInfo]="contentHeaderInfo"
+    ></app-content-header>
+  </div>
+  <div class="table">
+    <app-table
+      [tableInfo]="tableInfo"
+      [itemList]="roles"
+      [page]="page"
+      (editAction)="roleEdit($event)"
+      (deleteAction)="roleDelete($event)"
+      (pageEmitter)="page = $event"
+      (filterAction)="getRoles($event)"
+      (deleteAllAction)="deleteAll($event)"
+      (changeStateEmitter)="changeState($event)"
+    ></app-table>
+  </div>
+</main>

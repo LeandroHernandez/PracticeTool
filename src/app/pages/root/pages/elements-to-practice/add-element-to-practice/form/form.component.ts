@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { RoutesApp, typesOfElementsToPractice, typesOfWords } from '../../../../../../constants';
+import { RoutesApp, typesOfElementsToPractice, typesOfWords } from '../../../../../../enums';
 
 import {
   NzNotificationRef,

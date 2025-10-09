@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { localStorageLabels, RoutesApp } from '../../constants';
+import { localStorageLabels, RoutesApp } from '../../enums';
 import { FeaturesComponent, HomeComponent, PricingComponent, ReviewsComponent } from './components';
 import { ObserveSectionDirective } from './observe-section.directive';
 import { FormsModule } from '@angular/forms';
+import { ViewportScroller } from '@angular/common';
 
 interface IEnEs {
   en: string;
@@ -26,7 +27,7 @@ interface IFooterList {
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css'
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements AfterViewInit {
 
   public baseRoute: string = `/${RoutesApp.landingPage}`;
   public signInRoute: string = `/${RoutesApp.auth}/${RoutesApp.logIn}`;
@@ -86,12 +87,22 @@ export class LandingPageComponent {
     },
   ]
 
-  public navShow: boolean = true;
+  public navShow: boolean = false;
   public activeSection: string = 'home';
   public currentLanguage: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   
   get localLanguage(): string {
     return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  }
+
+  constructor(private _viewportScroller: ViewportScroller) {}
+
+  ngAfterViewInit() {
+    this.scrollTop();
+  }
+
+  scrollTop() {
+    this._viewportScroller.scrollToPosition([0, 0]);
   }
 
   public languageChange(val: string): void {

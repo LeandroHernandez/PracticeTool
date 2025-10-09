@@ -4,33 +4,52 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    gap: 1.2rem;
     background-color: rgba(144, 147, 159, 0.1);
-    padding: 20px;
+    padding: 1.2rem;
 }
 
-.btn {
-    font-size: 16px;
-    padding: 6px 12px;
+[class^="button"] {
+    font-size: 1rem;
+    padding: .3rem .7rem;
     border: none;
-    border-radius: 5px;
+    border-radius: .3rem;
 }
 
 .title {
-    /* font-weight: 500; */
-    font-size: 20px;
+    font-size: 1.2rem;
 }
 
-.add_btn {
+.button-add {
     background-color: var(--secondary);
     color: var(--primary);
 
-    &:hover i {
+    .bi {
+        margin-left: .4rem;
+        &::before {
+            transition: .2s ease;
+            transition-property: transform, color;
+        }
+    }
+
+    &:hover .bi::before {
+        transform: scale(1.6);
         color: var(--accent);
     }
 }
 
-.test_btn {
-    background-color: var(--accent);
-    color: var(--secondary);
+.button-test {
+    border: .15rem solid var(--accent);
+    background-color: var(--primary);
+    color: var(--accent);
+    font-weight: 500;
+
+    transition: .2s ease;
+    transition-property: transform, background-color, color;
+
+    &:hover {
+        transform: scale(1.1);
+        background-color: var(--accent);
+        color: var(--primary);
+    }
 }

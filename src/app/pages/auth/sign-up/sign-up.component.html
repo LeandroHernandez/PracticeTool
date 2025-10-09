@@ -1,71 +1,82 @@
 <!-- <p>sign-up works!</p> -->
 
-<div class="signUp-container">
+<div [class]=" ' signUp-container ' + localLanguage ">
     <section class="section">
         <header class="header-section">
-            <h3 class="h3-header-signUp">Sign up</h3>
-            <button type="button" class="button-header-signUp" [title]="notEnabledTitle"> 
+            <h3 class="h3-header-signUp">{{ localLanguage === 'en' ? 'Sign up' : 'Registrarse'}}</h3>
+            <!-- <button type="button" class="button-header-signUp" [title]="notEnabledTitle"> 
                 English <i class="bi bi-chevron-down"></i> 
-            </button>
+            </button> -->
+            
+            <form class="language-form" [formGroup]="languageForm">
+                <select class="form-select" formControlName="language">
+                    <option [selected]="localLanguage === 'en'" value="en">{{ localLanguage === 'en' ?  'English' : 'Ingles'}}</option>
+                    <option [selected]="localLanguage === 'es'" value="es">{{ localLanguage === 'en' ?  'Spanish' : 'Español'}}</option>
+                </select>
+            </form>
         </header>
         <form [formGroup]="form" (ngSubmit)="submit()" class="form">
             <header class="header-form">
-                <h4 class="title-form">You Ready?</h4>
-                <h5 class="subtitle-form">Welcome to <span class="span-subtitle">PRACTICE TOOL</span> </h5>
+                <h4 class="title-form"> {{ localLanguage === 'en' ? 'You Ready?' : '¿Estas Listo?' }} </h4>
+                <h5 class="subtitle-form"> {{ localLanguage === 'en' ? 'Welcome to' : 'Bienvenido a' }} <span class="span-subtitle"> PRACTICE TOOL </span> </h5>
             </header>
 
             <fieldset class="fieldset">
                 <div class="input-box">
                     <label class="label-input">
                         <div class="span-label-div">
-                            @for (letter of letters('Names'); track $index) {
+                            @for (letter of letters( localLanguage === 'en' ? 'Names' : 'Nombres' ); track $index) {
                                 <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
                             }
                         </div>
                         <input type="text" formControlName="names" placeholder="" class="input">
                     </label>
                     @if ( showErrors && getControlErrors('names').length > 0 ) {
-                        <p class="p-error">Please enter a valid name between 2 and 30 characters long.</p>
+                        <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a valid name between 2 and 30 characters long.' : 'Ingrese un nombre válido de entre 2 y 30 caracteres.' }} </p> -->
+                         <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="localLanguage === 'en' ? 'Invalid Names' : 'Nombres Invalidos' " [nzPopoverContent]="localLanguage === 'en' ? 'Please enter a valid name between 2 and 30 characters long.' : 'Ingrese un nombre válido de entre 2 y 30 caracteres.' " ></i>
                     }
                 </div>
                 <div class="input-box">
                     <label class="label-input">
                         <div class="span-label-div">
-                            @for (letter of letters('Last names'); track $index) {
+                            @for (letter of letters( localLanguage === 'en' ? 'Last names' : 'Apellidos' ); track $index) {
                                 <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
                             }
                         </div>
                         <input type="text" formControlName="lastnames" placeholder="" class="input">
                     </label>
                     @if ( showErrors && getControlErrors('lastnames').length > 0 ) {
-                        <p class="p-error">Please enter a valid lastname between 2 and 30 characters long.</p>
+                        <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a valid lastname between 2 and 30 characters long.' : 'Ingrese un apellido válido de entre 2 y 30 caracteres.' }} </p> -->
+                         <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="localLanguage === 'en' ? 'Invalid Last Names' : 'Apellidos Invalidos' " [nzPopoverContent]="localLanguage === 'en' ? 'Please enter a valid lastname between 2 and 30 characters long.' : 'Ingrese un apellido válido de entre 2 y 30 caracteres.'" ></i>
                     }
                 </div>
                 <div class="input-box">
                     <label class="label-input">
                         <div class="span-label-div">
-                            @for (letter of letters('Email'); track $index) {
+                            @for (letter of letters( localLanguage === 'en' ? 'Email' : 'Correo' ); track $index) {
                                 <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
                             }
                         </div>
                         <input type="email" formControlName="email" placeholder="" class="input">
                     </label>
                     @if ( showErrors && getControlErrors('email').length > 0 ) {
-                        <p class="p-error">Please enter a valid email with a maximum of 30 characters.</p>
+                        <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres'}} </p> -->
+                         <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Email' : 'Correo Invalido' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres' " ></i>
                     }
                 </div>
                 <div class="input-box">
                     <label class="label-input">
                         <div class="span-label-div">
-                            @for (letter of letters('Password'); track $index) {
+                            @for (letter of letters( localLanguage === 'en' ? 'Password' : 'Contraseña' ); track $index) {
                                 <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
                             }
                         </div>
                         <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder="" class="input">
-                        <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" (click)="showPassword = !showPassword"></i>
+                        <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" [title]=" localLanguage === 'en' ? showPassword ? 'Hide Password' : 'Show Password' : showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña' " (click)="showPassword = !showPassword"></i>
                     </label>
                     @if ( showErrors && getControlErrors('password').length > 0 ) {
-                        <p class="p-error">Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.</p>
+                        <!-- <p class="p-error-password"> {{ localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial'}} </p> -->
+                         <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Password' : 'Contraseña Invalida' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial' " ></i>
                     }
                 </div>
                 <!-- <span class="span-url" title="Ask for a new password" > Forgot password? </span> -->
@@ -81,9 +92,9 @@
                 Sign Up With Google 
                 <div class="div-google"></div>
             </button> -->
-            <button type="submit" class="button-submit">Sign Up</button>
+            <button type="submit" class="button-submit">{{ localLanguage === 'en' ? 'Sign Up' : 'Registrarse'}}</button>
 
-            <span class="log-in-span" > Do you already have an account? <span class="span-url" title="Let's do it" [routerLink]="[logInUrl]" > Login </span> </span>
+            <span class="log-in-span" > {{ localLanguage === 'en' ? 'Do you already have an account?' : '¿Ya tiene una cuenta?' }} <span class="span-url" [title]=" localLanguage === 'en' ? `Let's do it` : 'Vamos a hacerlo' " [routerLink]="[logInUrl]" > {{ localLanguage === 'en' ? 'Login' : 'Ingresar' }} </span> </span>
 
         </form>
         <footer class="footer-section">

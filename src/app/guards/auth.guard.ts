@@ -4,9 +4,8 @@ import { Auth } from '@angular/fire/auth';
 import { CanActivateChildFn, Router } from '@angular/router';
 import { AuthService } from '../pages/auth/auth.service';
 import { map, take } from 'rxjs';
-import { RoutesApp } from '../constants';
+import { RoutesApp } from '../enums';
 
-// export const authGuard: CanActivateFn = (route, state) => {
 export const authGuard: CanActivateChildFn = (route, state) => {
   console.log('AuthGuard');
   const auth = inject(Auth);

@@ -22,12 +22,35 @@
     display: flex;
 }
 
+.nav-show {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    z-index: 1;
+    
+    transform: scale(1);
+    transition: .1s ease allow-discrete;
+    transition-property: transform, display;
+    transform-origin: left;
+    /* display: auto; */
+
+    @starting-style {
+        /* display: none; */
+        transform: scale(0, 1);
+    }
+}
+
 .nav {
     height: 100%;
     position: fixed;
     left: 0;
     z-index: 1;
-    /* padding: 20px; */
+    
+    transition: .1s ease allow-discrete;
+    transition-property: transform, display;
+    transform-origin: left;
+    transform: scale(0, 1);
+    display: none;
 }
 
 .content {

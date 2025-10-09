@@ -1,6 +1,9 @@
 <!-- <p>auth works!</p> -->
 
 <main [class]="'main-' + route">
+    <button class="button-back-to-landing-page" [routerLink]="['/landing-page']" >
+        <i class="bi bi-arrow-left"></i> {{ localLanguage=== 'en' ? 'Back To Landing Page' : ' Volver a la Landing Page ' }}
+    </button>
     <section class="section">
         <div [class]="'card-container ' + route">
             <div class="card-bg"></div>
@@ -9,8 +12,8 @@
                 <header class="header-card">
                     <h6 class="h6-card"> PRACTICE TOOL </h6>
                     <div class="actions-card">
-                        <button class="button-card-auth {{route === 'sign-up' ? 'active' : ''}}" [routerLink]="['/auth/sign-up']" > Sign Up </button>
-                        <button class="button-card-auth {{route === 'log-in' ? 'active' : ''}}" [routerLink]="['/auth/log-in']" > Log In </button>
+                        <button class="button-card-auth {{route === 'sign-up' ? 'active' : ''}}" [routerLink]="['/auth/sign-up']" >{{ localLanguage === 'en' ? 'Sign Up' : 'Registrarse'}}</button>
+                        <button class="button-card-auth {{route === 'log-in' ? 'active' : ''}}" [routerLink]="['/auth/log-in']" >{{ localLanguage === 'en' ? 'Log In' : 'Ingresar'}}</button>
                     </div>
                 </header>
                 <!-- <footer class="fotter-card"></footer> -->

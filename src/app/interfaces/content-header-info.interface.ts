@@ -8,5 +8,5 @@ interface IOption {
 export interface IContentHeaderInfoItem {
     add: IOption;
     title: string;
-    test: IOption;
+    test?: IOption;
   }

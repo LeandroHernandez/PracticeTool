@@ -1,7 +1,7 @@
 <!-- <p>header works!</p> -->
 
 <div class="container_div">
-    <button type="button" class="btn menu_btn" title="Menu" (click)="changeMenu.emit(true)" >
+    <button type="button" class="button-menu" title="Menu" (click)="changeMenu.emit(true)" >
         <i class="bi bi-list"></i>
     </button>
 
@@ -9,17 +9,33 @@
 
     <button 
       type="button"
-      class="btn"
-      data-bs-toggle="button"
+      class="button-options"
       title="options"
-      nz-popover
-      nzPopoverTitle="Log out"
-      nzPopoverTrigger="click"
-      [nzPopoverContent]="contentTemplate"
+      nz-dropdown
+      [nzDropdownMenu]="menu"
+      nzTrigger="click" 
     >
         <i class="bi bi-gear"></i>
     </button>
-    <ng-template #contentTemplate>
-      <a (click)="logOut()">Log out</a>
-    </ng-template>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu class="ul-options" >
+        <li nz-menu-item [routerLink]="profileRoute" >Profile</li>
+        <li nz-menu-item>
+          <button 
+            type="button"
+            class="button-log-out"
+            data-bs-toggle="button"
+            title="Log out"
+            nz-popover
+            nzPopoverTitle="Log out"
+            nzPopoverTrigger="click"
+            [nzPopoverContent]="contentTemplate"
+          > Log Out </button>
+          <ng-template #contentTemplate>
+            <a (click)="logOut()">Sure?</a>
+          </ng-template>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+    
 </div>

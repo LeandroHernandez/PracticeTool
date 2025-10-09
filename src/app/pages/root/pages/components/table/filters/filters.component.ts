@@ -4,7 +4,7 @@ import { IFilterFormField } from '../../../../../../interfaces/filter-form-field
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Router } from '@angular/router';
-import { localStorageLabels, RoutesApp } from '../../../../../../constants';
+import { localStorageLabels, RoutesApp } from '../../../../../../enums';
 
 @Component({
   selector: 'app-filters',
@@ -20,7 +20,7 @@ export class FiltersComponent implements OnInit {
   public form: FormGroup;
 
   public get actualLabel(): string {
-    return this._router.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.filerBodyETP : localStorageLabels.filerBodyPL;
+    return this._router.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.etp.filerBody : localStorageLabels.pl.filerBody;
   }
 
   // public get activeFilters(): boolean {

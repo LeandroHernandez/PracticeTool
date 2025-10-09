@@ -1,0 +1,14 @@
+
+.main {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    border: .15rem solid gray;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+}

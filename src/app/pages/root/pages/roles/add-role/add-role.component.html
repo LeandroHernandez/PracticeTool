@@ -1,0 +1,48 @@
+<!-- <p>add-role works!</p> -->
+
+<div class="main">
+    <button class="button-back" [routerLink]="[backTo]" title="Volver a Roles" > <i class="bi bi-arrow-left"></i> Back </button>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <header class="header-form">
+            <h3> {{  role ? 'Edit Role' : 'Register Role'  }} </h3>
+            <label class="label-state">
+                <span class="span-state">State:</span>
+                <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" formControlName="state"></nz-switch>
+            </label>
+        </header>
+        <fieldset class="fieldset">
+            <!-- <input type="text" class="input" formControlName="name"> -->
+            <div class="input-box">
+                @if ( isRequired('name') ) {
+                    <i class="bi bi-asterisk"  nz-popover [nzPopoverContent]=" localLanguage === 'en' ? 'Required Field' : 'Campo Obligatorio' " ></i>
+                }
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Name' : 'Nombre' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                        }
+                    </div>
+                    <input type="text" formControlName="name" placeholder="" class="input">
+                </label>
+                @if ( showErrors && getControlErrors('name').length > 0 ) {
+                    <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Name' : 'Nombre Invalido' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid name with a maximum of 60 characters.' : 'Por favor ingrese un nombre valido con un maximo de 60 caracteres' " ></i>
+                }
+            </div>
+            <div class="input-box">
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Description' : 'Descripción' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                        }
+                    </div>
+                    <textarea formControlName="description" placeholder="" class="textarea"></textarea>
+                </label>
+                @if ( showErrors && getControlErrors('description').length > 0 ) {
+                    <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Description' : 'Descripción Invalido' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid description with a maximum of 200 characters.' : 'Por favor ingrese un descripción valido con un maximo de 200 caracteres' " ></i>
+                }
+            </div>
+        </fieldset>
+        
+        <button class="button-submit" [title]=" role ? 'Edit Role' : 'Register Role' " type="submit"  > {{  role ? 'Edit' : 'Register'  }} </button>
+    </form>
+</div>

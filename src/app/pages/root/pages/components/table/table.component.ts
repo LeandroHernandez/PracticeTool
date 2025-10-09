@@ -1,38 +1,42 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { IElementToPractice, IPageTableInfo, TRoleChangeState, IFilterFormField, ITableItem, IWord } from '../../../../../interfaces';
+import { localStorageLabels, RoutesApp } from '../../../../../enums';
+
 import { FiltersComponent } from './filters/filters.component';
 
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-
-import { IWord } from '../../../../../interfaces/word.interface';
-import { ITableItem } from '../../../../../interfaces/table-item.interface';
-import { IFilterFormField } from '../../../../../interfaces/filter-form-field.interface';
-import { IElementToPractice, IPageTableInfo } from '../../../../../interfaces';
-import { localStorageLabels, RoutesApp } from '../../../../../constants';
-import { Router } from '@angular/router';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-table',
   imports: [
+    DatePipe,
+    FormsModule,
     NzPopconfirmModule,
     NzModalModule,
     NzTableModule,
     NzPaginationModule,
     NzCheckboxModule,
+    NzSwitchModule,
+    NzIconModule
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
-export class TableComponent {
-  // @Input() tableHeader: Array<string> = [];
-  @Input() filterFormFields: Array<IFilterFormField> = [];
+export class TableComponent implements OnInit {
+  @Input() filterFormFields: Array<IFilterFormField> | null = null;
   @Input() tableInfo: Array<ITableItem> = [];
   @Input() page: IPageTableInfo = { index: 1, size: 10 };
-  @Input() itemList: Array<any> = [];
-  // @Input() setOfCheckedId: Set<number> = new Set<number>();
+  @Input() itemList: Array<any> | null = null;
 
   @Input() pageEmitter: EventEmitter<IPageTableInfo> = new EventEmitter();
   @Output() filterAction: EventEmitter<IElementToPractice | null> =
@@ -40,95 +44,80 @@ export class TableComponent {
   @Output() editAction: EventEmitter<string> = new EventEmitter();
   @Output() deleteAction: EventEmitter<string> = new EventEmitter();
   @Output() deleteAllAction: EventEmitter<boolean> = new EventEmitter();
-  // @Output() setOfCheckedIdsEmitter: EventEmitter<Set<number>> =
-  //   new EventEmitter();
-
-  // checked = false;
-  // indeterminate = false;
+  @Output() changeStateEmitter: EventEmitter<{ id: string, state: any}> = new EventEmitter();
   setOfCheckedId = new Set<number>();
 
-  public actualLabel: string = localStorageLabels.selectedListOfETP;
+  // public actualLabel: string = localStorageLabels.etp.selectedList;
+  get actualLabel(): string {
+    const urlA: string[] = this._router.url.split('/');
+    switch ( urlA[urlA.length - 1] ) {
+      case RoutesApp.practiceLists:
+        return localStorageLabels.pl.selectedList;
+        break;
+    
+      case RoutesApp.roles:
+        return localStorageLabels.role.selectedList;
+        break;
+    
+      default:
+        return localStorageLabels.etp.selectedList
+        break;
+    }
+  };
   
-  public get selectedListOfETP(): boolean {
-    return localStorage.getItem(localStorageLabels.selectedListOfETP) ? true : false;
-  }
-  
-  public get paginatedItems(): Array<any> {
+  get paginatedItems(): Array<any> {
+    if ( !this.itemList ) return [];
     const { index, size } = this.page;
     const sheet: number = size * index;
     return this.itemList.slice(sheet - size, sheet);
   }
   
-  public get checked(): boolean {
+  get checked(): boolean {
     return this.paginatedItems.length > 0 && this.paginatedItems.every((item) => {
       return this.setOfCheckedId.has(item.id);
     });
   }
   
-  public get indeterminate(): boolean {
+  get indeterminate(): boolean {
     return !this.checked && this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id));
   }
   
-  public get url(): string {
+  get url(): string {
     return this._router.url;
   }
   
-  public get actualSelectedItems(): any[] {
+  get actualSelectedItems(): any[] {
     return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]');
   }
   
-  public get actualFilterLabel(): string {
-    return this.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.filerBodyETP : localStorageLabels.filerBodyPL;
+  get actualFilterLabel(): string {
+    return this.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.etp.filerBody : localStorageLabels.pl.filerBody;
   }
   
-  public get actualSelectedFilters(): Object | null {
+  get actualSelectedFilters(): Object | null {
     return JSON.parse(localStorage.getItem(this.actualFilterLabel) ?? 'null');
   }
 
-  constructor(private _router: Router, private _nzModalSvc: NzModalService) {
-    // JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
-    this.initSet();
-  }
+  constructor(private _router: Router, private _nzModalSvc: NzModalService) {}
   
-  public initSet(): void {
-    // const val = this.url.split('/')[1localStorageLabels.selectedListOfETP];
-    // console.log({ val });
-    switch (this.url.split('/')[1]) {
-      case RoutesApp.practiceLists:
-        this.actualLabel = localStorageLabels.selectedListOfPL;
-        break;
-        
-        default:
-        this.actualLabel = localStorageLabels.selectedListOfETP;
-        break;
+  ngOnInit(): void {
+    for (const item of this.actualSelectedItems) {
+      this.setOfCheckedId.add(item.id);
     }
-    // return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
-    return this.actualSelectedItems.forEach((element: any) => this.setOfCheckedId.add(element.id));
-  };
+  }
 
-  // public selectionInit(): void {
-  //   JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]').forEach((element: any) => this.setOfCheckedId.add(element.id));
-  //   // if ( this.setOfCheckedId.values.length === 0 ) return;
-  //   // this.refreshCheckedStatus();
-  //   // console.log({ indeterminate: this.indeterminate, checked: this.checked });
-  // }
-
-  public getItemIndex(i: number): number {
+  getItemIndex(i: number): number | void {
+    if ( !this.itemList ) return;
     const item = this.itemList.findIndex((item) => item.id === i);
     return item < 0 ? 0 : item + 1;
   }
 
-  onAllChecked(checked: boolean): void {
-    // console.log({ allCheckedFunc: { checked } });
-    // this.listOfCurrentPageData
-    //   .filter(({ disabled }) => !disabled)
+  public onAllChecked(checked: boolean): void {
     this.paginatedItems
-      // .filter(({ disabled }) => !disabled)
       .forEach(({ id }) => this.updateCheckedSet(id, checked));
-    // this.refreshCheckedStatus();
   }
 
-  updateCheckedSet(id: number, checked: boolean): void {
+  public updateCheckedSet(id: number, checked: boolean): void {
     if (checked) {
       this.setOfCheckedId.add(id);
     } else {
@@ -137,45 +126,31 @@ export class TableComponent {
     return this.setSelectedList();
   }
 
-  // refreshCheckedStatus(): void {
-  //   // this.checked = this.paginatedItems.every(({ id }) =>
-  //   //   this.setOfCheckedId.has(id)
-  //   // );
-  //   // this.indeterminate =
-  //   //   this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id)) &&
-  //   //   !this.checked;
-  //   this.setSelectedList();
-  // }
-
   public setSelectedList(): void {
+    if ( !this.itemList ) return;
     const selectedList = this.itemList.filter((item) =>
       this.setOfCheckedId.has(item.id)
     );
 
     if (selectedList.length === 0)
-      // return localStorage.removeItem(localStorageLabels.selectedListOfETP);
       return localStorage.removeItem(this.actualLabel);
 
     return localStorage.setItem(
-      // localStorageLabels.selectedListOfETP,
       this.actualLabel,
       JSON.stringify(selectedList)
     );
   }
 
-  onItemChecked(id: number, checked: boolean): void {
-    // console.log({ itemCheckedFunc: { id, checked } });6
+  public onItemChecked(id: number, checked: boolean): void {
     this.updateCheckedSet(id, checked);
-    // this.refreshCheckedStatus();
   }
 
-  public getKeys(item: IWord): Array<string> {
+  getKeys(item: IWord): Array<string> {
     console.log({ item });
-    // delete item.id
     return Object.keys(item);
   }
 
-  public getClass(item: any, keyItem: ITableItem): string {
+  getClass(item: any, keyItem: ITableItem): string {
     const key: string = keyItem.key;
 
     if (!item[keyItem.key]) {
@@ -195,22 +170,17 @@ export class TableComponent {
     return '';
   }
 
-  public getNestedValue(obj: any, path: string): any {
+  getNestedValue(obj: any, path: string): any {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
   }
 
-  public getValue(item: any, keyItem: ITableItem): string {
-    // const valueItem: any = item[keyItem.key];
-    // const key: string = keyItem.key;
+  getValue(item: any, keyItem: ITableItem): string {
     const key: string = keyItem.key;
     const valueItem: any = this.getNestedValue(item, key);
 
     if (key.endsWith('irregular')) {
       return valueItem ? 'Irregular' : 'Regular';
     } else if (!valueItem) {
-      // if (item.verbInfo.wordType.id !== 'cieWObetRIxQzKFddEg4') {
-      //   return '----'
-      // }
 
       const verbInfo: string = 'verbInfo';
       if (
@@ -255,8 +225,12 @@ export class TableComponent {
   }
 
   public paginationChange(): void {
-    // return this.pageEmitter.emit(this.page);
     this.pageEmitter.emit(this.page);
-    // this.refreshCheckedStatus();
+  }
+
+
+  public changeState({ id, state }: TRoleChangeState): void {
+    console.log({ id, state })
+    return this.changeStateEmitter.emit({ id, state });
   }
 }

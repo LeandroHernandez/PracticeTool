@@ -10,7 +10,8 @@ import {
    authState,
    deleteUser,
    UserCredential,
-   User 
+   User, 
+   linkWithPopup
   } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 
@@ -29,6 +30,9 @@ export class AuthService {
   googleAuth(): Promise<UserCredential> {
     return signInWithPopup(this.auth, new GoogleAuthProvider());
   }
+  // googleAuth(u: User): Promise<UserCredential> {
+  //   return linkWithPopup(u, new GoogleAuthProvider());
+  // }
 
   logOut(): Promise<void> {
     return signOut(this.auth);

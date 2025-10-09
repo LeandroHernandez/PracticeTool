@@ -4,7 +4,7 @@
 <div class="main_content">
   <button
     type="button"
-    class="btn add_btn"
+    class="button-add"
     title="Add Word"
     [routerLink]="[contentHeaderInfo.add.route]"
     [title]="contentHeaderInfo.add.title"
@@ -14,15 +14,19 @@
   </button>
   <h3 class="title">{{ contentHeaderInfo.title }}</h3>
   <!-- [routerLink]="[contentHeaderInfo.test.route]"  -->
-  <button
-    type="button"
-    class="btn test_btn"
-    title="Test"
-    (click)="goToTest()"
-    [title]="contentHeaderInfo.test.title"
-  >
-    {{ contentHeaderInfo.test.label }}
-    <i class="bi bi-play-fill"></i>
-  </button>
+   @if ( contentHeaderInfo.test ) {
+     <button
+       type="button"
+       class="button-test"
+       title="Test"
+       (click)="goToTest()"
+       [title]="contentHeaderInfo.test.title"
+     >
+       {{ contentHeaderInfo.test.label }}
+       <i class="bi bi-play-fill"></i>
+     </button>
+   } @else {  
+    <div></div>
+   }
 </div>
 }

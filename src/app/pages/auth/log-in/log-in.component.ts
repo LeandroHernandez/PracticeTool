@@ -1,17 +1,20 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { RoutesApp } from '../../../constants';
-import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
-import { AuthService } from '../auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { validateComplexPassword } from '../validate-complex-password';
+
+import { firebaseErrors, localStorageLabels, RoutesApp } from '../../../enums';
+
 import { UsersService } from '../../root/pages/users';
-import { Subscription } from 'rxjs';
-import { firebaseErrors } from '../../../constants/firebase-errors';
+import { AuthService } from '../auth.service';
+
+import { validateComplexPassword } from '../validate-complex-password';
+
+import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 @Component({
   selector: 'app-log-in',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, NzPopoverModule],
   templateUrl: './log-in.component.html',
   styleUrl: './log-in.component.css'
 })
@@ -19,12 +22,17 @@ import { firebaseErrors } from '../../../constants/firebase-errors';
 export class LogInComponent {
   public signUpUrl: string = `/${RoutesApp.auth}/${RoutesApp.signUp}`;
 
-  public notEnabledTitle: string = 'This option will be enabled forward';
+  public notEnabledTitle: string = this.localLanguage === 'en' ? 'This option will be enabled forward' : 'Esta opción estará habiliotada más adelante';
 
   public form: FormGroup;
+  public languageForm: FormGroup;
 
   public showErrors: boolean = false;
   public showPassword: boolean = false;
+  
+  get localLanguage(): string {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  }
 
   constructor (
     private _router: Router, 
@@ -37,11 +45,21 @@ export class LogInComponent {
       email: ['', [ Validators.required, Validators.email ]],
       password: ['', [ Validators.required, validateComplexPassword() ]],
     })
+
+    this.languageForm = this._fb.group({
+      language: ['en'],
+    })
+
+    this.languageForm.get('language')?.valueChanges.subscribe(val => this.languageChange(val));
   }
   
   public getControlErrors(control: string): Array<string> {
     return Object.keys(this.form.get(control)?.errors ?? {});
   }
+
+  public languageChange(val: string): void {
+    return localStorage.setItem(localStorageLabels.localCurrentLanguage, val);
+  };
 
   public letters(word: string): string[] {
     return word.split('');
@@ -49,11 +67,11 @@ export class LogInComponent {
 
   public invalidForm(): NzNotificationRef {
     this.showErrors = true;
-    return this._nzNotificationSvc.warning('Invalid Form', 'The form is not valid, please check out the values.');
+    return this._nzNotificationSvc.warning(this.localLanguage === 'en' ? 'Invalid Form' : 'Formulario Invalido', this.localLanguage === 'en' ? 'The form is not valid, please check out the values.' : 'El Formulario no es valido, por favor revise los valores');
   }
 
   public invalidCredentials(): NzNotificationRef {
-    return this._nzNotificationSvc.warning('No matching user', 'There is no user matching the entered credentials.');
+    return this._nzNotificationSvc.warning(this.localLanguage === 'en' ? 'No matching user' : 'Usuario no encontrado', this.localLanguage === 'en' ? 'There is no user matching the entered credentials.' : 'Ningún uuario corresponde a las credenciales ingresadas');
   }
 
   public success(successResponse: any): Promise<boolean> {
@@ -67,14 +85,17 @@ export class LogInComponent {
   public error(errorResponse: any): NzNotificationRef {
     console.log({ errorResponse });
 
-    return this._nzNotificationSvc.error('error', 'Something went wrong, please try again.');
+    return this._nzNotificationSvc.error('error', this.localLanguage ? 'Something went wrong, please try again.' : 'Algo salio mal, por favor vuelva a intentarlo.');
   }
   
-  public googleAuth(): Promise<boolean | NzNotificationRef> {
-    return this._authSvc.googleAuth()
-    .then(googleAuthResponse => this.success(googleAuthResponse))
-    .catch(error => this.error(error));
-  }
+  // public googleAuth(): Promise<boolean | NzNotificationRef> {
+
+  //   // this._usersSvc.getFilteredUsers({email: })
+    
+  //   return this._authSvc.googleAuth()
+  //   .then(googleAuthResponse => this.success(googleAuthResponse))
+  //   .catch(error => this.error(error));
+  // }
 
   public submit(): void | NzNotificationRef | Promise<any> {
     console.log({ loginForm: this.form });
@@ -85,7 +106,7 @@ export class LogInComponent {
 
     return this._authSvc.logIn(email, password)
       .then(response => this.success(response))
-      .catch(error => { if(error.code === firebaseErrors.invalidCredential) return this.invalidCredentials(); return error(error)});
+      .catch(error => { if(error.code === firebaseErrors.auth.invalidCredential) return this.invalidCredentials(); return error(error)});
 
   }
 }

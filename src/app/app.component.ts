@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { localStorageLabels } from './enums';
 // import { HeaderComponent } from './components/header/header.component';
 // import { NavComponent } from './components/nav/nav.component';
 
@@ -12,6 +13,10 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'practiceTool';
+
+  get loadingClass (): string {
+    return localStorage.getItem(localStorageLabels.loading) ?? '';
+  }
 
   // public showNav: boolean = false;
 

@@ -1,1 +1,22 @@
-<p>users works!</p>
+<!-- <p>users works!</p> -->
+
+<main class="main">
+  <div class="content-header">
+    <app-content-header
+      [contentHeaderInfo]="contentHeaderInfo"
+    ></app-content-header>
+  </div>
+  <div class="table">
+    <app-table
+      [tableInfo]="tableInfo"
+      [itemList]="users"
+      [page]="page"
+      (editAction)="userEdit($event)"
+      (deleteAction)="userDelete($event)"
+      (pageEmitter)="page = $event"
+      (filterAction)="getUsers($event)"
+      (deleteAllAction)="deleteAll($event)"
+      (changeStateEmitter)="changeState($event)"
+    ></app-table>
+  </div>
+</main>

@@ -9,7 +9,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
 import { PracticeListsService } from '../practice-lists.service';
 import { IPracticeList } from '../../../../../interfaces';
-import { localStorageLabels } from '../../../../../constants';
+import { localStorageLabels } from '../../../../../enums';
 
 @Component({
   selector: 'app-add-practice-list',
@@ -166,26 +166,6 @@ export class AddPracticeListComponent implements OnInit {
     )
   }
 
-  // public elementToPraciceEdit(id: string): void {
-  //   // this._router.navigate([`/${RoutesApp.elementToPracices}/${RoutesApp.addelementToPracice}/${id}`])
-  // }
-
-  // public elementToPraciceDelete(id: string): void {
-  //   // this._elementToPraciceSvc.deleteelementToPracice(id)
-  //   // .then(
-  //   //   (deleteResponse) => {
-  //   //     console.log({deleteResponse});
-  //   //     this._notificationSvc.success('Success', 'elementToPracice deleted successfully.');
-  //   //   }
-  //   // )
-  //   // .catch(
-  //   //   (error) => {
-  //   //     console.log({error});
-  //   //     this._notificationSvc.error('Error', 'There was an error and we were not able to delete the elementToPracice.');
-  //   //   }
-  //   // )
-  // }
-
   public invalidForm(): NzNotificationRef {
     return this._nzNotificationSvc.warning('Invalid Form', 'The form is not valid, please check out the values.');
   };
@@ -210,7 +190,7 @@ export class AddPracticeListComponent implements OnInit {
       .then( 
         response => {
           console.log({ response });
-        const selectedList: Array<IPracticeList> = JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfPL) ?? '[]');
+        const selectedList: Array<IPracticeList> = JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedList) ?? '[]');
         
         if ( selectedList.length > 0 ) {
           const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
@@ -221,7 +201,7 @@ export class AddPracticeListComponent implements OnInit {
               list.push(this.elementsToPractice.find(etpItem => etpItem.id === id) ?? id);
             });
             selectedList[selectedItemIndex] = { ...updatedItem, ...formValue, list };
-            localStorage.setItem(localStorageLabels.selectedListOfPL, JSON.stringify(selectedList));
+            localStorage.setItem(localStorageLabels.pl.selectedList, JSON.stringify(selectedList));
           }
         }
           this.successful(true);

@@ -22,8 +22,8 @@ import {
   Query,
   setDoc,
 } from '@angular/fire/firestore';
-import { DbCollections } from '../../../../constants';
-import { IUser } from '../../../../interfaces';
+import { DbCollections } from '../../../../enums';
+import { IUser, TUser } from '../../../../interfaces';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { RolesService } from '../roles';
 
@@ -46,7 +46,7 @@ export class UsersService {
       pageSize?: number;
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
     } = {}
-  ): Observable<any[]> {
+  ): Observable<IUser[]> {
 
     // console.log({ filters: {...filters} });
     const usersRef = collection(
@@ -78,7 +78,7 @@ export class UsersService {
   }
   
 private executeQuery(
-  queryRef: Query<IUser>,
+  queryRef: Query<TUser>,
   options: {
     pageSize?: number;
     startAfterDoc?: QueryDocumentSnapshot<DocumentData>;

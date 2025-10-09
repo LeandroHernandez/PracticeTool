@@ -5,6 +5,12 @@
     width: 100%;
     display: flex;
     justify-content: end;
+    
+    &.es {
+        .title-form {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+    }
 }
 
 .section {
@@ -60,13 +66,21 @@
     display: grid;
     gap: 1rem;
 
+    transition: .2s ease-in;
+    transition-property: gap, margin-bottom;
+
+    &:has(.invalid-icon) {
+        gap: 1.5rem;
+        margin-bottom: .5lh;
+    }
+
     .input-box {
 
         position: relative;
         display: grid;
         gap: .2rem;
 
-        &:has(.p-error) .input {
+        &:has(.invalid-icon) .input {
             border-color: var(--error-color-bg);
         }
 
@@ -101,10 +115,13 @@
             background-color: var(--primary);
         }
     
-        .p-error {
+        .invalid-icon {
             color: var(--error-color);
-            border-radius: .2rem;
-            font-size: clamp(.6rem, 1vw, .8rem);
+            text-align: start;
+            width: fit-content;
+            position: absolute;
+            right: .5rem;
+            bottom: -1lh;
         }
     }
 }
@@ -177,6 +194,10 @@
 }
 
 .button-header-logIn {
+    cursor: not-allowed;
+}
+
+.button-google {
     cursor: not-allowed;
 }
 

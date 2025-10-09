@@ -1,36 +1,39 @@
-
-.main {
-    height: calc(100% - 92px);
-    width: 100%;
-}
-
-.main_contianer {
-    height: 100%;
-    /* width: 100%; */
-}
-
-.header {
-    width: 100%;
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-}
-
-.content_section {
-    height: 100%;
-    display: flex;
-}
-
-.nav {
-    height: 100%;
-    position: fixed;
-    left: 0;
-    z-index: 1;
-    /* padding: 20px; */
-}
-
-.content {
+.main-app {
     height: 100%;
     width: 100%;
+}
+
+.loading {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.2);
+        z-index: 20;
+    }
+
+    &::after {
+        content: '';
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translateY(50%, 50%);
+        height: 2.5rem;
+        aspect-ratio: 1/1;
+        border-radius: 50%;
+        border: .2rem dashed var(--accent);
+        animation: 2s spinner_animation infinite;
+        z-index: 20;
+    }
+}
+
+@keyframes spinner_animation {
+    to {
+        transform: rotate(180deg);
+    }
 }

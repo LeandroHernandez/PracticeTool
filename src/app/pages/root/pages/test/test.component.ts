@@ -12,7 +12,7 @@ import {
 // import { ElementToPracticeService } from '../components/add-element-to-prectice/element-to-practice.service';
 // import { AddElementToPrecticeComponent } from '../components/add-element-to-prectice/add-element-to-prectice.component';
 import { Router, RouterLink } from '@angular/router';
-import { localStorageLabels } from '../../../../constants';
+import { localStorageLabels } from '../../../../enums';
 import { FormComponent } from '../elements-to-practice/add-element-to-practice/form';
 import { BehaviorSubject } from 'rxjs';
 import {
@@ -94,11 +94,11 @@ export class TestComponent implements OnInit, OnDestroy {
 
   public verifySelectedList(): void | Array<IElementToPractice2> {
     const selectedList: Array<IElementToPractice2> = JSON.parse(
-      // localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]'
-      localStorage.getItem(localStorageLabels.customSelectedListOfETP) ?? '[]'
+      // localStorage.getItem(localStorageLabels.etp.selectedList) ?? '[]'
+      localStorage.getItem(localStorageLabels.etp.customSelectedList) ?? '[]'
     );
 
-    // localStorage.removeItem(localStorageLabels.customSelectedListOfETP);
+    // localStorage.removeItem(localStorageLabels.etp.customSelectedList);
 
     if (selectedList.length > 0) {
       // return (this.elementsToPractice = selectedList);

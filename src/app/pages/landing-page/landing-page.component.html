@@ -10,9 +10,10 @@
         <nav class="nav">
             <ul class="{{ navShow ? 'ul-nav-active': 'ul-nav' }}">
                 <li class="li-nav">
+                    <!-- [routerLink]="[baseRoute]"
+                    fragment="main" -->
                     <a
-                        [routerLink]="[baseRoute]"
-                        fragment="main"
+                        (click)="scrollTop()"
                         class="a-nav"
                         [class.active]="activeSection === 'home'"
                     >
@@ -63,18 +64,46 @@
         <i class="bi bi-list" (click)="navShow = !navShow" ></i>
     </header>
 
-    <section id="home" appObserveSection sectionId="home" (sectionInView)="activeSection = 'home'" class="section-home">
+    <section id="home"
+        appObserveSection
+        [thresholdDesktop]="0.6"
+        [thresholdMobile]="0.5"
+        sectionId="home"
+        (sectionInView)="activeSection = 'home'"
+        class="section-home"
+    >
         <app-home [currentLanguage]="localLanguage" ></app-home>
     </section>
 
-    <section id="features" appObserveSection sectionId="features" (sectionInView)="activeSection = 'features'" class="section-features">
+    <section id="features"
+        appObserveSection
+        [thresholdDesktop]="0.6"
+        [thresholdMobile]="0.5"
+        sectionId="features"
+        (sectionInView)="activeSection = 'features'"
+        class="section-features"
+    >
         <app-features [currentLanguage]="localLanguage" ></app-features>
     </section>
 
-    <section id="reviews" appObserveSection sectionId="reviews" (sectionInView)="activeSection = 'reviews'" class="section-reviews">
+    <section id="reviews"
+        appObserveSection
+        [thresholdDesktop]="0.6"
+        [thresholdMobile]="0.5"
+        sectionId="reviews"
+        (sectionInView)="activeSection = 'reviews'"
+        class="section-reviews"
+    >
         <app-reviews [currentLanguage]="localLanguage" ></app-reviews>
     </section>
-    <section id="pricing" appObserveSection sectionId="pricing" (sectionInView)="activeSection = 'pricing'" class="section-pricing">
+    <section id="pricing"
+        appObserveSection
+        [thresholdDesktop]="0.6"
+        [thresholdMobile]="0.5"
+        sectionId="pricing"
+        (sectionInView)="activeSection = 'pricing'"
+        class="section-pricing"
+    >
         <app-pricing [currentLanguage]="localLanguage" ></app-pricing>
     </section>
 

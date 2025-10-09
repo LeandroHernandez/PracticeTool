@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-import { localStorageLabels, RoutesApp } from '../../../../../constants';
+import { localStorageLabels, RoutesApp } from '../../../../../enums';
 
 import {
   NzNotificationRef,
@@ -71,14 +71,14 @@ export class AddElementToPracticeComponent implements OnInit {
       .updateElementToPractice2(this.id, elementToPractice)
       .then((reponse) => {
         console.log({ reponse });
-        const selectedList: Array<IElementToPractice2> = JSON.parse(localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]');
+        const selectedList: Array<IElementToPractice2> = JSON.parse(localStorage.getItem(localStorageLabels.etp.selectedList) ?? '[]');
         
         if ( selectedList.length > 0 ) {
           const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
           if (selectedItemIndex >= 0) {
             // selectedList.splice(selectedItemIndex, 1, elementToPractice);
             selectedList[selectedItemIndex] = { ...selectedList[selectedItemIndex], ...elementToPractice};
-            localStorage.setItem(localStorageLabels.selectedListOfETP, JSON.stringify(selectedList));
+            localStorage.setItem(localStorageLabels.etp.selectedList, JSON.stringify(selectedList));
           }
         }
         this._nzNotificationService.success(

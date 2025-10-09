@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { RoutesApp } from './constants';
+import { RoutesApp } from './enums';
 import { authGuard } from './guards/auth.guard';
 import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
 

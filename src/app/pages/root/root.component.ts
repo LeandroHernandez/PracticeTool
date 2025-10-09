@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { NavComponent } from './components/nav/nav.component';
+import { firebaseErrors } from '../../enums';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ export class RootComponent {
   // title = 'practiceTool';
 
   public showNav: boolean = false;
+  public ej: string = firebaseErrors.auth.emailAlreadyInUse;
 
   onContentClick(event: MouseEvent): void {
     // const target = event.target as HTMLElement;

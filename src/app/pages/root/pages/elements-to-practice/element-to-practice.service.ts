@@ -22,7 +22,7 @@ import {
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { IElementToPractice, IElementToPractice2 } from '../../../../interfaces';
-import { DbCollections, typesOfWords } from '../../../../constants';
+import { DbCollections, typesOfWords } from '../../../../enums';
 import { TypeService } from '../types/types.service';
 import { Query, setDoc } from 'firebase/firestore';
 

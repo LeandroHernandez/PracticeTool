@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { RoutesApp } from '../../../../constants';
+import { RoutesApp } from '../../../../enums';
 
 export const elementsToPracticeRoutes: Routes = [
   {
@@ -10,14 +10,14 @@ export const elementsToPracticeRoutes: Routes = [
       ),
   },
   {
-    path: RoutesApp.addElementToPractice,
+    path: RoutesApp.add,
     loadComponent: () =>
       import('./add-element-to-practice').then(
         (m) => m.AddElementToPracticeComponent
       ),
   },
   {
-    path: `${RoutesApp.addElementToPractice}/:id`,
+    path: `${RoutesApp.add}/:id`,
     loadComponent: () =>
       import('./add-element-to-practice').then(
         (m) => m.AddElementToPracticeComponent

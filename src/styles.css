@@ -18,16 +18,20 @@
   --accent2: #875c49;
   --accent3: #90939f;
 
+  
+  --secondary-bg: #aba7d7;
+
 
   /* error-color */
   --error-color: rgba(255, 77, 80);
-  --error-color-bg: rgba(255, 77, 80, 0.1);
+  /* --error-color-bg: rgba(255, 77, 80, 0.1); */
+  --error-color-bg: #ffd3d3;
 
   scroll-behavior: smooth;
 
   --padding: 1vw 2.5vw;
   --padding-section: 5rem 2.5vw;
-  --hh: 73.31px;
+  --hh: calc(4vh + 1lh + .65rem);
 }
 
 * {
@@ -54,54 +58,198 @@ ul {
     padding: 0;
 }
 
-.btn, .button {
+.btn, [class^="button"] {
     cursor: pointer;
     transition: .2s transform ease;
-
+    
+    .bi::before {
+        transition: .2s transform ease;
+    }
+    
     &:hover {
         transform: scale(1.1);
+        
+        .bi::before {
+            transform: scale(1.5);
+        }
     }
 }
  
 .btn-primary {
-    /* --bs-btn-font-weight: 600; */
     --bs-btn-color: var(--primary);
     --bs-btn-bg: var(--secondary);
     --bs-btn-border-color: var(--secondary);
     --bs-btn-hover-color: var(--primary);
-    /* --bs-btn-hover-bg: #{shade-color($bd-violet, 10%)}; */
     --bs-btn-hover-bg: var(--accent);
     --bs-btn-hover-border-color: var(--accent);
-    /* --bs-btn-hover-border-color: #{shade-color($bd-violet, 10%)};
-    --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-    --bs-btn-active-color: var(--bs-btn-hover-color);
-    --bs-btn-active-bg: #{shade-color($bd-violet, 20%)};
-    --bs-btn-active-border-color: #{shade-color($bd-violet, 20%)}; */
-  }
+}
 
+
+.fieldset {
+    width: 100%;
+    /* text-align: end; */
+    display: grid;
+    gap: 1rem;
+
+    transition: .2s ease-in;
+    transition-property: gap, margin-bottom;
+    
+    --special-color: rgb(211, 212, 206);
+
+    &:has(.invalid-icon) {
+        gap: 1.5rem;
+        margin-bottom: .5lh;
+    }
+
+    .input-box {
+
+        position: relative;
+        display: grid;
+        gap: .2rem;
+
+        transition: .15s transform ease;
+        
+        &:hover {
+            transform: scale(100.5%);
+
+            .input, .textarea {
+                border-color: #dad9e9;
+            }
+        }
+
+        &:has(.invalid-icon) {
+            .input, .textarea {
+                border-color: var(--error-color-bg);
+            }
+        }
+
+        &:has(.input:focus), &:has(.input:not(:placeholder-shown)), &:has(.textarea:focus), &:has(.textarea:not(:placeholder-shown)) {
+            .span-letter {
+                border-bottom: .1rem var(--secondary);
+                transform: translateY(-100%);
+                color: var(--accent);
+            }
+        }
+
+        .bi-asterisk {
+            position: absolute;
+            top: -1lh;
+            left: 0;
+            width: fit-content;
+            font-size: .6rem;
+            color: var(--error-color);
+        }
+
+        .label-input {
+            position: relative;
+
+            .span-label-div {
+                position: absolute;
+                top: .6rem;
+                /* bottom: .5rem; */
+                left: .7rem;
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                /* gap: .05rem; */
+                color: #808080;
+            }
+        }
+
+        .input, .textarea {
+            width: 100%;
+            border: .15rem solid var(--special-color);
+            outline: none;
+            border-radius: .5rem;
+            padding: .5rem;
+            background-color: var(--primary);
+            
+            transition: .15s border-color ease;
+        }
+    
+        .invalid-icon {
+            color: var(--error-color);
+            text-align: start;
+            width: fit-content;
+            position: absolute;
+            right: .5rem;
+            bottom: -1lh;
+        }
+    }
+}
+
+.span-letter {
+    font-size: clamp(.4rem, 4vw, .9rem);
+    transition: .2s ease;
+    transition-property: transform, color;
+    background-color: var(--primary);
+    padding: .0 .05rem;
+    transition-delay: calc(var(--i) * 50ms);
+    position: relative;
+}
   
  
 .ant-switch {
-    background-color: var(--accent3);
-    border-color: var(--accent3);
+    background-color: transparent;
+    border: .1rem solid var(--secondary);
+    box-shadow: none;
 
-    & span {
+    height: 1.1lh;
+
+    transition: .2s ease;
+    transition-property: background-color, border-color;
+
+    span {
         color: var(--secondary);
+        font-size: .8rem;
+        font-weight: 600;
+        transition: .2s color ease;
+    }
+
+    .ant-switch-handle::before {
+        background-color: var(--secondary);
+    }
+    
+    &:hover {
+        border-color: var(--accent);
+       
+        span {
+            color: var(--accent);
+        }
+
+        .ant-switch-handle::before {
+            background-color: var(--accent);
+        }
+
     }
 }
 
 
 .ant-switch-checked {
-    background-color: var(--accent);
-    border-color: var(--accent);
-}
+    background-color: var(--secondary);
+    /* border-color: var(--accent); */
 
-.ant-switch .ant-switch-handle::before {
-  background-color: var(--accent);
-}
+    span {
+        color: var(--primary);
+        font-size: .9rem;
+        font-weight: 500;
+    }
+    
+    .ant-switch-handle::before {
+      background-color: var(--primary);
+    }
 
-.ant-switch-checked .ant-switch-handle::before {
-  background-color: var(--secondary);
+    &:hover {
+        background-color: var(--accent);
+
+        span {
+            color: var(--primary);
+        }
+        
+        .ant-switch-handle::before {
+            background-color: var(--primary);
+        }
+    }
 }
 
 .main-landing-page [class^="header-"] {
@@ -124,6 +272,17 @@ ul {
             
         }
     }
+}
+
+select.form-select {
+    outline: none;
+    padding: .2rem .5rem;
+    background-color: var(--primary);
+    font-size: 1rem;
+    height: 100%;
+    border-radius: .3rem;
+    border-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 @supports (animation-timeline: auto) {
@@ -175,6 +334,17 @@ ul {
         }
     }
     
+    @keyframes hide {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: .2;
+            transform: scale(.25);
+        }
+    }
+    
     @keyframes appear {
         from {
             opacity: 0;
@@ -184,7 +354,8 @@ ul {
         }
     }
     
-    @keyframes hide {
+    
+    @keyframes disappear {
         from {
             opacity: 1;
         }

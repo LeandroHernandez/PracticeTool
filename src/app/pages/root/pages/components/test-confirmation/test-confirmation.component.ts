@@ -11,7 +11,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
 import { IElementToPractice2, IPracticeList, IType } from '../../../../../interfaces';
 import { TypeService } from '../../../pages/types/types.service';
-import { localStorageLabels, RoutesApp } from '../../../../../constants';
+import { localStorageLabels, RoutesApp } from '../../../../../enums';
 import { Router } from '@angular/router';
 import { ElementToPracticeService } from '../../../pages/elements-to-practice';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -64,13 +64,13 @@ export class TestConfirmationComponent {
 
   get selectedListOfETP(): Array<IElementToPractice2> {
     return JSON.parse(
-      localStorage.getItem(localStorageLabels.selectedListOfETP) ?? '[]'
+      localStorage.getItem(localStorageLabels.etp.selectedList) ?? '[]'
     );
   }
 
   get selectedListOfPL(): Array<IPracticeList> {
     return JSON.parse(
-      localStorage.getItem(localStorageLabels.selectedListOfPL) ?? '[]'
+      localStorage.getItem(localStorageLabels.pl.selectedList) ?? '[]'
     );
   }
 
@@ -161,7 +161,7 @@ export class TestConfirmationComponent {
     // console.log({ list });
     const finalList: any[] = [];
     list.forEach(item => { if (!finalList.some(subItem => subItem.id === item.id)) finalList.push(item)});
-    return localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify(finalList));
+    return localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify(finalList));
   }
   
   public goToTest(): void | Subscription | Promise<boolean> {
@@ -180,7 +180,7 @@ export class TestConfirmationComponent {
             this._nzNotificationSvc.warning('Without practice lists', 'There are not any practice lists');
             return this.navigate(true);
           }
-          // localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify([...new Set(practiceLists.flatMap(item => item.list))]));
+          // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify([...new Set(practiceLists.flatMap(item => item.list))]));
           this.setCustomList(practiceLists.flatMap(item => item.list));
           return this.navigate();
         }, 
@@ -191,7 +191,7 @@ export class TestConfirmationComponent {
         }
       );
 
-      // localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify([...new Set(this.selectedListOfPL)]))
+      // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify([...new Set(this.selectedListOfPL)]))
       this.setCustomList(this.selectedListOfPL.flatMap(item => item.list));
       return this.navigate()
     }
@@ -200,7 +200,7 @@ export class TestConfirmationComponent {
 
     // if ( this.selectedItems.length < 1 || selectedOption ) {
     if ( selectedOption ) {
-      // if (selectedOption) localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify(this.selectedListOfETP))
+      // if (selectedOption) localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify(this.selectedListOfETP))
       // console.log({ selectedOption });
       if (selectedOption) this.setCustomList(this.selectedListOfETP);
       return this.navigate()
@@ -214,7 +214,7 @@ export class TestConfirmationComponent {
         (filteredEtpsByKind) => {
           // console.log({ filteredEtpsByKind })
           if (filteredEtpsByKind.length < 1) return this._nzNotificationSvc.warning('Without matches', 'There are not any elements to practice for this filters');
-          // localStorage.setItem(localStorageLabels.customSelectedListOfETP, JSON.stringify(filteredEtpsByKind));
+          // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify(filteredEtpsByKind));
           this.setCustomList(filteredEtpsByKind);
           return this.navigate();
         }, 
@@ -224,13 +224,5 @@ export class TestConfirmationComponent {
           return this.navigate(true)
         }
     );
-
-    // localStorage.setItem(
-    //   localStorageLabels.selectedListOfKinds,
-    //   JSON.stringify(this.selectedItems)
-    // );
-    // this._router.navigateByUrl(
-    //   `/${RoutesApp.elementsToPractice}/${RoutesApp.test}`
-    // );
   }
 }

@@ -1,9 +1,13 @@
 
 export interface IRole {
-    id?: string,
+    id: string,
     name: string,
     description?: string,
-    createdAt: Date,
-    lastUpdate: Date,
+    createdAt: Date | any,
+    lastUpdate: Date | any,
     state: boolean,
-}
+};
+
+export type TRole = Omit<IRole, 'id'>;
+
+export type TRoleChangeState = Pick<IRole, 'id' | 'state'>;
