@@ -9,7 +9,11 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { RoutesApp, typesOfElementsToPractice, typesOfWords } from '../../../../../../enums';
+import {
+  RoutesApp,
+  typesOfElementsToPractice,
+  typesOfWords,
+} from '../../../../../../enums';
 
 import {
   NzNotificationRef,
@@ -21,7 +25,6 @@ import { TypeService } from '../../../types/types.service';
 import { Observable, Subscription } from 'rxjs';
 import {
   IElementToPractice,
-  IElementToPractice2,
   IEtp,
   IEtpItem,
   IEtpToCheck,
@@ -48,7 +51,7 @@ export class FormComponent implements OnInit {
   @Input() elementToPractice: IElementToPractice | any = null;
   // @Input() etp$: Observable<IEtpItem | null> | null = null;
 
-  @Output() formInfoEmitter: EventEmitter<IElementToPractice2> =
+  @Output() formInfoEmitter: EventEmitter<IElementToPractice> =
     new EventEmitter();
   @Output() etpEmitter: EventEmitter<IEtpToCheck> = new EventEmitter();
 
@@ -85,7 +88,7 @@ export class FormComponent implements OnInit {
       this.id = this._route.snapshot.paramMap.get('id');
       this.id ? this.getElementToPractice(this.id) : this.formInit();
     } else this.formInit(this.elementToPractice);
-    
+
     this._testSvc.etp$.subscribe((etpItem) => {
       // console.log({ etpItem });
       if (!etpItem) return;
@@ -102,7 +105,7 @@ export class FormComponent implements OnInit {
 
   get etpItem(): IEtpItem | null {
     return this._testSvc.current;
-  };
+  }
 
   get type(): FormControl {
     return this.form.get('type') as FormControl;
@@ -148,7 +151,7 @@ export class FormComponent implements OnInit {
 
   public setSupscriptions(): void {
     this.form.get('selectedUses')?.valueChanges.subscribe((value) => {
-      if ( !this.form.get('uses') ) return;
+      if (!this.form.get('uses')) return;
       this.selectedUsesChange(
         value.map(
           (valId: string) =>
@@ -226,7 +229,7 @@ export class FormComponent implements OnInit {
     return formBody;
   }
 
-  public formInit(body?: IElementToPractice2 | any, content?: IEtp): FormGroup {
+  public formInit(body?: IElementToPractice | any, content?: IEtp): FormGroup {
     const isWord =
       this.form?.get('type')?.value === typesOfElementsToPractice.word;
     // const bodyForm: FormGroup = this._fb.group({
@@ -250,9 +253,12 @@ export class FormComponent implements OnInit {
         );
       } else bodyForm.removeControl('meanings');
       const selectedUses: Array<string> | null = body.selectedUses
-        ? body.selectedUses.map((selectedUseItem: IType, j: number) => selectedUseItem.id ?? body.uses[j].id )
+        ? body.selectedUses.map(
+            (selectedUseItem: IType, j: number) =>
+              selectedUseItem.id ?? body.uses[j].id
+          )
         : null;
-        
+
       // content.etp.selectedUses?.map((selectedUseItem, j) => { const uses: Array<IUse> = content.etp.uses ?? []; console.log({ selectedUseItem, useItem: uses[j] }); return selectedUseItem ?? uses[j].id} );
       if (selectedUses) body.selectedUses = selectedUses;
       const { type } = body;
@@ -309,7 +315,7 @@ export class FormComponent implements OnInit {
     }
     this.form = bodyForm;
     this.setSupscriptions();
-    
+
     // console.log({ body, formPostInit: this.form });
 
     return this.form;
@@ -422,7 +428,7 @@ export class FormComponent implements OnInit {
   // }
 
   public setUses(): void {
-    if ( this.etpItem ) return;
+    if (this.etpItem) return;
     if (!this.form.get('selectedUses'))
       this.form.addControl(
         'selectedUses',
@@ -436,7 +442,7 @@ export class FormComponent implements OnInit {
   }
 
   public removeUses(): void {
-    if ( this.etpItem ) return;
+    if (this.etpItem) return;
     if (this.form.get('selectedUses')) this.form.removeControl('selectedUses');
 
     if (this.form.get('uses')) this.form.removeControl('uses');
@@ -447,8 +453,9 @@ export class FormComponent implements OnInit {
 
   public submit(): void | NzNotificationRef {
     console.log({ valid: this.form.valid, value: this.form.value });
-    
-    const meanings: Array<string> | null = this.form.get('meanings')?.value ?? null;
+
+    const meanings: Array<string> | null =
+      this.form.get('meanings')?.value ?? null;
 
     // this.word ? this.setUses() : this.removeUses();
     const isWord =
@@ -471,7 +478,7 @@ export class FormComponent implements OnInit {
       : {
           ...this.form.value,
         };
-    
+
     if (meanings) formBody.meanings = meanings;
 
     // if (isWord && !this.etp$) {
@@ -487,7 +494,7 @@ export class FormComponent implements OnInit {
 
     console.log({ etpItemToCheck: this.etpItem });
     if (this.etpItem) {
-      const etpItem = {...this.etpItem};
+      const etpItem = { ...this.etpItem };
       return this.etpEmitter.emit({
         etpItem,
         checkingWord: this.checkingWord,

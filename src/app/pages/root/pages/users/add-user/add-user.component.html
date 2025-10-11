@@ -1,0 +1,90 @@
+<!-- <p>add-user works!</p> -->
+
+<div class="main">
+  <button
+    class="button-back"
+    [routerLink]="[backTo]"
+    [title]="en ? 'Back To Users' : 'Volver a Users'"
+  >
+    <i class="bi bi-arrow-left"></i> {{ en ? "Back" : "Volver" }}
+  </button>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+    <header class="header-form">
+      <h3>
+        {{
+          user
+            ? en
+              ? "Edit User"
+              : "Editar Usuario"
+            : en
+            ? "Register User"
+            : "Registrar Usuario"
+        }}
+      </h3>
+      <label class="label-state">
+        <span class="span-state">{{ en ? "State" : "Estado" }}:</span>
+        <nz-switch
+          [nzCheckedChildren]="en ? 'Active' : 'Activo'"
+          [nzUnCheckedChildren]="en ? 'Inactive' : 'Inactivo'"
+          formControlName="state"
+        ></nz-switch>
+      </label>
+    </header>
+    <fieldset class="fieldset">
+      <!-- <input type="text" class="input" formControlName="name"> -->
+      @for (control of controls; track $index) {
+      <div class="input-box">
+        @if ( isRequired(control.name) ) {
+        <i
+          class="bi bi-asterisk"
+          nz-popover
+          [nzPopoverContent]="en ? 'Required Field' : 'Campo Obligatorio'"
+        ></i>
+        }
+        <label class="label-input">
+          <div class="span-label-div">
+            @for (letter of letters(control.title); track $index) {
+            <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
+            }
+          </div>
+          @if (control.type === 'textarea') {
+          <textarea
+            [formControlName]="control.name"
+            placeholder=""
+            class="textarea"
+          ></textarea>
+          } @else {
+          <input
+            [type]="control.type"
+            [formControlName]="control.name"
+            placeholder=""
+            class="input"
+          />
+          }
+        </label>
+        @if ( showErrors && getControlErrors(control.name).length > 0 ) {
+        <i
+          class="bi bi-exclamation-circle-fill invalid-icon"
+          nz-popover
+          [nzPopoverTitle]="
+            en
+              ? 'Invalid ' + control.title
+              : 'Campo ' + control.title + ' Invalido'
+          "
+          [nzPopoverContent]="control.invalid"
+        ></i>
+        }
+      </div>
+
+      }
+    </fieldset>
+
+    <button
+      class="button-submit"
+      [title]="user ? 'Edit User' : 'Register User'"
+      type="submit"
+    >
+      {{ user ? (en ? "Edit" : "Editar") : en ? "Register" : "Registrar" }}
+    </button>
+  </form>
+</div>

@@ -21,9 +21,12 @@ import {
   collectionSnapshots,
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
-import { IElementToPractice, IElementToPractice2 } from '../../../../interfaces';
+
 import { DbCollections, typesOfWords } from '../../../../enums';
+import { IElementToPractice } from '../../../../interfaces';
+
 import { TypeService } from '../types/types.service';
+
 import { Query, setDoc } from 'firebase/firestore';
 
 @Injectable({
@@ -109,7 +112,6 @@ export class ElementToPracticeService {
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
     } = {}
   ): Observable<any[]> {
-
     // console.log({ filters: {...filters} });
     const elementsRef = collection(
       this.firestore,
@@ -128,23 +130,21 @@ export class ElementToPracticeService {
 
     const typeFilter = filters['type'];
     delete filters['type'];
-    
+
     const validFilters = extractValidFilters(filters);
     const constraints: QueryConstraint[] = [];
-
 
     // console.log({ validFilters });
 
     for (const [path, value] of validFilters) {
-
       // const condition: boolean = path === 'type' && Array.isArray(value);
       // const condition2: boolean = condition && value.some((val: string) => childrenTypes.includes(val));
 
-      // if ( condition2 ) 
+      // if ( condition2 )
       //   constraints.push(
       //     where(
-      //       'selectedUses', 
-      //       'array-contains-any', 
+      //       'selectedUses',
+      //       'array-contains-any',
       //       value.filter((val: string) => childrenTypes.includes(val))
       //     )
       //   );
@@ -157,11 +157,11 @@ export class ElementToPracticeService {
     }
 
     // console.log({ constraints });
-    
+
     const baseQuery = query(elementsRef, ...constraints);
-    
+
     if (!typeFilter) return this.executeQuery(baseQuery, options);
-    
+
     const parents: string[] = [];
     const children: string[] = [];
 
@@ -170,11 +170,15 @@ export class ElementToPracticeService {
       typesOfWords.adjective,
       typesOfWords.preposition,
       typesOfWords.adverb,
-      typesOfWords.noun
-    ]
+      typesOfWords.noun,
+    ];
 
-    for (const typeId of Array.isArray(typeFilter) ? typeFilter : [typeFilter]) {
-      if ( childrenTypes.includes(typeId) ) {children.push(typeId)} else parents.push(typeId);
+    for (const typeId of Array.isArray(typeFilter)
+      ? typeFilter
+      : [typeFilter]) {
+      if (childrenTypes.includes(typeId)) {
+        children.push(typeId);
+      } else parents.push(typeId);
       // const found = allTypes.find((t) => t.id === typeId);
       // if (!found) continue;
       // if (found.father) {
@@ -184,38 +188,42 @@ export class ElementToPracticeService {
       // }
     }
 
-      const parentQuery = parents.length > 0
+    const parentQuery =
+      parents.length > 0
         ? query(baseQuery, where('type', 'in', parents))
         : null;
 
-      const childQuery = children.length > 0
-        ? query(baseQuery, where('selectedUses', 'array-contains-any', children))
+    const childQuery =
+      children.length > 0
+        ? query(
+            baseQuery,
+            where('selectedUses', 'array-contains-any', children)
+          )
         : null;
 
-      const observables: Observable<any[]>[] = [];
+    const observables: Observable<any[]>[] = [];
 
-      if (parentQuery) {
-        observables.push(this.executeQuery(parentQuery, options));
-      }
-      if (childQuery) {
-        observables.push(this.executeQuery(childQuery, options));
-      }
+    if (parentQuery) {
+      observables.push(this.executeQuery(parentQuery, options));
+    }
+    if (childQuery) {
+      observables.push(this.executeQuery(childQuery, options));
+    }
 
-      if (observables.length === 0) {
-        return of([]);
-      }
+    if (observables.length === 0) {
+      return of([]);
+    }
 
-      return combineLatest(observables).pipe(
-        map((results) => {
-          const merged = [...results.flat()];
-          // Quitar duplicados por ID
-          const uniqueMap = new Map();
-          merged.forEach((el) => uniqueMap.set(el.id, el));
-          return Array.from(uniqueMap.values());
-        })
-      );
-    
-    
+    return combineLatest(observables).pipe(
+      map((results) => {
+        const merged = [...results.flat()];
+        // Quitar duplicados por ID
+        const uniqueMap = new Map();
+        merged.forEach((el) => uniqueMap.set(el.id, el));
+        return Array.from(uniqueMap.values());
+      })
+    );
+
     // if (options.pageSize) {
     //   constraints.push(limit(options.pageSize));
     // }
@@ -253,54 +261,54 @@ export class ElementToPracticeService {
     //   })
     // );
   }
-  
-private executeQuery(
-  queryRef: Query<IElementToPractice>,
-  options: {
-    pageSize?: number;
-    startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
+
+  private executeQuery(
+    queryRef: Query<IElementToPractice>,
+    options: {
+      pageSize?: number;
+      startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
+    }
+  ): Observable<any[]> {
+    const constraints: QueryConstraint[] = [];
+
+    if (options.pageSize) {
+      constraints.push(limit(options.pageSize));
+    }
+
+    if (options.startAfterDoc) {
+      constraints.push(startAfter(options.startAfterDoc));
+    }
+
+    const finalQuery = query(queryRef, ...constraints);
+
+    return collectionSnapshots(finalQuery).pipe(
+      // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+      map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+      switchMap((elements: any[]) => {
+        const enrichedElements$ = elements.map((element) => {
+          const wordTypeId = element.verbInfo?.wordType;
+
+          if (wordTypeId) {
+            return this._typeSvc.getType(wordTypeId).pipe(
+              map((wordTypeData) => ({
+                ...element,
+                verbInfo: {
+                  ...element.verbInfo,
+                  wordType: wordTypeData,
+                },
+              }))
+            );
+          }
+
+          return of(element);
+        });
+
+        return enrichedElements$.length > 0
+          ? combineLatest(enrichedElements$)
+          : of([]);
+      })
+    );
   }
-): Observable<any[]> {
-  const constraints: QueryConstraint[] = [];
-
-  if (options.pageSize) {
-    constraints.push(limit(options.pageSize));
-  }
-
-  if (options.startAfterDoc) {
-    constraints.push(startAfter(options.startAfterDoc));
-  }
-
-  const finalQuery = query(queryRef, ...constraints);
-
-  return collectionSnapshots(finalQuery).pipe(
-    // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-    map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-    switchMap((elements: any[]) => {
-      const enrichedElements$ = elements.map((element) => {
-        const wordTypeId = element.verbInfo?.wordType;
-
-        if (wordTypeId) {
-          return this._typeSvc.getType(wordTypeId).pipe(
-            map((wordTypeData) => ({
-              ...element,
-              verbInfo: {
-                ...element.verbInfo,
-                wordType: wordTypeData,
-              },
-            }))
-          );
-        }
-
-        return of(element);
-      });
-
-      return enrichedElements$.length > 0
-        ? combineLatest(enrichedElements$)
-        : of([]);
-    })
-  );
-}
 
   async addElementToPractice(data: IElementToPractice | any): Promise<string> {
     const docRef = await addDoc(this.elementToPracticesRef, data);
@@ -321,7 +329,7 @@ private executeQuery(
 
   async updateElementToPractice2(
     id: string,
-    elementToPractice: Partial<IElementToPractice2>
+    elementToPractice: Partial<IElementToPractice>
   ) {
     // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
     const elementToPracticeDoc = doc(

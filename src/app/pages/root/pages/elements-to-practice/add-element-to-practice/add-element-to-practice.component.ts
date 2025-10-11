@@ -1,19 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { localStorageLabels, RoutesApp } from '../../../../../enums';
+import { IElementToPractice } from '../../../../../interfaces';
+
+import { ElementToPracticeService } from '../element-to-practice.service';
+
+import { FormComponent } from './form';
 
 import {
   NzNotificationRef,
   NzNotificationService,
 } from 'ng-zorro-antd/notification';
-import {
-  IElementToPractice,
-  IElementToPractice2,
-  IType,
-} from '../../../../../interfaces';
-import { ElementToPracticeService } from '../element-to-practice.service';
-import { FormComponent } from './form';
 
 @Component({
   selector: 'app-add-element-to-practice',
@@ -21,38 +19,21 @@ import { FormComponent } from './form';
   templateUrl: './add-element-to-practice.component.html',
   styleUrl: './add-element-to-practice.component.css',
 })
-export class AddElementToPracticeComponent implements OnInit {
+export class AddElementToPracticeComponent {
   public backTo: string = RoutesApp.elementsToPractice;
 
   public id: string | null = null;
-  // public elementToPractice: IElementToPractice | any | null = null;
 
   constructor(
-    // private _fb: FormBuilder,
     private _route: ActivatedRoute,
     private _elementToPracticeService: ElementToPracticeService,
     private _nzNotificationService: NzNotificationService
   ) {
-    // this.form = this._fb.group({});
-    // this.formInit();
-
     this.id = this._route.snapshot.paramMap.get('id');
-    // this.id ? this.getElementToPractice(this.id) : false;
-  }
-
-  ngOnInit(): void {
-    // this.getTypes();
-    // this.form.get('selectedUses')?.valueChanges.subscribe((value) => {
-    //   this.selectedUsesChange(value);
-    // });
-    // this.form.get('type')?.valueChanges.subscribe(() => {
-    //   this.typeChange();
-    // });
-    // if (this.id) this.getElementToPractice(this.id);
   }
 
   public submit(
-    elementToPractice: IElementToPractice2 | any
+    elementToPractice: IElementToPractice | any
   ): Promise<void> | NzNotificationRef {
     if (!this.id) {
       return this._elementToPracticeService
@@ -71,14 +52,23 @@ export class AddElementToPracticeComponent implements OnInit {
       .updateElementToPractice2(this.id, elementToPractice)
       .then((reponse) => {
         console.log({ reponse });
-        const selectedList: Array<IElementToPractice2> = JSON.parse(localStorage.getItem(localStorageLabels.etp.selectedList) ?? '[]');
-        
-        if ( selectedList.length > 0 ) {
-          const selectedItemIndex: number = selectedList.findIndex(item => item.id === this.id);
+        const selectedList: Array<IElementToPractice> = JSON.parse(
+          localStorage.getItem(localStorageLabels.etp.selectedList) ?? '[]'
+        );
+
+        if (selectedList.length > 0) {
+          const selectedItemIndex: number = selectedList.findIndex(
+            (item) => item.id === this.id
+          );
           if (selectedItemIndex >= 0) {
-            // selectedList.splice(selectedItemIndex, 1, elementToPractice);
-            selectedList[selectedItemIndex] = { ...selectedList[selectedItemIndex], ...elementToPractice};
-            localStorage.setItem(localStorageLabels.etp.selectedList, JSON.stringify(selectedList));
+            selectedList[selectedItemIndex] = {
+              ...selectedList[selectedItemIndex],
+              ...elementToPractice,
+            };
+            localStorage.setItem(
+              localStorageLabels.etp.selectedList,
+              JSON.stringify(selectedList)
+            );
           }
         }
         this._nzNotificationService.success(

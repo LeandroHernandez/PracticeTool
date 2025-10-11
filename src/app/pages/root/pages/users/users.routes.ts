@@ -1,18 +1,18 @@
 import { Routes } from '@angular/router';
 import { RoutesApp } from '../../../../enums';
 
-export const rolesRoutes: Routes = [
+export const usersRoutes: Routes = [
     {
         path: RoutesApp.root,
-        loadComponent: () => import('./roles.component').then(m => m.RolesComponent),
+        loadComponent: () => import('./users.component').then(m => m.UsersComponent),
     },
     {
         path: RoutesApp.add,
-        loadComponent: () => import('./add-role').then(m => m.AddRoleComponent),
+        loadComponent: () => import('./add-user').then(m => m.AddUserComponent),
     },
     {
         path: `${RoutesApp.add}/:id`,
-        loadComponent: () => import('./add-role').then(m => m.AddRoleComponent),
+        loadComponent: () => import('./add-user').then(m => m.AddUserComponent),
     },
     {
         path: RoutesApp.other,

@@ -23,12 +23,12 @@ import {
   setDoc,
 } from '@angular/fire/firestore';
 import { DbCollections } from '../../../../enums';
-import { IUser, TUser } from '../../../../interfaces';
+import { IUser, IUserB } from '../../../../interfaces';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { RolesService } from '../roles';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UsersService {
   private usersRef: CollectionReference<IUser>;
@@ -47,7 +47,6 @@ export class UsersService {
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
     } = {}
   ): Observable<IUser[]> {
-
     // console.log({ filters: {...filters} });
     const usersRef = collection(
       this.firestore,
@@ -63,88 +62,87 @@ export class UsersService {
         return [[`${prefix}${key}`, val]];
       });
     }
-    
+
     const validFilters = extractValidFilters(filters);
     const constraints: QueryConstraint[] = [];
 
     for (const [path, value] of validFilters) {
-
       constraints.push(where(path, '==', value));
     }
-    
+
     const baseQuery = query(usersRef, ...constraints);
-    
+
     return this.executeQuery(baseQuery, options);
   }
-  
-private executeQuery(
-  queryRef: Query<TUser>,
-  options: {
-    pageSize?: number;
-    startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
+
+  private executeQuery(
+    queryRef: Query<IUserB | any>,
+    options: {
+      pageSize?: number;
+      startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
+    }
+  ): Observable<any[]> {
+    const constraints: QueryConstraint[] = [];
+
+    if (options.pageSize) {
+      constraints.push(limit(options.pageSize));
+    }
+
+    if (options.startAfterDoc) {
+      constraints.push(startAfter(options.startAfterDoc));
+    }
+
+    const finalQuery = query(queryRef, ...constraints);
+
+    return collectionSnapshots(finalQuery).pipe(
+      // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+      map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+      switchMap((elements: any[]) => {
+        const enrichedElements$ = elements.map((element: IUser) => {
+          const roleId = element.role;
+
+          if (roleId && typeof roleId === 'string') {
+            return this._rolesSvc.getRole(roleId).pipe(
+              map((roleData) => ({
+                ...element,
+                role: roleData,
+              }))
+            );
+          }
+
+          return of(element);
+        });
+
+        return enrichedElements$.length > 0
+          ? combineLatest(enrichedElements$)
+          : of([]);
+      })
+    );
   }
-): Observable<any[]> {
-  const constraints: QueryConstraint[] = [];
 
-  if (options.pageSize) {
-    constraints.push(limit(options.pageSize));
+  getUser(id: string): Observable<IUser> {
+    const userDoc = doc(this.firestore, `${DbCollections.users}/${id}`);
+    const res = docData(userDoc, {
+      idField: 'id',
+    });
+    console.log({ getUserResponse: res });
+    return res as Observable<IUser>;
   }
-
-  if (options.startAfterDoc) {
-    constraints.push(startAfter(options.startAfterDoc));
-  }
-
-  const finalQuery = query(queryRef, ...constraints);
-
-  return collectionSnapshots(finalQuery).pipe(
-    // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-    map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-    switchMap((elements: any[]) => {
-      const enrichedElements$ = elements.map((element: IUser) => {
-        const roleId = element.role;
-
-        if (roleId && typeof roleId === 'string') {
-          return this._rolesSvc.getRole(roleId).pipe(
-            map((roleData) => ({
-              ...element,
-              role: roleData,
-            }))
-          );
-        }
-
-        return of(element);
-      });
-
-      return enrichedElements$.length > 0
-        ? combineLatest(enrichedElements$)
-        : of([]);
-    })
-  );
-}
 
   public async addUser(data: any): Promise<string> {
     const docRef = await addDoc(this.usersRef, data);
     return docRef.id;
   }
 
-  public async updateUser(
-    id: string,
-    user: Partial<IUser>
-  ) {
-    const userDoc = doc(
-      this.firestore,
-      `${DbCollections.users}/${id}`
-    );
+  public async updateUser(id: string, user: Partial<IUser>) {
+    const userDoc = doc(this.firestore, `${DbCollections.users}/${id}`);
     return await setDoc(userDoc, user, {
       merge: false,
     });
   }
 
   public deleteUser(id: string) {
-    const userDoc = doc(
-      this.firestore,
-      `${DbCollections.users}/${id}`
-    );
+    const userDoc = doc(this.firestore, `${DbCollections.users}/${id}`);
     return deleteDoc(userDoc);
   }
 }

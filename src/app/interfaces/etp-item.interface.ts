@@ -1,15 +1,15 @@
-import { IElementToPractice2 } from './element-to-practice.interface2';
+import { IElementToPractice } from './element-to-practice.interface';
 
 // export interface IEtpItem {
 //   id: string;
-//   etp: IElementToPractice2;
+//   etp: IElementToPractice;
 //   word: boolean;
 //   aplications: boolean;
 // }
 
 export interface IEtp {
   id: string;
-  etp: IElementToPractice2;
+  etp: IElementToPractice;
   word: boolean;
   aplications: boolean;
 }

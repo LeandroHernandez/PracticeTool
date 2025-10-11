@@ -1,3 +1,4 @@
+export * from './control-types';
 export * from './db-collections';
 export * from './firebase-errors';
 export * from './localStorage-labels';

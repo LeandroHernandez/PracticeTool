@@ -1,44 +1,142 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { IFilterFormField } from '../../../../../../interfaces/filter-form-field.interface';
-import { NzSwitchModule } from 'ng-zorro-antd/switch';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Router } from '@angular/router';
+
 import { localStorageLabels, RoutesApp } from '../../../../../../enums';
+import { IFilterFormField } from '../../../../../../interfaces/filter-form-field.interface';
+
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'app-filters',
   imports: [ReactiveFormsModule, NzSelectModule],
-  templateUrl: './filters.component.html',
-  styleUrl: './filters.component.css',
+  template: `
+    <!-- <p>filters works!</p> -->
+
+    <div class="container">
+      <header class="header">
+        <h5 class="title">Filters</h5>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        @for (item of filterFormFields; track item.key) { @if (item.type ===
+        'multiselect') {
+        <div class="multiselect_div">
+          <span>{{ item.label }}</span>
+          <nz-select
+            class="select"
+            nzMode="multiple"
+            [nzPlaceHolder]="item.placeholder ?? ''"
+            [formControlName]="item.key"
+          >
+            @for (item of item.selectOptions; track item) {
+            <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+            }
+          </nz-select>
+        </div>
+        } @else {
+        <label class="label">
+          <span>{{ item.label }}</span>
+          <input
+            [type]="item.type"
+            class="input"
+            [placeholder]="item.placeholder"
+            [formControlName]="item.key"
+          />
+        </label>
+        } }
+        <button type="submit" title="Apply Filter" class="button submit_button">
+          Filter
+        </button>
+      </form>
+    </div>
+  `,
+  styles: [
+    `
+      .container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        padding: 20px;
+        background-color: var(--secondary);
+        color: var(--primary);
+        border-radius: 10px;
+      }
+
+      .title {
+        color: var(--accent);
+        font-size: 20px;
+      }
+
+      .form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .subForm {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .label,
+      .multiselect_div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .input,
+      select,
+      button {
+        width: 100%;
+        border: none;
+        outline: none;
+        color: var(--secondary);
+        border-radius: 5px;
+        padding: 4px 8px;
+      }
+
+      button {
+        margin-top: 20px;
+        background-color: var(--accent);
+
+        &:hover {
+          transform: scale(105%);
+        }
+      }
+    `,
+  ],
 })
 export class FiltersComponent implements OnInit {
   @Output() valueFormEmitter: EventEmitter<any> = new EventEmitter();
   @Input() filterFormFields: Array<IFilterFormField> = [];
 
-  // public activeForm: FormGroup;
   public form: FormGroup;
 
   public get actualLabel(): string {
-    return this._router.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.etp.filerBody : localStorageLabels.pl.filerBody;
+    return this._router.url.split('/')[1] === RoutesApp.elementsToPractice
+      ? localStorageLabels.etp.filerBody
+      : localStorageLabels.pl.filerBody;
   }
 
-  // public get activeFilters(): boolean {
-  //   return this.activeForm.controls['activeFilters'].value;
-  // };
-
   constructor(private _fb: FormBuilder, private _router: Router) {
-    // this.activeForm = this._fb.group({
-    //   activeFilters: [ false ]
-    // });
     this.form = this._fb.group({});
   }
 
   ngOnInit(): void {
     this.initForm();
-    // this.form.valueChanges.subscribe(value => {
-    //   this.valueFormEmitter.emit( this.activeFilters ? value : null);
-    // });
   }
 
   public getfieldType(item: IFilterFormField): number | boolean | string {
@@ -56,13 +154,13 @@ export class FiltersComponent implements OnInit {
 
     items.forEach((item) => {
       console.log({ item });
-      // return group.addControl(item.key, item.type !=='subForm' ? [ this.getfieldType(item) ] : this.buildForm(item.subForm ?? []));
       group.addControl(
         item.key,
-        // item.type !== 'subForm'
-        //   ? this._fb.control(item.intialValue ?? this.getfieldType(item))
-        //   : this.buildForm(item.subForm ?? [])
-        this._fb.control(item.type !== 'multiselect' ? item.intialValue ?? this.getfieldType(item) : [])
+        this._fb.control(
+          item.type !== 'multiselect'
+            ? item.intialValue ?? this.getfieldType(item)
+            : []
+        )
       );
     });
 
@@ -73,45 +171,27 @@ export class FiltersComponent implements OnInit {
 
   public initForm(): void {
     this.form = this.buildForm(this.filterFormFields);
-    const filerBodyForm = JSON.parse(localStorage.getItem(this.actualLabel) ?? 'null');
+    const filerBodyForm = JSON.parse(
+      localStorage.getItem(this.actualLabel) ?? 'null'
+    );
     if (filerBodyForm) this.form.patchValue(filerBodyForm);
     console.log({ form: this.form });
-    // this.form.disable();
   }
 
-  // public changeActiveFilters(): void {
-
-  //   console.log({activeFilters: this.activeFilters})
-
-  //   if (!this.activeFilters) {
-  //     return this.form.disable()
-  //   }
-
-  //   return this.form.enable();
-  // }
-
   public submit(): void {
-    // const irregular = this.form.get('verbInfo')?.get('irregular');
-    // this.form
-    //   .get('verbInfo')
-    //   ?.get('irregular')
-    //   ?.patchValue(
-    //     irregular && irregular.value !== '' ? JSON.parse(irregular.value) : ''
-    //   );
-
     console.log({ filterForm: this.form });
-
-    // this.valueFormEmitter.emit(this.form.value);
 
     const formValue: any = {};
     const { value } = this.form;
-    if ( value.selectedUses ) {
+    if (value.selectedUses) {
       value.type = value.type.concat(value.selectedUses);
       delete value.selectedUses;
     }
-    Object.keys(value).forEach(key => value[key].length > 0 ? formValue[key] = value[key] : false );
+    Object.keys(value).forEach((key) =>
+      value[key].length > 0 ? (formValue[key] = value[key]) : false
+    );
     if (Object.keys(formValue).length > 0) {
-      localStorage.setItem(this.actualLabel, JSON.stringify(formValue))
+      localStorage.setItem(this.actualLabel, JSON.stringify(formValue));
     } else {
       localStorage.removeItem(this.actualLabel);
     }

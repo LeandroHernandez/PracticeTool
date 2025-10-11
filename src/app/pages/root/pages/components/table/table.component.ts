@@ -3,7 +3,14 @@ import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { IElementToPractice, IPageTableInfo, TRoleChangeState, IFilterFormField, ITableItem, IWord } from '../../../../../interfaces';
+import {
+  IElementToPractice,
+  IPageTableInfo,
+  TRoleChangeState,
+  IFilterFormField,
+  ITableItem,
+  IWord,
+} from '../../../../../interfaces';
 import { localStorageLabels, RoutesApp } from '../../../../../enums';
 
 import { FiltersComponent } from './filters/filters.component';
@@ -27,7 +34,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzPaginationModule,
     NzCheckboxModule,
     NzSwitchModule,
-    NzIconModule
+    NzIconModule,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
@@ -44,62 +51,71 @@ export class TableComponent implements OnInit {
   @Output() editAction: EventEmitter<string> = new EventEmitter();
   @Output() deleteAction: EventEmitter<string> = new EventEmitter();
   @Output() deleteAllAction: EventEmitter<boolean> = new EventEmitter();
-  @Output() changeStateEmitter: EventEmitter<{ id: string, state: any}> = new EventEmitter();
+  @Output() changeStateEmitter: EventEmitter<{ id: string; state: any }> =
+    new EventEmitter();
   setOfCheckedId = new Set<number>();
 
   // public actualLabel: string = localStorageLabels.etp.selectedList;
   get actualLabel(): string {
     const urlA: string[] = this._router.url.split('/');
-    switch ( urlA[urlA.length - 1] ) {
+    switch (urlA[urlA.length - 1]) {
       case RoutesApp.practiceLists:
         return localStorageLabels.pl.selectedList;
         break;
-    
+
       case RoutesApp.roles:
         return localStorageLabels.role.selectedList;
         break;
-    
+
       default:
-        return localStorageLabels.etp.selectedList
+        return localStorageLabels.etp.selectedList;
         break;
     }
-  };
-  
+  }
+
   get paginatedItems(): Array<any> {
-    if ( !this.itemList ) return [];
+    if (!this.itemList) return [];
     const { index, size } = this.page;
     const sheet: number = size * index;
     return this.itemList.slice(sheet - size, sheet);
   }
-  
+
   get checked(): boolean {
-    return this.paginatedItems.length > 0 && this.paginatedItems.every((item) => {
-      return this.setOfCheckedId.has(item.id);
-    });
+    return (
+      this.paginatedItems.length > 0 &&
+      this.paginatedItems.every((item) => {
+        return this.setOfCheckedId.has(item.id);
+      })
+    );
   }
-  
+
   get indeterminate(): boolean {
-    return !this.checked && this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id));
+    return (
+      !this.checked &&
+      this.paginatedItems.some(({ id }) => this.setOfCheckedId.has(id))
+    );
   }
-  
+
   get url(): string {
     return this._router.url;
   }
-  
+
   get actualSelectedItems(): any[] {
     return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]');
   }
-  
+
   get actualFilterLabel(): string {
-    return this.url.split('/')[1] === RoutesApp.elementsToPractice ? localStorageLabels.etp.filerBody : localStorageLabels.pl.filerBody;
+    return this.url.split('/')[1] === RoutesApp.elementsToPractice
+      ? localStorageLabels.etp.filerBody
+      : localStorageLabels.pl.filerBody;
   }
-  
+
   get actualSelectedFilters(): Object | null {
     return JSON.parse(localStorage.getItem(this.actualFilterLabel) ?? 'null');
   }
 
   constructor(private _router: Router, private _nzModalSvc: NzModalService) {}
-  
+
   ngOnInit(): void {
     for (const item of this.actualSelectedItems) {
       this.setOfCheckedId.add(item.id);
@@ -107,14 +123,13 @@ export class TableComponent implements OnInit {
   }
 
   getItemIndex(i: number): number | void {
-    if ( !this.itemList ) return;
+    if (!this.itemList) return;
     const item = this.itemList.findIndex((item) => item.id === i);
     return item < 0 ? 0 : item + 1;
   }
 
   public onAllChecked(checked: boolean): void {
-    this.paginatedItems
-      .forEach(({ id }) => this.updateCheckedSet(id, checked));
+    this.paginatedItems.forEach(({ id }) => this.updateCheckedSet(id, checked));
   }
 
   public updateCheckedSet(id: number, checked: boolean): void {
@@ -127,7 +142,7 @@ export class TableComponent implements OnInit {
   }
 
   public setSelectedList(): void {
-    if ( !this.itemList ) return;
+    if (!this.itemList) return;
     const selectedList = this.itemList.filter((item) =>
       this.setOfCheckedId.has(item.id)
     );
@@ -135,10 +150,7 @@ export class TableComponent implements OnInit {
     if (selectedList.length === 0)
       return localStorage.removeItem(this.actualLabel);
 
-    return localStorage.setItem(
-      this.actualLabel,
-      JSON.stringify(selectedList)
-    );
+    return localStorage.setItem(this.actualLabel, JSON.stringify(selectedList));
   }
 
   public onItemChecked(id: number, checked: boolean): void {
@@ -181,7 +193,6 @@ export class TableComponent implements OnInit {
     if (key.endsWith('irregular')) {
       return valueItem ? 'Irregular' : 'Regular';
     } else if (!valueItem) {
-
       const verbInfo: string = 'verbInfo';
       if (
         key === `${verbInfo}.simplePresent` ||
@@ -228,9 +239,8 @@ export class TableComponent implements OnInit {
     this.pageEmitter.emit(this.page);
   }
 
-
   public changeState({ id, state }: TRoleChangeState): void {
-    console.log({ id, state })
+    console.log({ id, state });
     return this.changeStateEmitter.emit({ id, state });
   }
 }

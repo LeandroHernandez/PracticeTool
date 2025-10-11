@@ -1,4 +1,4 @@
-import { IVerbInfo } from './element-to-practice.interface2';
+import { IVerbInfo } from './element-to-practice.interface';
 
 export interface IMistakenUse {
   name: string;

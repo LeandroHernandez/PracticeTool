@@ -6,11 +6,61 @@ import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-nav',
   imports: [RouterLink],
-  templateUrl: './nav.component.html',
-  styleUrl: './nav.component.css'
+  // templateUrl: './nav.component.html',
+  template: `
+    <!-- <p>nav works!</p> -->
+    <div class="nav_container">
+      <ul class="ul">
+        @for(item of navList; track item.route) {
+        <li
+          class="li {{ url.startsWith('/' + item.route) ? 'active' : '' }}"
+          [title]="item.title"
+          [routerLink]="['/' + item.route]"
+        >
+          <i [class]="'bi bi-' + item.icon"></i>
+          {{ item.label }}
+        </li>
+        }
+      </ul>
+    </div>
+  `,
+  // styleUrl: './nav.component.css'
+  styles: [
+    `
+      .nav_container {
+        height: 100%;
+        width: 171.38px;
+      }
+
+      .ul {
+        height: 100%;
+        padding: 10px;
+        list-style: none;
+        background-color: var(--secondary);
+        color: var(--primary);
+        position: fixed;
+      }
+
+      .li {
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        width: max-content;
+
+        transition: 0.2s transform ease;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      .active {
+        color: var(--accent);
+      }
+    `,
+  ],
 })
 export class NavComponent {
-  
   public navList: Array<INavItem> = [
     // {
     //   label: 'Words',
@@ -40,44 +90,43 @@ export class NavComponent {
       label: 'Roles',
       title: 'Roles',
       route: RoutesApp.roles,
-      icon: 'columns'
+      icon: 'columns',
     },
     {
       label: 'Users',
       title: 'Users',
       route: RoutesApp.users,
-      icon: 'people-fill'
+      icon: 'people-fill',
     },
     {
       label: 'Dashboard',
       title: 'Dashboard',
       route: RoutesApp.dashboard,
-      icon: 'columns-gap'
+      icon: 'columns-gap',
     },
     {
       label: 'Elements to Practice',
       title: 'Elements to Practice',
       route: RoutesApp.elementsToPractice,
-      icon: 'translate'
+      icon: 'translate',
     },
     {
       label: 'Practice Lists',
       title: 'Practice Lists',
       route: RoutesApp.practiceLists,
-      icon: 'list-check'
+      icon: 'list-check',
     },
     {
       label: 'Test',
       title: 'Test',
       route: RoutesApp.test,
-      icon: 'play-fill'
+      icon: 'play-fill',
     },
   ];
 
-  constructor (private _router: Router) {}
+  constructor(private _router: Router) {}
 
   get url(): string {
     return this._router.url;
   }
-
 }

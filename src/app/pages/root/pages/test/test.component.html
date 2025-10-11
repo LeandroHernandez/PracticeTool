@@ -1,10 +1,7 @@
 <!-- <p>test works!</p> -->
 
-<!-- <app-add-element-to-prectice ></app-add-element-to-prectice> -->
-
 <main class="main">
   <header class="main_header">
-    <!-- <button class="btn back_btn" [routerLink]="['/' + backTo]"> -->
     <button class="btn back_btn" (click)="backToAction()">
       <i class="bi bi-arrow-bar-left"></i>
       Volver
@@ -14,7 +11,5 @@
     <span> {{ practiceList.length }} </span>
     }
   </header>
-
-  <!-- <app-form [etp$]="etp$" (etpEmitter)="submit($event)"></app-form> -->
   <app-form (etpEmitter)="submit($event)"></app-form>
 </main>
