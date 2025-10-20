@@ -1,0 +1,57 @@
+<!-- <p>header works!</p> -->
+
+<div class="container_div">
+  <button type="button" class="button-menu" title="Menu" (click)="changeMenu.emit(true)">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <h1>Practice Tool</h1>
+
+  <!-- nzPopoverTitle="Title"
+      [(nzPopoverVisible)]="visible"
+      (nzPopoverVisibleChange)="change($event)" -->
+  <button type="button" class="button-options" title="options" nz-popover nzPopoverTrigger="click"
+    [nzPopoverContent]="menu">
+    <i class="bi bi-gear"></i>
+  </button>
+  <ng-template #menu>
+    <ul nz-menu class="ul-options">
+      <li nz-menu-item class="li-clickable" [routerLink]="profileRoute">Profile</li>
+      <li nz-menu-item class="li">
+        <select class="form-select" [(ngModel)]="currentLanguage" (ngModelChange)="languageChange(currentLanguage)">
+          <option value="en">{{ localLanguage === 'en' ? 'English' : 'Ingles'}}</option>
+          <option value="es">{{ localLanguage === 'en' ? 'Spanish' : 'Español'}}</option>
+        </select>
+      </li>
+      <li nz-menu-item class="li-clickable danger" title="Log out" nz-popover nzPopoverTitle="Log out"
+        nzPopoverTrigger="click" [nzPopoverContent]="contentTemplate">
+        Log Out
+        <ng-template #contentTemplate>
+          <a (click)="logOut()">Sure?</a>
+        </ng-template>
+      </li>
+    </ul>
+  </ng-template>
+  <!-- <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu class="ul-options">
+          <li nz-menu-item [routerLink]="profileRoute">Profile</li>
+          <li nz-menu-item>
+            <button
+              type="button"
+              class="button-log-out"
+              data-bs-toggle="button"
+              title="Log out"
+              nz-popover
+              nzPopoverTitle="Log out"
+              nzPopoverTrigger="click"
+              [nzPopoverContent]="contentTemplate"
+            >
+              Log Out
+            </button>
+            <ng-template #contentTemplate>
+              <a (click)="logOut()">Sure?</a>
+            </ng-template>
+          </li>
+        </ul>
+      </nz-dropdown-menu> -->
+</div>

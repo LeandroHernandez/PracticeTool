@@ -7,6 +7,7 @@ export enum RoutesApp {
     home = 'home',
     dashboard = 'dashboard',
     roles = 'roles',
+    modules = 'modules',
     users = 'users',
     auth = 'auth',
     logIn = 'log-in',

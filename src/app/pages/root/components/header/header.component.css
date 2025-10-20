@@ -1,0 +1,116 @@
+.container_div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100vw;
+  padding: 1.2rem;
+  gap: 1.2rem;
+  border-radius: 0.3rem;
+  border-bottom: 0.1rem solid var(--secondary);
+  background-color: var(--primary);
+}
+
+[class^='button'],
+::ng-deep .ant-dropdown-trigger {
+  outline: none;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.3rem 0.6rem;
+  color: var(--accent);
+  border: 0.1rem solid var(--accent);
+
+  .bi-list::before {
+    transition: 0.1s transform ease;
+  }
+
+  &:hover {
+    color: var(--primary);
+    background-color: var(--accent);
+
+    .bi-list::before {
+      transform: scale(1.5);
+    }
+  }
+}
+
+::ng-deep .ant-dropdown-menu-item {
+  padding: 1rem;
+}
+
+.button-options {
+  border: none;
+  color: var(--primary);
+  background-color: var(--secondary);
+
+  transition: 0.2s ease;
+  transition-property: transform, background-color;
+
+  .bi-gear::before {
+    color: var(--primary);
+
+    transition: 0.2s transform ease;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    background-color: var(--accent);
+
+    .bi-gear::before {
+      transform: scale(1.3);
+    }
+  }
+}
+
+.button-log-out {
+  color: var(--secondary);
+  background-color: transparent;
+}
+
+h1 {
+  font-size: clamp(1rem, 3vw, 2rem);
+}
+
+
+.ul-options {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  [class^="li"] {
+    background-color: var(--primary);
+    color: var(--secondary);
+    padding: .5rem 1rem;
+    text-align: center;
+
+    transition-duration: .2s;
+    transition-property: transform, opacity;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .li-clickable {
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--accent);
+      color: var(--primary);
+    }
+  }
+
+  .danger {
+    background-color: var(--error-color);
+
+    &:hover {
+      /* background-color: darken(var(--error-color), 5%); */
+      background-color: #ff272b;
+    }
+  }
+
+  &:has([class^="li"]:hover) [class^="li"]:not(:hover) {
+    opacity: .5;
+  }
+}

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { INavItem } from '../../../../interfaces';
-import { RoutesApp } from '../../../../enums';
+import { localStorageLabels, RoutesApp } from '../../../../enums';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -34,23 +34,30 @@ import { Router, RouterLink } from '@angular/router';
 
       .ul {
         height: 100%;
-        padding: 10px;
+        padding: .8rem;
         list-style: none;
         background-color: var(--secondary);
         color: var(--primary);
         position: fixed;
+
+        &:has(.li:hover) .li:not(:hover) {
+          opacity: 0.5;
+        }
       }
 
       .li {
-        padding: 10px;
+        padding: .8rem;
         font-size: 16px;
         cursor: pointer;
+        min-width: 100%;
         width: max-content;
 
-        transition: 0.2s transform ease;
+        transition-duration: 0.2s;
+        transition-property: transform, background-color;
 
         &:hover {
           transform: scale(1.1);
+          background-color: #111023;
         }
       }
 
@@ -61,72 +68,86 @@ import { Router, RouterLink } from '@angular/router';
   ],
 })
 export class NavComponent {
-  public navList: Array<INavItem> = [
-    // {
-    //   label: 'Words',
-    //   title: 'Words',
-    //   route: RoutesApp.words,
-    //   icon: 'file-word'
-    // },
-    // {
-    //   label: 'Phrasal Verbs',
-    //   title: 'Phrasal Verbs',
-    //   route: RoutesApp.phrasalVerbs,
-    //   icon: 'diagram-2'
-    // },
-    // {
-    //   label: 'Idioms',
-    //   title: 'Idioms',
-    //   route: RoutesApp.idioms,
-    //   icon: 'globe-americas'
-    // },
-    // {
-    //   label: 'Expressions',
-    //   title: 'Expressions',
-    //   route: RoutesApp.expressions,
-    //   icon: 'translate'
-    // },
-    {
-      label: 'Roles',
-      title: 'Roles',
-      route: RoutesApp.roles,
-      icon: 'columns',
-    },
-    {
-      label: 'Users',
-      title: 'Users',
-      route: RoutesApp.users,
-      icon: 'people-fill',
-    },
-    {
-      label: 'Dashboard',
-      title: 'Dashboard',
-      route: RoutesApp.dashboard,
-      icon: 'columns-gap',
-    },
-    {
-      label: 'Elements to Practice',
-      title: 'Elements to Practice',
-      route: RoutesApp.elementsToPractice,
-      icon: 'translate',
-    },
-    {
-      label: 'Practice Lists',
-      title: 'Practice Lists',
-      route: RoutesApp.practiceLists,
-      icon: 'list-check',
-    },
-    {
-      label: 'Test',
-      title: 'Test',
-      route: RoutesApp.test,
-      icon: 'play-fill',
-    },
-  ];
 
-  constructor(private _router: Router) {}
+  get localLanguage(): string {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  }
+
+  get navList(): Array<INavItem> {
+    const en = this.localLanguage === 'en';
+    return [
+      // {
+      //   label: 'Words',
+      //   title: 'Words',
+      //   route: RoutesApp.words,
+      //   icon: 'file-word'
+      // },
+      // {
+      //   label: 'Phrasal Verbs',
+      //   title: 'Phrasal Verbs',
+      //   route: RoutesApp.phrasalVerbs,
+      //   icon: 'diagram-2'
+      // },
+      // {
+      //   label: 'Idioms',
+      //   title: 'Idioms',
+      //   route: RoutesApp.idioms,
+      //   icon: 'globe-americas'
+      // },
+      // {
+      //   label: 'Expressions',
+      //   title: 'Expressions',
+      //   route: RoutesApp.expressions,
+      //   icon: 'translate'
+      // },
+      {
+        label: en ? 'Modules' : 'Módulos',
+        title: en ? 'Modules' : 'Módulos',
+        route: RoutesApp.modules,
+        icon: 'microsoft',
+      },
+      {
+        label: 'Roles',
+        title: 'Roles',
+        route: RoutesApp.roles,
+        icon: 'columns',
+      },
+      {
+        label: en ? 'Users' : 'Usuarios',
+        title: en ? 'Users' : 'Usuarios',
+        route: RoutesApp.users,
+        icon: 'people-fill',
+      },
+      {
+        label: en ? 'Dashboard' : 'Tablero',
+        title: en ? 'Dashboard' : 'Tablero',
+        route: RoutesApp.dashboard,
+        icon: 'columns-gap',
+      },
+      {
+        label: en ? 'Elements to Practice' : 'Elementos a Practicar',
+        title: en ? 'Elements to Practice' : 'Elementos a Practicar',
+        route: RoutesApp.elementsToPractice,
+        icon: 'translate',
+      },
+      {
+        label: en ? 'Practice Lists' : 'Listas de Práctica',
+        title: en ? 'Practice Lists' : 'Listas de Práctica',
+        route: RoutesApp.practiceLists,
+        icon: 'list-check',
+      },
+      {
+        label: en ? 'Test' : 'Prueba',
+        title: en ? 'Test' : 'Prueba',
+        route: RoutesApp.test,
+        icon: 'play-fill',
+      },
+    ];
+  }
+
 
   get url(): string {
     return this._router.url;
   }
+  constructor(private _router: Router) { }
 }

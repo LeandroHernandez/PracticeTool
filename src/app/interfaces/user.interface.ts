@@ -25,5 +25,7 @@ export interface IUFControl {
   name: string;
   title: string;
   type: ControlTypes;
-  invalid: string;
+  invalid?: string;
+  options?: { label: string; value: string }[];
+  controls?: IUFControl[];
 }

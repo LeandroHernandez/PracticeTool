@@ -137,7 +137,7 @@ export class UsersService {
   public async updateUser(id: string, user: Partial<IUser>) {
     const userDoc = doc(this.firestore, `${DbCollections.users}/${id}`);
     return await setDoc(userDoc, user, {
-      merge: false,
+      merge: true,
     });
   }
 

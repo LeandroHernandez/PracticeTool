@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
@@ -13,7 +13,7 @@ import {
   localStorageLabels,
   RoutesApp,
 } from '../../../../../enums';
-import { IUFControl, IUser } from '../../../../../interfaces';
+import { IRole, IUFControl, IUser } from '../../../../../interfaces';
 
 import { UsersService } from '../users.service';
 import { validateComplexPassword } from '../../../../auth';
@@ -24,6 +24,7 @@ import {
 } from 'ng-zorro-antd/notification';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { RolesService } from '../../roles';
 
 @Component({
   selector: 'app-add-user',
@@ -31,13 +32,16 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
   templateUrl: './add-user.component.html',
   styleUrl: './add-user.component.css',
 })
-export class AddUserComponent {
+export class AddUserComponent implements OnInit {
   public backTo: string = `/${RoutesApp.users}`;
 
   public form: FormGroup;
   public showErrors: boolean = false;
+  public showPassword: boolean = false;
 
   public user: IUser | null = null;
+
+  public roles: IRole[] = [];
 
   get localLanguage(): string {
     return (
@@ -51,6 +55,18 @@ export class AddUserComponent {
 
   get controls(): IUFControl[] {
     return [
+      {
+        title: this.en ? 'Role' : 'Rol',
+        name: 'role',
+        type: ControlTypes.select,
+        options: this.roles.map((role) => ({
+          label: role.name,
+          value: role.id,
+        })),
+        invalid: this.en
+          ? 'Please enter a valid name between 2 and 30 characters long.'
+          : 'Ingrese un nombre válido de entre 2 y 30 caracteres.',
+      },
       {
         title: this.en ? 'Names' : 'Nombres',
         name: 'names',
@@ -91,6 +107,7 @@ export class AddUserComponent {
     private _route: ActivatedRoute,
     private _fb: FormBuilder,
     private _usersSvc: UsersService,
+    private _rolesSvc: RolesService,
     private _nzNotificationSvc: NzNotificationService
   ) {
     localStorage.removeItem(localStorageLabels.loading);
@@ -132,6 +149,20 @@ export class AddUserComponent {
 
     const id = this._route.snapshot.paramMap.get('id');
     if (id) this.getUser(id);
+  }
+
+  ngOnInit(): void {
+    this.getRoles()
+  }
+
+  public getRoles(): Subscription {
+    return this._rolesSvc.getRoles().subscribe(
+      (roles) => {
+        console.log({ roles });
+        this.roles = roles;
+      },
+      (error) => console.error({ error })
+    );
   }
 
   public isRequired(cn: string): boolean {
@@ -197,7 +228,7 @@ export class AddUserComponent {
     return this._nzNotificationSvc.error(
       'Error',
       msg ??
-        'Something went wrong so we were not able to complete the proccess, please try again.'
+      'Something went wrong so we were not able to complete the proccess, please try again.'
     );
   }
 

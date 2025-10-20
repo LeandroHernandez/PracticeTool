@@ -1,0 +1,12 @@
+<!-- <p>modules works!</p> -->
+
+<main class="main">
+    <div class="content-header">
+        <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header>
+    </div>
+    <div class="table">
+        <app-table [tableInfo]="tableInfo" [itemList]="modules" [page]="page" (editAction)="moduleEdit($event)"
+            (deleteAction)="moduleDelete($event)" (pageEmitter)="page = $event" (filterAction)="getModules($event)"
+            (deleteAllAction)="deleteAll($event)" (changeStateEmitter)="changeState($event)"></app-table>
+    </div>
+</main>

@@ -1,0 +1,93 @@
+.main {
+    height: 100%;
+    width: 100%;
+    padding: 2lh clamp(0.7lh, 5vw, 2lh);
+
+    display: flex;
+    flex-direction: column;
+    gap: 2lh;
+}
+
+[class^="button"] {
+    width: fit-content;
+    font-size: 1rem;
+    padding: 0.3rem 0.7rem;
+    border: 0.15rem solid var(--secondary);
+    border-radius: 0.5rem;
+    background-color: transparent;
+    color: var(--secondary);
+
+    transition-property: transform, color, border-color;
+
+    &:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+}
+
+.form {
+    height: fit-content;
+    width: 600px;
+    max-width: 100%;
+    margin: 0 auto;
+    border: 0.12rem solid rgba(0, 0, 0, 0.2);
+    border-radius: 1rem;
+    padding: 2lh clamp(0.7lh, 5vw, 2lh);
+
+    display: flex;
+    flex-direction: column;
+    gap: 2lh;
+}
+
+.header-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1lh 2lh;
+    border-bottom: 0.12rem solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 0.1rem;
+}
+
+.label-state {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.textarea {
+    min-height: 3lh;
+    max-height: 10lh;
+}
+
+.button-submit {
+    font-size: clamp(0.7rem, 5vw, 1rem);
+    background-color: var(--secondary);
+    color: var(--primary);
+    transition-property: transform, background-color, color, border-color;
+
+    &:hover {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        color: var(--primary);
+    }
+}
+
+.disabled {
+    border-color: #6761b7;
+    background-color: #6761b7;
+}
+
+@supports not (form-sizing: content) {
+    .textarea {
+        resize: vertical;
+    }
+}
+
+@supports (form-sizing: content) {
+    .textarea {
+        resize: none;
+        form-sizing: content;
+    }
+}

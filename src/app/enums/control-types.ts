@@ -3,4 +3,7 @@ export enum ControlTypes {
   email = 'email',
   password = 'password',
   textarea = 'textarea',
+  select = 'select',
+  multiselect = 'multiselect',
+  group = 'group',
 }

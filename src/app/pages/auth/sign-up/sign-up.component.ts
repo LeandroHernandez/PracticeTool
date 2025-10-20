@@ -27,23 +27,23 @@ export class SignUpComponent {
 
   public showErrors: boolean = false;
   public showPassword: boolean = false;
-  
+
   get localLanguage(): string {
     return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   }
 
   constructor(
-      private _fb: FormBuilder, 
-      private _router: Router, 
-      private _authSvc: AuthService, 
-      private _userSvc: UsersService, 
-      private _nzNotificationSvc: NzNotificationService
-    ) {
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _authSvc: AuthService,
+    private _userSvc: UsersService,
+    private _nzNotificationSvc: NzNotificationService
+  ) {
     this.form = this._fb.group({
-      email: ['', [ Validators.required, Validators.email, Validators.maxLength(30) ]],
-      names: ['', [ Validators.required, Validators.minLength(2), Validators.maxLength(30) ]],
-      lastnames: ['', [ Validators.required, Validators.minLength(2), Validators.maxLength(30) ]],
-      password: ['', [ Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20) ]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
+      names: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
+      lastnames: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
+      password: ['', [Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20)]],
       role: ['0DVyrvO2rmDJZ6MoNBgv'],
       // createdAt: [new Date],
       // lastUpdate: [new Date],
@@ -60,7 +60,7 @@ export class SignUpComponent {
   public languageChange(val: string): void {
     return localStorage.setItem(localStorageLabels.localCurrentLanguage, val);
   };
-  
+
   public getControlErrors(control: string): Array<string> {
     return Object.keys(this.form.get(control)?.errors ?? {});
   }
@@ -82,9 +82,9 @@ export class SignUpComponent {
     return this._router.navigateByUrl(`/${RoutesApp.dashboard}`);
   }
 
-  public emailAlreadyInUseError (): Promise<boolean> {
+  public emailAlreadyInUseError(): Promise<boolean> {
 
-    this._nzNotificationSvc.warning(this.localLanguage === 'en' ? 'Email already in use' : 'Correo en uso' , this.localLanguage === 'en' ? `Actually you already have an account, let's log in.` : 'De hecho usted ya tiene una cuenta, vamos a ingresar' );
+    this._nzNotificationSvc.warning(this.localLanguage === 'en' ? 'Email already in use' : 'Correo en uso', this.localLanguage === 'en' ? `Actually you already have an account, let's log in.` : 'De hecho usted ya tiene una cuenta, vamos a ingresar');
 
     return this._router.navigateByUrl(`/${RoutesApp.auth}}/${RoutesApp.logIn}`);
   }
@@ -107,20 +107,20 @@ export class SignUpComponent {
   public submit(): Promise<boolean | NzNotificationRef> | NzNotificationRef {
     console.log({ form: this.form });
     if (this.form.invalid) return this.invalidForm();
-    
+
     const { email, password } = this.form.value;
     return this._authSvc.signUp(email, password)
-    .then(sigUpResponse => {
-      // return this.success(sigUpResponse);
-      const d: number = Date.now();
-      return this._userSvc.addUser({...this.form.value, createdAt: d, lastUpdate: d})
-      .then( addUserResponse => { console.log({ addUserResponse }); return this.success(sigUpResponse); } )
-      .catch(error => {
-        this._authSvc.delete(sigUpResponse.user).then(() => {})
-        return this.error(error);
-      });
-    })
-    .catch(error => this.error(error));
+      .then(sigUpResponse => {
+        // return this.success(sigUpResponse);
+        const d: number = Date.now();
+        return this._userSvc.addUser({ ...this.form.value, createdAt: d, lastUpdate: d })
+          .then(addUserResponse => { console.log({ addUserResponse }); return this.success(sigUpResponse); })
+          .catch(error => {
+            this._authSvc.delete(sigUpResponse.user).then(() => { })
+            return this.error(error);
+          });
+      })
+      .catch(error => this.error(error));
   }
 
 }

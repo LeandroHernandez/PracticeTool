@@ -1,6 +1,7 @@
 
 export enum DbCollections {
     roles = 'roles',
+    modules = 'modules',
     users = 'users',
     elementsToPractice = 'elementsToPractice',
     types = 'types',

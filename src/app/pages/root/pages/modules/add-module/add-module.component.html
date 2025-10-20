@@ -1,0 +1,92 @@
+<!-- <p>add-module works!</p> -->
+
+<div class="main">
+    <button class="button-back" [routerLink]="[backTo]" [title]=" en ? 'Back To Modules' : 'Volver a Módulos'"> <i
+            class="bi bi-arrow-left"></i> {{ en ? "Back" : "Volver" }}
+    </button>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <header class="header-form">
+            <h3> {{ module ? en ? 'Edit Module' : 'Editar Módulo' : en ? 'Register Module' : 'Registrar Módulo' }} </h3>
+            <label class="label-state">
+                <span class="span-state">{{ en ? 'State' : 'Estado' }}:</span>
+                <nz-switch [nzCheckedChildren]="en ? 'Active' : 'Activo'"
+                    [nzUnCheckedChildren]="en ? 'Inactive' : 'Inactivo'" formControlName="state"></nz-switch>
+            </label>
+        </header>
+        <fieldset class="fieldset">
+            <!-- <input type="text" class="input" formControlName="name"> -->
+            @for (control of controls; track $index) {
+
+            @if ( control.type === 'group' && control.controls ) {
+            <fieldset class="subfieldset" [formGroupName]="control.name">
+                <legend class="legend"> {{ control.title }} </legend>
+                @for (subControl of control.controls; track $index) {
+                <div class="input-box">
+                    @if ( isRequired(control.name, subControl.name) ) {
+                    <i class="bi bi-asterisk" nz-popover
+                        [nzPopoverContent]="en ? 'Required Field' : 'Campo Obligatorio'"></i>
+                    }
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters(subControl.title); track $index) {
+                            <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
+                            }
+                        </div>
+                        <input [type]="subControl.type" [formControlName]="subControl.name" placeholder=""
+                            class="input" />
+                    </label>
+                    @if ( showErrors && getControlErrors(control.name, subControl.name).length > 0 ) {
+                    <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="
+                            en
+                              ? 'Invalid ' + subControl.title
+                              : 'Campo ' + subControl.title + ' Invalido'
+                          " [nzPopoverContent]="subControl.invalid"></i>
+                    }
+                </div>
+                }
+            </fieldset>
+            } @else {
+            <div class="input-box">
+                @if ( isRequired(control.name) ) {
+                <i class="bi bi-asterisk" nz-popover
+                    [nzPopoverContent]="en ? 'Required Field' : 'Campo Obligatorio'"></i>
+                }
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters(control.title); track $index) {
+                        <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
+                        }
+                    </div>
+                    @if (control.type === 'textarea') {
+                    <textarea [formControlName]="control.name" placeholder="" class="textarea"></textarea>
+                    } @else if (control.type === 'select' && control.options) {
+                    <select [formControlName]="control.name" class="select">
+                        @for (role of control.options; track $index) {
+                        <option [value]="role.value">{{ role.label }}</option>
+                        }
+                    </select>
+                    } @else {
+                    <input [type]="control.type" [formControlName]="control.name" placeholder="" class="input" />
+                    }
+                </label>
+                @if ( showErrors && getControlErrors(control.name).length > 0 ) {
+                <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="
+                    en
+                      ? 'Invalid ' + control.title
+                      : 'Campo ' + control.title + ' Invalido'
+                  " [nzPopoverContent]="control.invalid"></i>
+                }
+            </div>
+
+            }
+
+
+            }
+        </fieldset>
+
+        <button class="button-submit"
+            [title]=" module ? en ? 'Edit Module' : 'Editar Módulo' : en ? 'Register Module' : 'Registrar Módulo' "
+            type="submit"> {{ module ?
+            en ? 'Edit' : 'Editar' : en ? 'Register' : 'Registrar' }} </button>
+    </form>
+</div>

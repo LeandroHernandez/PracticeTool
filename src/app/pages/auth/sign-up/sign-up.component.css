@@ -1,4 +1,3 @@
-
 .signUp-container {
     --special-color: rgb(211, 212, 206);
     height: 100%;
@@ -9,11 +8,13 @@
 
 .section {
     height: 100%;
-    width: calc(45% - 3rem);
+    width: calc(45% - 1rem);
     display: grid;
     gap: 2rem;
     /* justify-content: center; */
     align-items: end;
+    overflow-y: auto;
+    overflow-x: clip;
 }
 
 .header-section {
@@ -39,7 +40,7 @@
 }
 
 .title-form {
-    font-size: clamp(1.9rem, 5vw, 4rem);
+    font-size: clamp(1.9rem, 5vw, 3rem);
     font-weight: 600;
     line-height: fit-content;
 }
@@ -78,7 +79,8 @@
             border-color: var(--error-color-bg);
         }
 
-        &:has(.input:focus) .span-letter, &:has(.input:not(:placeholder-shown)) .span-letter {
+        &:has(.input:focus) .span-letter,
+        &:has(.input:not(:placeholder-shown)) .span-letter {
             border-bottom: .1rem var(--secondary);
             transform: translateY(-100%);
             color: var(--accent);
@@ -108,7 +110,7 @@
             padding: .5rem;
             background-color: var(--primary);
         }
-    
+
         .invalid-icon {
             color: var(--error-color);
             text-align: start;
@@ -143,6 +145,7 @@
     cursor: pointer;
     color: var(--accent);
     justify-self: end;
+    font-size: .85rem;
 }
 
 [class^="button"] {
@@ -173,7 +176,7 @@
 }
 
 .log-in-span {
-    font-size: clamp(.5rem, 2vw, .9rem);
+    font-size: clamp(.6rem, 2vw, .9rem);
 }
 
 .footer-section {
@@ -191,7 +194,7 @@
 }
 
 @media (max-width: 800px) {
-    
+
     .section {
         width: 100%;
     }

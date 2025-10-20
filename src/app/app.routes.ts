@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { RoutesApp } from './enums';
-import { authGuard } from './guards/auth.guard';
-import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+// import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { canActivate, redirectLoggedInTo } from '@angular/fire/auth-guard';
+import { canActivateUserAndState } from './guards/auth-and-state-guard';
 
 export const routes: Routes = [
     {
@@ -17,8 +18,8 @@ export const routes: Routes = [
 
     {
         path: RoutesApp.root,
-        // canActivateChild: [authGuard],
-        ...canActivate(() => redirectUnauthorizedTo([RoutesApp.landingPage])),
+        // ...canActivate(() => redirectUnauthorizedTo([RoutesApp.landingPage])),
+        canActivate: [canActivateUserAndState],
         loadComponent: () => import('./pages/root').then(m => m.RootComponent),
         loadChildren: () => import('./pages/root').then(m => m.rootRoutes),
     },

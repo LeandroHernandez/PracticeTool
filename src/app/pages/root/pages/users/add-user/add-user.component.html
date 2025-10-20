@@ -1,33 +1,26 @@
 <!-- <p>add-user works!</p> -->
 
 <div class="main">
-  <button
-    class="button-back"
-    [routerLink]="[backTo]"
-    [title]="en ? 'Back To Users' : 'Volver a Users'"
-  >
+  <button class="button-back" [routerLink]="[backTo]" [title]="en ? 'Back To Users' : 'Volver a Users'">
     <i class="bi bi-arrow-left"></i> {{ en ? "Back" : "Volver" }}
   </button>
   <form [formGroup]="form" (ngSubmit)="submit()" class="form">
     <header class="header-form">
       <h3>
         {{
-          user
-            ? en
-              ? "Edit User"
-              : "Editar Usuario"
-            : en
-            ? "Register User"
-            : "Registrar Usuario"
+        user
+        ? en
+        ? "Edit User"
+        : "Editar Usuario"
+        : en
+        ? "Register User"
+        : "Registrar Usuario"
         }}
       </h3>
       <label class="label-state">
         <span class="span-state">{{ en ? "State" : "Estado" }}:</span>
-        <nz-switch
-          [nzCheckedChildren]="en ? 'Active' : 'Activo'"
-          [nzUnCheckedChildren]="en ? 'Inactive' : 'Inactivo'"
-          formControlName="state"
-        ></nz-switch>
+        <nz-switch [nzCheckedChildren]="en ? 'Active' : 'Activo'" [nzUnCheckedChildren]="en ? 'Inactive' : 'Inactivo'"
+          formControlName="state"></nz-switch>
       </label>
     </header>
     <fieldset class="fieldset">
@@ -35,11 +28,7 @@
       @for (control of controls; track $index) {
       <div class="input-box">
         @if ( isRequired(control.name) ) {
-        <i
-          class="bi bi-asterisk"
-          nz-popover
-          [nzPopoverContent]="en ? 'Required Field' : 'Campo Obligatorio'"
-        ></i>
+        <i class="bi bi-asterisk" nz-popover [nzPopoverContent]="en ? 'Required Field' : 'Campo Obligatorio'"></i>
         }
         <label class="label-input">
           <div class="span-label-div">
@@ -48,42 +37,36 @@
             }
           </div>
           @if (control.type === 'textarea') {
-          <textarea
-            [formControlName]="control.name"
-            placeholder=""
-            class="textarea"
-          ></textarea>
+          <textarea [formControlName]="control.name" placeholder="" class="textarea"></textarea>
+          } @else if (control.type === 'select' && control.options) {
+          <select [formControlName]="control.name" class="select">
+            @for (role of control.options; track $index) {
+            <option [value]="role.value">{{ role.label }}</option>
+            }
+          </select>
           } @else {
-          <input
-            [type]="control.type"
-            [formControlName]="control.name"
-            placeholder=""
-            class="input"
-          />
+          <input [type]="control.type === 'password' ? (showPassword ? 'text' : 'password') : control.type"
+            [formControlName]="control.name" placeholder="" class="input" />
+          @if (control.name === 'password') {
+          <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"
+            [title]=" localLanguage === 'en' ? showPassword ? 'Hide Password' : 'Show Password' : showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña' "
+            (click)="showPassword = !showPassword"></i>
+          }
           }
         </label>
         @if ( showErrors && getControlErrors(control.name).length > 0 ) {
-        <i
-          class="bi bi-exclamation-circle-fill invalid-icon"
-          nz-popover
-          [nzPopoverTitle]="
+        <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="
             en
               ? 'Invalid ' + control.title
               : 'Campo ' + control.title + ' Invalido'
-          "
-          [nzPopoverContent]="control.invalid"
-        ></i>
+          " [nzPopoverContent]="control.invalid"></i>
         }
       </div>
 
       }
     </fieldset>
 
-    <button
-      class="button-submit"
-      [title]="user ? 'Edit User' : 'Register User'"
-      type="submit"
-    >
+    <button class="button-submit" [title]="user ? 'Edit User' : 'Register User'" type="submit">
       {{ user ? (en ? "Edit" : "Editar") : en ? "Register" : "Registrar" }}
     </button>
   </form>

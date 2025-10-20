@@ -29,21 +29,21 @@ export class LogInComponent {
 
   public showErrors: boolean = false;
   public showPassword: boolean = false;
-  
+
   get localLanguage(): string {
     return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   }
 
-  constructor (
-    private _router: Router, 
-    private _fb: FormBuilder, 
-    private _authSvc: AuthService, 
-    private _usersSvc: UsersService, 
+  constructor(
+    private _router: Router,
+    private _fb: FormBuilder,
+    private _authSvc: AuthService,
+    private _usersSvc: UsersService,
     private _nzNotificationSvc: NzNotificationService
   ) {
     this.form = this._fb.group({
-      email: ['', [ Validators.required, Validators.email ]],
-      password: ['', [ Validators.required, validateComplexPassword() ]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, validateComplexPassword()]],
     })
 
     this.languageForm = this._fb.group({
@@ -52,7 +52,7 @@ export class LogInComponent {
 
     this.languageForm.get('language')?.valueChanges.subscribe(val => this.languageChange(val));
   }
-  
+
   public getControlErrors(control: string): Array<string> {
     return Object.keys(this.form.get(control)?.errors ?? {});
   }
@@ -87,11 +87,11 @@ export class LogInComponent {
 
     return this._nzNotificationSvc.error('error', this.localLanguage ? 'Something went wrong, please try again.' : 'Algo salio mal, por favor vuelva a intentarlo.');
   }
-  
+
   // public googleAuth(): Promise<boolean | NzNotificationRef> {
 
   //   // this._usersSvc.getFilteredUsers({email: })
-    
+
   //   return this._authSvc.googleAuth()
   //   .then(googleAuthResponse => this.success(googleAuthResponse))
   //   .catch(error => this.error(error));
@@ -106,7 +106,7 @@ export class LogInComponent {
 
     return this._authSvc.logIn(email, password)
       .then(response => this.success(response))
-      .catch(error => { if(error.code === firebaseErrors.auth.invalidCredential) return this.invalidCredentials(); return error(error)});
+      .catch(error => { if (error.code === firebaseErrors.auth.invalidCredential) return this.invalidCredentials(); return error(error) });
 
   }
 }

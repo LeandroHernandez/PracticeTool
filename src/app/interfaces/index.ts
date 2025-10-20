@@ -3,6 +3,7 @@ export * from './element-to-practice.interface';
 export * from './etp-item.interface';
 export * from './filter-form-field.interface';
 export * from './mistake.interface';
+export * from './module.interface';
 export * from './nav-item.interface';
 export * from './page-table-info.interface';
 export * from './practice-list.interface';

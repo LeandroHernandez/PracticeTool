@@ -1,25 +1,26 @@
-
 .logIn-container {
     --special-color: rgb(211, 212, 206);
     height: 100%;
     width: 100%;
     display: flex;
     justify-content: end;
-    
+
     &.es {
         .title-form {
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
         }
     }
 }
 
 .section {
     height: 100%;
-    width: calc(45% - 3rem);
+    width: calc(45% - 1rem);
     display: grid;
     gap: 2rem;
     /* justify-content: center; */
     align-items: end;
+    overflow-y: auto;
+    overflow-x: clip;
 }
 
 .header-section {
@@ -45,7 +46,7 @@
 }
 
 .title-form {
-    font-size: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 600;
     line-height: fit-content;
 }
@@ -84,7 +85,8 @@
             border-color: var(--error-color-bg);
         }
 
-        &:has(.input:focus) .span-letter, &:has(.input:not(:placeholder-shown)) .span-letter {
+        &:has(.input:focus) .span-letter,
+        &:has(.input:not(:placeholder-shown)) .span-letter {
             border-bottom: .1rem var(--secondary);
             transform: translateY(-100%);
             color: var(--accent);
@@ -114,7 +116,7 @@
             padding: .5rem;
             background-color: var(--primary);
         }
-    
+
         .invalid-icon {
             color: var(--error-color);
             text-align: start;
@@ -157,12 +159,12 @@
         left: -3.5rem;
         transform: translateY(-50%);
         color: rgba(211, 212, 206, 0.7);
-        border: .15rem solid ;
+        border: .15rem solid;
         border-radius: .1rem;
         height: .1rem;
         width: 3rem;
 
-        box-shadow: 5rem 0 0 ;
+        box-shadow: 5rem 0 0;
     }
 }
 
@@ -170,10 +172,11 @@
     cursor: pointer;
     color: var(--accent);
     justify-self: end;
+    font-size: .85rem;
 }
 
 .forgot-password {
-    font-size: clamp(.65rem, 2vw, .85rem);
+    font-size: .85rem;
     cursor: not-allowed;
 }
 
@@ -244,7 +247,7 @@
 }
 
 @media (max-width: 800px) {
-    
+
     .section {
         width: 100%;
     }

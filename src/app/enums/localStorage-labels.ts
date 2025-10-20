@@ -1,34 +1,42 @@
 
-enum role { 
+enum module {
+  customSelectedList = 'customSelectedListOfMODULE',
+  selectedList = 'selectedListOfMODULE',
+  filerBody = 'filerBodyMODULE',
+}
+
+enum role {
   customSelectedList = 'customSelectedListOfROLE',
   selectedList = 'selectedListOfROLE',
   filerBody = 'filerBodyROLE',
 }
 
-enum user { 
+enum user {
   customSelectedList = 'customSelectedListOfUSER',
   selectedList = 'selectedListOfUSER',
   filerBody = 'filerBodyUSER',
 }
 
-enum etp { 
+enum etp {
   customSelectedList = 'customSelectedListOfETP',
   selectedList = 'selectedListOfETP',
   filerBody = 'filerBodyETP',
 }
 
-enum pl { 
+enum pl {
   customSelectedList = 'customSelectedListOfPL',
   selectedList = 'selectedListOfPL',
   filerBody = 'filerBodyPL',
 }
 
 export const localStorageLabels = {
+  module,
   role,
+  user,
   etp,
   pl,
-  user,
   selectedListOfKinds: 'selectedListOfKinds',
   localCurrentLanguage: 'localCurrentLanguage',
   loading: 'loading',
+  userEmail: 'userEmail',
 }

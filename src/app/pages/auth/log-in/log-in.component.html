@@ -7,19 +7,24 @@
             <!-- <button type="button" class="button-header-logIn" [title]="notEnabledTitle"> 
                 English <i class="bi bi-chevron-down"></i> 
             </button> -->
-            
+
             <form class="language-form" [formGroup]="languageForm">
                 <select class="form-select" formControlName="language">
-                    <option [selected]="localLanguage === 'en'" value="en" [class]="localLanguage === 'en' ? 'option-s' : 'option' " >{{ localLanguage === 'en' ?  'English' : 'Ingles'}}</option>
-                    <option [selected]="localLanguage === 'es'" value="es" [class]="localLanguage === 'es' ? 'option-s' : 'option' " >{{ localLanguage === 'en' ?  'Spanish' : 'Español'}}</option>
+                    <option [selected]="localLanguage === 'en'" value="en"
+                        [class]="localLanguage === 'en' ? 'option-s' : 'option' ">{{ localLanguage === 'en' ? 'English'
+                        : 'Ingles'}}</option>
+                    <option [selected]="localLanguage === 'es'" value="es"
+                        [class]="localLanguage === 'es' ? 'option-s' : 'option' ">{{ localLanguage === 'en' ? 'Spanish'
+                        : 'Español'}}</option>
                 </select>
             </form>
-            
+
         </header>
         <form class="form" [formGroup]="form" (ngSubmit)="submit()">
             <header class="header-form">
                 <h4 class="title-form"> {{ localLanguage === 'en' ? 'Hi Student' : 'Hola Estudiante' }} </h4>
-                <h5 class="subtitle-form"> {{ localLanguage === 'en' ? 'Welcome to' : 'Bienvenido a' }} <span class="span-subtitle"> PRACTICE TOOL </span> </h5>
+                <h5 class="subtitle-form"> {{ localLanguage === 'en' ? 'Welcome to' : 'Bienvenido a' }} <span
+                        class="span-subtitle"> PRACTICE TOOL </span> </h5>
             </header>
 
             <fieldset class="fieldset">
@@ -27,48 +32,56 @@
                     <label class="label-input">
                         <div class="span-label-div">
                             @for (letter of letters( localLanguage === 'en' ? 'Email' : 'Correo' ); track $index) {
-                                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
                             }
                         </div>
                         <input type="email" formControlName="email" placeholder="" class="input">
                     </label>
                     @if ( showErrors && getControlErrors('email').length > 0 ) {
-                        <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres'}} </p> -->
-                         <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Email' : 'Correo Invalido' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres' " ></i>
+                    <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres'}} </p> -->
+                    <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover
+                        [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Email' : 'Correo Invalido' "
+                        [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres' "></i>
                     }
                 </div>
                 <div class="input-box">
                     <label class="label-input">
                         <div class="span-label-div">
-                            @for (letter of letters( localLanguage === 'en' ? 'Password' : 'Contraseña' ); track $index) {
-                                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            @for (letter of letters( localLanguage === 'en' ? 'Password' : 'Contraseña' ); track $index)
+                            {
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
                             }
                         </div>
-                        <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder="" class="input">
-                        <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" [title]=" localLanguage === 'en' ? showPassword ? 'Hide Password' : 'Show Password' : showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña' " (click)="showPassword = !showPassword"></i>
+                        <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder=""
+                            class="input">
+                        <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"
+                            [title]=" localLanguage === 'en' ? showPassword ? 'Hide Password' : 'Show Password' : showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña' "
+                            (click)="showPassword = !showPassword"></i>
                     </label>
                     @if ( showErrors && getControlErrors('password').length > 0 ) {
-                        <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial'}} </p> -->
-                         <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Password' : 'Contraseña Invalida' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial' " ></i>
+                    <!-- <p class="p-error"> {{ localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial'}} </p> -->
+                    <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover
+                        [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Password' : 'Contraseña Invalida' "
+                        [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial' "></i>
                     }
                 </div>
-                <span class="span-url forgot-password" [title]=" localLanguage === 'en' ? 'Ask for a new password' : 'Pida una nueva contraseña' " > {{ localLanguage === 'en' ? 'Forgot password?' : 'Olvidó su contrtaseña?'}} </span>
+                <span class="span-url forgot-password"
+                    [title]=" localLanguage === 'en' ? 'Ask for a new password' : 'Pida una nueva contraseña' "> {{
+                    localLanguage === 'en' ? 'Forgot password?' : 'Olvidó su contrtaseña?'}} </span>
             </fieldset>
 
             <span class="span-or"> {{ localLanguage === 'en' ? 'or' : 'o' }} </span>
 
             <!-- (click)="googleAuth()" -->
-            <button
-                type="button"
-                class="button-google"
-                [title]="notEnabledTitle"
-            > 
-                 {{ localLanguage === 'en' ? 'Login With Google' : 'Ingresar Con Google'}}  
+            <button type="button" class="button-google" [title]="notEnabledTitle">
+                {{ localLanguage === 'en' ? 'Login With Google' : 'Ingresar Con Google'}}
                 <div class="div-google"></div>
             </button>
             <button type="submit" class="button-submit"> {{ localLanguage === 'en' ? 'Login' : 'Ingresar'}} </button>
 
-            <span class="sign-up-span" > {{ localLanguage === 'en' ? `Don't have an account?` :  'No tiene una cuenta?'}} <span class="span-url" [title]=" localLanguage === 'en' ? `Let's do it` : 'Vamos a hacerlo' " [routerLink]="[signUpUrl]" > {{ localLanguage === 'en' ? 'Sign up' : 'Reistrese'}} </span> </span>
+            <span class="sign-up-span"> {{ localLanguage === 'en' ? `Don't have an account?` : 'No tiene una cuenta?'}}
+                <span class="span-url" [title]=" localLanguage === 'en' ? `Let's do it` : 'Vamos a hacerlo' "
+                    [routerLink]="[signUpUrl]"> {{ localLanguage === 'en' ? 'Sign up' : 'Reistrese'}} </span> </span>
 
         </form>
         <footer class="footer-section">
