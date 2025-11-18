@@ -114,7 +114,11 @@ export class TableComponent implements OnInit {
     return JSON.parse(localStorage.getItem(this.actualFilterLabel) ?? 'null');
   }
 
-  constructor(private _router: Router, private _nzModalSvc: NzModalService) {}
+  get localLanguage(): string {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  }
+
+  constructor(private _router: Router, private _nzModalSvc: NzModalService) { }
 
   ngOnInit(): void {
     for (const item of this.actualSelectedItems) {
@@ -163,21 +167,9 @@ export class TableComponent implements OnInit {
   }
 
   getClass(item: any, keyItem: ITableItem): string {
-    const key: string = keyItem.key;
+    const { key } = keyItem;
 
-    if (!item[keyItem.key]) {
-      if (
-        key === 'simplePresent' ||
-        key === 'simplePast' ||
-        key === 'pastParticiple'
-      ) {
-        if (item.type !== 'Verb') {
-          return 'null';
-        } else {
-          return 'empty';
-        }
-      }
-    }
+    if (item[key] === '' || item[key] === null) return 'empty';
 
     return '';
   }
@@ -192,16 +184,7 @@ export class TableComponent implements OnInit {
 
     if (key.endsWith('irregular')) {
       return valueItem ? 'Irregular' : 'Regular';
-    } else if (!valueItem) {
-      const verbInfo: string = 'verbInfo';
-      if (
-        key === `${verbInfo}.simplePresent` ||
-        key === `${verbInfo}.simplePast` ||
-        key === `${verbInfo}.pastParticiple`
-      ) {
-        return 'Empty';
-      }
-    }
+    } else if (!valueItem) return this.localLanguage === 'en' ? 'Empty' : 'Vacío';
     return valueItem;
   }
 

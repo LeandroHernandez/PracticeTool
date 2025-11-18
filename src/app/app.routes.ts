@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { RoutesApp } from './enums';
 // import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
 import { canActivate, redirectLoggedInTo } from '@angular/fire/auth-guard';
-import { canActivateUserAndState } from './guards/auth-and-state-guard';
+import { canActivateAuthStateRole } from './guards/auth-state-role.guard';
 
 export const routes: Routes = [
     {
@@ -19,7 +19,7 @@ export const routes: Routes = [
     {
         path: RoutesApp.root,
         // ...canActivate(() => redirectUnauthorizedTo([RoutesApp.landingPage])),
-        canActivate: [canActivateUserAndState],
+        canActivate: [canActivateAuthStateRole],
         loadComponent: () => import('./pages/root').then(m => m.RootComponent),
         loadChildren: () => import('./pages/root').then(m => m.rootRoutes),
     },

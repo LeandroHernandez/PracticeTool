@@ -83,10 +83,10 @@
     background-color: var(--primary);
     color: var(--error-color);
     font-weight: 500;
-    
+
     transition: .2s ease allow-discrete;
     transition-property: transform, background-color, color, border-style;
-    
+
     &:hover {
       font-weight: auto;
       background-color: var(--error-color);
@@ -183,8 +183,8 @@
 }
 
 .empty {
-  /* color: var(--accent); */
-  font-weight: 650;
+  color: var(--accent3);
+  font-weight: 700;
 }
 
 .null {
@@ -192,7 +192,8 @@
   font-weight: 700;
 }
 
-.empty-p, .loading-p {
+.empty-p,
+.loading-p {
   padding: 1.2rem;
   text-align: center;
   font-size: 1rem;

@@ -114,7 +114,8 @@ ul {
             transform: scale(100.5%);
 
             .input,
-            .textarea {
+            .textarea,
+            .ant-select-selector {
                 border-color: #dad9e9;
             }
         }
@@ -122,7 +123,8 @@ ul {
         &:has(.invalid-icon) {
 
             .input,
-            .textarea {
+            .textarea,
+            .ant-select .ant-select-selector {
                 border-color: var(--error-color-bg);
             }
         }
@@ -131,7 +133,9 @@ ul {
         &:has(.input:not(:placeholder-shown)),
         &:has(.textarea:focus),
         &:has(.textarea:not(:placeholder-shown)),
-        &:has(.select) {
+        &:has(.select),
+        &:has(.ant-select-focused),
+        &:has(.with-content) {
             .span-letter {
                 border-bottom: .1rem var(--secondary);
                 transform: translateY(-100%);
@@ -150,6 +154,7 @@ ul {
 
         .label-input {
             position: relative;
+            width: 100%;
 
             .span-label-div {
                 position: absolute;
@@ -161,12 +166,22 @@ ul {
                 align-items: center;
                 /* gap: .05rem; */
                 color: #808080;
+                cursor: text;
+            }
+        }
+
+        &:has(.ant-select) .span-label-div {
+            top: .9rem;
+
+            .span-letter {
+                z-index: 1;
             }
         }
 
         .select,
         .input,
-        .textarea {
+        .textarea,
+        .ant-select .ant-select-selector {
             width: 100%;
             border: .15rem solid var(--special-color);
             outline: none;
@@ -177,13 +192,65 @@ ul {
             transition: .15s border-color ease;
         }
 
-        .select {
+        .select,
+        .ant-select-selector {
             /* appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none; */
             cursor: pointer;
             /* height: 2.5lh;
             font-size: 1rem; */
+
+            .ant-select-selection-item {
+                background-color: #d3d4d9;
+                color: var(--secondary);
+                padding: .2rem .5rem;
+                box-sizing: content-box;
+                border-radius: .3rem;
+                display: flex;
+                align-items: center;
+                gap: .3rem;
+                z-index: 1;
+
+                transition-duration: .2s;
+                transition-property: opacity, transform;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+
+                .ant-select-selection-item-remove {
+                    color: #ff4d50;
+
+                    transition-duration: .2s;
+                    font-size: .8rem;
+                    transition-property: transform, color;
+
+                    &:hover {
+                        transform: scale(1.5);
+                        color: var(--error-color);
+                    }
+                }
+            }
+
+            &:has(.ant-select-selection-item:hover) {
+                .ant-select-selection-item:not(:hover) {
+                    opacity: .5;
+                }
+            }
+        }
+
+        .ant-select {
+            width: 100%;
+        }
+
+        .ant-select-clear nz-icon {
+            color: #ff4d50;
+            transition: .2s transform;
+
+            &:hover {
+                transform: scale(1.5);
+            }
         }
 
         .invalid-icon {

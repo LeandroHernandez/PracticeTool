@@ -1,37 +1,39 @@
 import { Routes } from '@angular/router';
-import { RoutesApp } from '../../enums';
-import { canActivateUserAndState } from '../../guards/auth-and-state-guard';
+import { RoleIds, RoutesApp } from '../../enums';
+import { canActivateAuthStateRole } from '../../guards/auth-state-role.guard';
+// import { canActivateWithRole } from '../../guards/auth-role.guard';
+// import { canActivateRole } from '../../guards';
 
 export const rootRoutes: Routes = [
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole],
     path: RoutesApp.profile,
     loadComponent: () =>
       import('./pages/profile').then((m) => m.ProfileComponent),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole],
     path: RoutesApp.dashboard,
     loadComponent: () =>
       import('./pages/dashboard').then((m) => m.DashboardComponent),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole([RoleIds.admin])],
     path: RoutesApp.modules,
     loadChildren: () => import('./pages/modules').then((m) => m.modulesRoutes),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole([RoleIds.admin])],
     path: RoutesApp.roles,
     loadChildren: () => import('./pages/roles').then((m) => m.rolesRoutes),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole([RoleIds.admin])],
     path: RoutesApp.users,
     loadChildren: () => import('./pages/users').then((m) => m.usersRoutes),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole],
     path: RoutesApp.elementsToPractice,
     loadComponent: () =>
       import('./pages/elements-to-practice').then(
@@ -43,7 +45,7 @@ export const rootRoutes: Routes = [
       ),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole],
     path: RoutesApp.practiceLists,
     loadChildren: () =>
       import('./pages/practice-lists/practice-lists.routes').then(
@@ -51,7 +53,7 @@ export const rootRoutes: Routes = [
       ),
   },
   {
-    canActivate: [canActivateUserAndState],
+    canActivate: [canActivateAuthStateRole],
     path: RoutesApp.test,
     loadComponent: () =>
       import('./pages/test/test.component').then((m) => m.TestComponent),

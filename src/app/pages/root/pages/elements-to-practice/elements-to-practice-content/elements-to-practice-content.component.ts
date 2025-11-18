@@ -15,6 +15,8 @@ import { TypeService } from '../../types/types.service';
 import { ElementToPracticeService } from '../element-to-practice.service';
 import { PracticeListsService } from '../../practice-lists';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { Subscription } from 'rxjs';
+import { RootService } from '../../../root.service';
 
 @Component({
   selector: 'app-elements-to-practice-content',
@@ -94,14 +96,24 @@ export class ElementsToPracticeContentComponent implements OnInit {
 
   constructor(
     private _router: Router,
+    private _rootSvc: RootService,
     private _typeSvc: TypeService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _practiceListsSvc: PracticeListsService,
     private _notificationSvc: NzNotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getElementsToPractice();
+    this.getUserInfo();
+  }
+
+  public getUserInfo(): void {
+    this._rootSvc.user$.subscribe(
+      userInfo => {
+        console.log({ userInfo });
+      }
+    )
   }
 
   public getElementsToPractice(query?: any, options?: any): void {

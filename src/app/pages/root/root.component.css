@@ -19,6 +19,11 @@
 .content_section {
     height: 100%;
     display: flex;
+
+    &:has([class^="nav"]:hover) .content {
+        filter: blur(1.5px);
+        opacity: .6;
+    }
 }
 
 .nav-show {
@@ -58,4 +63,14 @@
     min-height: 100%;
     width: 100%;
     padding: 1rem;
+
+    position: relative;
+
+    transition-duration: .2s;
+    transition-property: filter, opacity;
+
+    &.hide {
+        filter: blur(1px);
+        opacity: .8;
+    }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
 import {
   Firestore,
   collection,
@@ -33,33 +33,46 @@ import { Query, setDoc } from 'firebase/firestore';
   providedIn: 'root',
 })
 export class ElementToPracticeService {
-  private elementToPracticesRef: CollectionReference<IElementToPractice>;
+  // private elementToPracticesRef: CollectionReference<IElementToPractice>;
 
-  constructor(private firestore: Firestore, private _typeSvc: TypeService) {
-    this.elementToPracticesRef = collection(
-      this.firestore,
-      DbCollections.elementsToPractice
-    ) as CollectionReference<IElementToPractice>;
-  }
+  // constructor(private firestore: Firestore, private _typeSvc: TypeService) {
+  //   this.elementToPracticesRef = collection(
+  //     this.firestore,
+  //     DbCollections.elementsToPractice
+  //   ) as CollectionReference<IElementToPractice>;
+  // }
+
+  private firestore = inject(Firestore);
+  private injector = inject(EnvironmentInjector);
+  private elementToPracticesRef = runInInjectionContext(this.injector, () =>
+    collection(this.firestore, DbCollections.elementsToPractice) as CollectionReference<IElementToPractice>
+  );
+
+  private _typeSvc = inject(TypeService);
 
   getElementsToPractice(typeId?: string): Observable<IElementToPractice[]> {
-    if (typeId) {
-      return this.getElementsToPracticeByType(typeId);
-    }
-    return collectionData(this.elementToPracticesRef, {
-      idField: 'id',
-    }) as Observable<IElementToPractice[]>;
+
+    return runInInjectionContext(this.injector, () => {
+      if (typeId) {
+        return this.getElementsToPracticeByType(typeId);
+      }
+      return collectionData(this.elementToPracticesRef, {
+        idField: 'id',
+      }) as Observable<IElementToPractice[]>;
+    });
   }
 
   getElementToPractice(id: string): Observable<IElementToPractice> {
-    // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
-    const elementToPracticeDoc = doc(
-      this.firestore,
-      `${DbCollections.elementsToPractice}/${id}`
-    );
-    return docData(elementToPracticeDoc, {
-      idField: 'id',
-    }) as Observable<IElementToPractice>;
+    return runInInjectionContext(this.injector, () => {
+      // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
+      const elementToPracticeDoc = doc(
+        this.firestore,
+        `${DbCollections.elementsToPractice}/${id}`
+      );
+      return docData(elementToPracticeDoc, {
+        idField: 'id',
+      }) as Observable<IElementToPractice>;
+    });
   }
 
   // getElementsToPracticeByType(typeId: string): Observable<any[]> {
@@ -69,40 +82,43 @@ export class ElementToPracticeService {
   // }
 
   getElementsToPracticeByType(typeId: string): Observable<any[]> {
-    const ElementsToPracticeRef = collection(
-      this.firestore,
-      DbCollections.elementsToPractice
-    );
-    const ElementsToPracticeQuery = query(
-      ElementsToPracticeRef,
-      where('type', '==', typeId)
-    );
 
-    return collectionData(ElementsToPracticeQuery, { idField: 'id' }).pipe(
-      switchMap((elements: any[]) => {
-        const enrichedElements$ = elements.map((element) => {
-          const wordTypeId = element.verbInfo?.wordType;
+    return runInInjectionContext(this.injector, () => {
+      const ElementsToPracticeRef = collection(
+        this.firestore,
+        DbCollections.elementsToPractice
+      );
+      const ElementsToPracticeQuery = query(
+        ElementsToPracticeRef,
+        where('type', '==', typeId)
+      );
 
-          if (wordTypeId) {
-            return this._typeSvc.getType(wordTypeId).pipe(
-              map((wordTypeData) => {
-                return {
-                  ...element,
-                  verbInfo: {
-                    ...element.verbInfo,
-                    wordType: wordTypeData, // Aquí reemplazas el ID por el objeto
-                  },
-                };
-              })
-            );
-          }
+      return collectionData(ElementsToPracticeQuery, { idField: 'id' }).pipe(
+        switchMap((elements: any[]) => {
+          const enrichedElements$ = elements.map((element) => {
+            const wordTypeId = element.verbInfo?.wordType;
 
-          return of(element); // Si no hay wordType, simplemente regresa el elemento como está
-        });
+            if (wordTypeId) {
+              return this._typeSvc.getType(wordTypeId).pipe(
+                map((wordTypeData) => {
+                  return {
+                    ...element,
+                    verbInfo: {
+                      ...element.verbInfo,
+                      wordType: wordTypeData, // Aquí reemplazas el ID por el objeto
+                    },
+                  };
+                })
+              );
+            }
 
-        return combineLatest(enrichedElements$); // Espera todos los observables para combinarlos
-      })
-    );
+            return of(element); // Si no hay wordType, simplemente regresa el elemento como está
+          });
+
+          return combineLatest(enrichedElements$); // Espera todos los observables para combinarlos
+        })
+      );
+    });
   }
 
   getFilteredElementsToPractice(
@@ -112,117 +128,120 @@ export class ElementToPracticeService {
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
     } = {}
   ): Observable<any[]> {
-    // console.log({ filters: {...filters} });
-    const elementsRef = collection(
-      this.firestore,
-      DbCollections.elementsToPractice
-    ) as CollectionReference<IElementToPractice>;
 
-    function extractValidFilters(obj: any, prefix = ''): [string, any][] {
-      return Object.entries(obj).flatMap(([key, val]) => {
-        if (val === null || val === '') return [];
-        if (typeof val === 'object' && !Array.isArray(val)) {
-          return extractValidFilters(val, `${prefix}${key}.`);
-        }
-        return [[`${prefix}${key}`, val]];
-      });
-    }
+    return runInInjectionContext(this.injector, () => {
+      // console.log({ filters: {...filters} });
+      const elementsRef = collection(
+        this.firestore,
+        DbCollections.elementsToPractice
+      ) as CollectionReference<IElementToPractice>;
 
-    const typeFilter = filters['type'];
-    delete filters['type'];
+      function extractValidFilters(obj: any, prefix = ''): [string, any][] {
+        return Object.entries(obj).flatMap(([key, val]) => {
+          if (val === null || val === '') return [];
+          if (typeof val === 'object' && !Array.isArray(val)) {
+            return extractValidFilters(val, `${prefix}${key}.`);
+          }
+          return [[`${prefix}${key}`, val]];
+        });
+      }
 
-    const validFilters = extractValidFilters(filters);
-    const constraints: QueryConstraint[] = [];
+      const typeFilter = filters['type'];
+      delete filters['type'];
 
-    // console.log({ validFilters });
+      const validFilters = extractValidFilters(filters);
+      const constraints: QueryConstraint[] = [];
 
-    for (const [path, value] of validFilters) {
-      // const condition: boolean = path === 'type' && Array.isArray(value);
-      // const condition2: boolean = condition && value.some((val: string) => childrenTypes.includes(val));
+      // console.log({ validFilters });
 
-      // if ( condition2 )
-      //   constraints.push(
-      //     where(
-      //       'selectedUses',
-      //       'array-contains-any',
-      //       value.filter((val: string) => childrenTypes.includes(val))
-      //     )
-      //   );
+      for (const [path, value] of validFilters) {
+        // const condition: boolean = path === 'type' && Array.isArray(value);
+        // const condition2: boolean = condition && value.some((val: string) => childrenTypes.includes(val));
 
-      // if (!condition || value.some((val: string) => !childrenTypes.includes(val))) constraints.push(where(path, condition ? 'in' : '==', condition2 ? value.filter((val: string) => !childrenTypes.includes(val)) : value));
+        // if ( condition2 )
+        //   constraints.push(
+        //     where(
+        //       'selectedUses',
+        //       'array-contains-any',
+        //       value.filter((val: string) => childrenTypes.includes(val))
+        //     )
+        //   );
 
-      constraints.push(where(path, '==', value));
-      // constraints.push(where(path, '>=', value));
-      // constraints.push(where(path, '<=', value + '\uf8ff'));
-    }
+        // if (!condition || value.some((val: string) => !childrenTypes.includes(val))) constraints.push(where(path, condition ? 'in' : '==', condition2 ? value.filter((val: string) => !childrenTypes.includes(val)) : value));
 
-    // console.log({ constraints });
+        constraints.push(where(path, '==', value));
+        // constraints.push(where(path, '>=', value));
+        // constraints.push(where(path, '<=', value + '\uf8ff'));
+      }
 
-    const baseQuery = query(elementsRef, ...constraints);
+      // console.log({ constraints });
 
-    if (!typeFilter) return this.executeQuery(baseQuery, options);
+      const baseQuery = query(elementsRef, ...constraints);
 
-    const parents: string[] = [];
-    const children: string[] = [];
+      if (!typeFilter) return this.executeQuery(baseQuery, options);
 
-    const childrenTypes: string[] = [
-      typesOfWords.verb,
-      typesOfWords.adjective,
-      typesOfWords.preposition,
-      typesOfWords.adverb,
-      typesOfWords.noun,
-    ];
+      const parents: string[] = [];
+      const children: string[] = [];
 
-    for (const typeId of Array.isArray(typeFilter)
-      ? typeFilter
-      : [typeFilter]) {
-      if (childrenTypes.includes(typeId)) {
-        children.push(typeId);
-      } else parents.push(typeId);
-      // const found = allTypes.find((t) => t.id === typeId);
-      // if (!found) continue;
-      // if (found.father) {
-      //   children.push(typeId);
-      // } else {
-      //   parents.push(typeId);
-      // }
-    }
+      const childrenTypes: string[] = [
+        typesOfWords.verb,
+        typesOfWords.adjective,
+        typesOfWords.preposition,
+        typesOfWords.adverb,
+        typesOfWords.noun,
+      ];
 
-    const parentQuery =
-      parents.length > 0
-        ? query(baseQuery, where('type', 'in', parents))
-        : null;
+      for (const typeId of Array.isArray(typeFilter)
+        ? typeFilter
+        : [typeFilter]) {
+        if (childrenTypes.includes(typeId)) {
+          children.push(typeId);
+        } else parents.push(typeId);
+        // const found = allTypes.find((t) => t.id === typeId);
+        // if (!found) continue;
+        // if (found.father) {
+        //   children.push(typeId);
+        // } else {
+        //   parents.push(typeId);
+        // }
+      }
 
-    const childQuery =
-      children.length > 0
-        ? query(
+      const parentQuery =
+        parents.length > 0
+          ? query(baseQuery, where('type', 'in', parents))
+          : null;
+
+      const childQuery =
+        children.length > 0
+          ? query(
             baseQuery,
             where('selectedUses', 'array-contains-any', children)
           )
-        : null;
+          : null;
 
-    const observables: Observable<any[]>[] = [];
+      const observables: Observable<any[]>[] = [];
 
-    if (parentQuery) {
-      observables.push(this.executeQuery(parentQuery, options));
-    }
-    if (childQuery) {
-      observables.push(this.executeQuery(childQuery, options));
-    }
+      if (parentQuery) {
+        observables.push(this.executeQuery(parentQuery, options));
+      }
+      if (childQuery) {
+        observables.push(this.executeQuery(childQuery, options));
+      }
 
-    if (observables.length === 0) {
-      return of([]);
-    }
+      if (observables.length === 0) {
+        return of([]);
+      }
 
-    return combineLatest(observables).pipe(
-      map((results) => {
-        const merged = [...results.flat()];
-        // Quitar duplicados por ID
-        const uniqueMap = new Map();
-        merged.forEach((el) => uniqueMap.set(el.id, el));
-        return Array.from(uniqueMap.values());
-      })
-    );
+      return combineLatest(observables).pipe(
+        map((results) => {
+          const merged = [...results.flat()];
+          // Quitar duplicados por ID
+          const uniqueMap = new Map();
+          merged.forEach((el) => uniqueMap.set(el.id, el));
+          return Array.from(uniqueMap.values());
+        })
+      );
+    });
 
     // if (options.pageSize) {
     //   constraints.push(limit(options.pageSize));
@@ -269,84 +288,95 @@ export class ElementToPracticeService {
       startAfterDoc?: QueryDocumentSnapshot<DocumentData>;
     }
   ): Observable<any[]> {
-    const constraints: QueryConstraint[] = [];
+    return runInInjectionContext(this.injector, () => {
+      const constraints: QueryConstraint[] = [];
 
-    if (options.pageSize) {
-      constraints.push(limit(options.pageSize));
-    }
+      if (options.pageSize) {
+        constraints.push(limit(options.pageSize));
+      }
 
-    if (options.startAfterDoc) {
-      constraints.push(startAfter(options.startAfterDoc));
-    }
+      if (options.startAfterDoc) {
+        constraints.push(startAfter(options.startAfterDoc));
+      }
 
-    const finalQuery = query(queryRef, ...constraints);
+      const finalQuery = query(queryRef, ...constraints);
 
-    return collectionSnapshots(finalQuery).pipe(
-      // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-      map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-      switchMap((elements: any[]) => {
-        const enrichedElements$ = elements.map((element) => {
-          const wordTypeId = element.verbInfo?.wordType;
+      return collectionSnapshots(finalQuery).pipe(
+        // map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+        map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
+        switchMap((elements: any[]) => {
+          const enrichedElements$ = elements.map((element) => {
+            const wordTypeId = element.verbInfo?.wordType;
 
-          if (wordTypeId) {
-            return this._typeSvc.getType(wordTypeId).pipe(
-              map((wordTypeData) => ({
-                ...element,
-                verbInfo: {
-                  ...element.verbInfo,
-                  wordType: wordTypeData,
-                },
-              }))
-            );
-          }
+            if (wordTypeId) {
+              return this._typeSvc.getType(wordTypeId).pipe(
+                map((wordTypeData) => ({
+                  ...element,
+                  verbInfo: {
+                    ...element.verbInfo,
+                    wordType: wordTypeData,
+                  },
+                }))
+              );
+            }
 
-          return of(element);
-        });
+            return of(element);
+          });
 
-        return enrichedElements$.length > 0
-          ? combineLatest(enrichedElements$)
-          : of([]);
-      })
-    );
+          return enrichedElements$.length > 0
+            ? combineLatest(enrichedElements$)
+            : of([]);
+        })
+      );
+    });
   }
 
   async addElementToPractice(data: IElementToPractice | any): Promise<string> {
-    const docRef = await addDoc(this.elementToPracticesRef, data);
-    return docRef.id;
+    return runInInjectionContext(this.injector, async () => {
+      const docRef = await addDoc(this.elementToPracticesRef, data);
+      return docRef.id;
+    });
   }
 
   updateElementToPractice(
     id: string,
     elementToPractice: Partial<IElementToPractice>
   ) {
-    // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
-    const elementToPracticeDoc = doc(
-      this.firestore,
-      `${DbCollections.elementsToPractice}/${id}`
-    );
-    return updateDoc(elementToPracticeDoc, elementToPractice);
+
+    return runInInjectionContext(this.injector, () => {
+      // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
+      const elementToPracticeDoc = doc(
+        this.firestore,
+        `${DbCollections.elementsToPractice}/${id}`
+      );
+      return updateDoc(elementToPracticeDoc, elementToPractice);
+    });
   }
 
   async updateElementToPractice2(
     id: string,
     elementToPractice: Partial<IElementToPractice>
   ) {
-    // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
-    const elementToPracticeDoc = doc(
-      this.firestore,
-      `${DbCollections.elementsToPractice}/${id}`
-    );
-    return await setDoc(elementToPracticeDoc, elementToPractice, {
-      merge: false,
+    return runInInjectionContext(this.injector, async () => {
+      // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
+      const elementToPracticeDoc = doc(
+        this.firestore,
+        `${DbCollections.elementsToPractice}/${id}`
+      );
+      return await setDoc(elementToPracticeDoc, elementToPractice, {
+        merge: false,
+      });
     });
   }
 
   deleteElementToPractice(id: string) {
-    // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
-    const elementToPracticeDoc = doc(
-      this.firestore,
-      `${DbCollections.elementsToPractice}/${id}`
-    );
-    return deleteDoc(elementToPracticeDoc);
+    return runInInjectionContext(this.injector, () => {
+      // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
+      const elementToPracticeDoc = doc(
+        this.firestore,
+        `${DbCollections.elementsToPractice}/${id}`
+      );
+      return deleteDoc(elementToPracticeDoc);
+    });
   }
 }

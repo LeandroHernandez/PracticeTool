@@ -191,7 +191,7 @@ export class AddUserComponent implements OnInit {
   }
 
   public getUser(id: string): Subscription {
-    return this._usersSvc.getUser(id).subscribe(
+    return this._usersSvc.getUser(id, true).subscribe(
       (user) => {
         console.log({ user });
         if (typeof user === 'undefined') {

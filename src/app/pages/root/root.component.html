@@ -9,9 +9,9 @@
       <div class="nav{{ showNav ? '-show': '' }}">
         <app-nav></app-nav>
       </div>
-      <div class="content" (click)="onContentClick($event)">
+      <div class="content {{ showNav ? ' hide' : '' }}" (click)="onContentClick($event)">
         <router-outlet></router-outlet>
       </div>
     </section>
   </div>
-</main> 
+</main>
