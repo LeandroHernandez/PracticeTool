@@ -13,59 +13,56 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   template: `
     <!-- <p>filters works!</p> -->
 
-    <div class="container">
-      <header class="header">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <header class="form-header">
         <h5 class="title">Filters</h5>
       </header>
-
-      <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-        @for (item of filterFormFields; track item.key) { @if (item.type ===
-        'multiselect') {
-        <div class="multiselect_div">
-          <span>{{ item.label }}</span>
-          <nz-select
-            class="select"
-            nzMode="multiple"
-            [nzPlaceHolder]="item.placeholder ?? ''"
-            [formControlName]="item.key"
-          >
-            @for (item of item.selectOptions; track item) {
-            <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
-            }
-          </nz-select>
-        </div>
-        } @else {
-        <label class="label">
-          <span>{{ item.label }}</span>
-          <input
-            [type]="item.type"
-            class="input"
-            [placeholder]="item.placeholder"
-            [formControlName]="item.key"
-          />
-        </label>
-        } }
-        <button type="submit" title="Apply Filter" class="button submit_button">
-          Filter
-        </button>
-      </form>
-    </div>
+      <fieldset class="fieldset">
+        @for (item of filterFormFields; track item.key) { 
+          <div class="input-box">
+            @if (item.type === 'multiselect') {
+              <label class="label-input">
+                <div class="span-label-div">
+                  @for (letter of letters( item.placeholder ?? ''); track $index) {
+                    <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                  }
+                </div>
+                <nz-select
+                  [class]=" form.controls[item.key].value.length > 0 ? 'multiselect with-content' : 'multiselect'"
+                  nzMode="multiple"
+                  nzPlaceHolder=""
+                  [formControlName]="item.key"
+                >
+                @for (item of item.selectOptions; track item) {
+                  <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+                }
+              </nz-select>
+            </label>
+            } @else {
+          <label class="label-input">
+            <div class="span-label-div">
+              @for (letter of letters( item.placeholder ?? ''); track $index) {
+                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+              }
+            </div>
+            <input
+              [type]="item.type"
+              class="input"
+              placeholder=""
+              [formControlName]="item.key"
+            />
+          </label>
+          } 
+          </div>
+      }
+      </fieldset>
+      <button type="submit" title="Apply Filter" class="button-submit">
+        Filter
+      </button>
+    </form>
   `,
   styles: [
     `
-      .container {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 30px;
-        padding: 20px;
-        background-color: var(--secondary);
-        color: var(--primary);
-        border-radius: 10px;
-      }
-
       .title {
         color: var(--accent);
         font-size: 20px;
@@ -81,40 +78,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
         gap: 20px;
       }
 
-      .subForm {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-      }
-
-      .label,
-      .multiselect_div {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-
-      .input,
-      select,
-      button {
-        width: 100%;
-        border: none;
-        outline: none;
-        color: var(--secondary);
-        border-radius: 5px;
-        padding: 4px 8px;
-      }
-
-      button {
-        margin-top: 20px;
-        background-color: var(--accent);
-
-        &:hover {
-          transform: scale(105%);
-        }
+      .span-letter {
+        background-color: white;
       }
     `,
   ],
@@ -125,11 +90,17 @@ export class FiltersComponent implements OnInit {
 
   public form: FormGroup;
 
-  public get actualLabel(): string {
+  get actualLabel(): string {
     return this._router.url.split('/')[1] === RoutesApp.elementsToPractice
       ? localStorageLabels.etp.filerBody
       : localStorageLabels.pl.filerBody;
   }
+
+  get language(): string {
+    const res: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+    return res;
+  }
+
 
   constructor(private _fb: FormBuilder, private _router: Router) {
     this.form = this._fb.group({});
@@ -137,6 +108,10 @@ export class FiltersComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  public letters(w: string): string[] {
+    return w.split('');
   }
 
   public getfieldType(item: IFilterFormField): number | boolean | string {
@@ -153,7 +128,7 @@ export class FiltersComponent implements OnInit {
     const group: FormGroup = this._fb.group({});
 
     items.forEach((item) => {
-      console.log({ item });
+      // console.log({ item });
       group.addControl(
         item.key,
         this._fb.control(
@@ -164,7 +139,7 @@ export class FiltersComponent implements OnInit {
       );
     });
 
-    console.log({ group });
+    // console.log({ group });
 
     return group;
   }
@@ -175,11 +150,11 @@ export class FiltersComponent implements OnInit {
       localStorage.getItem(this.actualLabel) ?? 'null'
     );
     if (filerBodyForm) this.form.patchValue(filerBodyForm);
-    console.log({ form: this.form });
+    // console.log({ form: this.form });
   }
 
   public submit(): void {
-    console.log({ filterForm: this.form });
+    // console.log({ filterForm: this.form });
 
     const formValue: any = {};
     const { value } = this.form;

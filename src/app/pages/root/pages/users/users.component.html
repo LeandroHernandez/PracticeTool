@@ -2,21 +2,21 @@
 
 <main class="main">
   <div class="content-header">
-    <app-content-header
-      [contentHeaderInfo]="contentHeaderInfo"
-    ></app-content-header>
+    <!-- <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header> -->
+    <div class="main_content">
+      <button type="button" class="button-add" title="Add Word" [routerLink]="[contentHeaderInfo.add.route]"
+        [title]="contentHeaderInfo.add.title">
+        {{ contentHeaderInfo.add.label }}
+        <i class="bi bi-plus-lg"></i>
+      </button>
+      <h3 class="title">{{ contentHeaderInfo.title }}</h3>
+      <!-- [routerLink]="[contentHeaderInfo.test.route]"  -->
+      <div></div>
+    </div>
   </div>
   <div class="table">
-    <app-table
-      [tableInfo]="tableInfo"
-      [itemList]="users"
-      [page]="page"
-      (editAction)="userEdit($event)"
-      (deleteAction)="userDelete($event)"
-      (pageEmitter)="page = $event"
-      (filterAction)="getUsers($event)"
-      (deleteAllAction)="deleteAll($event)"
-      (changeStateEmitter)="changeState($event)"
-    ></app-table>
+    <app-table [tableInfo]="tableInfo" [itemList]="users" [page]="page" (editAction)="userEdit($event)"
+      (deleteAction)="userDelete($event)" (pageEmitter)="page = $event" (filterAction)="getUsers($event)"
+      (deleteAllAction)="deleteAll($event)" (changeStateEmitter)="changeState($event)"></app-table>
   </div>
 </main>

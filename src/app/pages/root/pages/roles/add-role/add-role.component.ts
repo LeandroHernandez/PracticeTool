@@ -61,14 +61,15 @@ export class AddRoleComponent implements OnInit {
 
   public getModules(): void {
     this._modulesSvc.getModules().subscribe(modules => {
-      console.log({ modules });
+      // console.log({ modules });
+
       // this.form.patchValue({ assignedModules: modules });
       this.modules = modules;
     }, error => console.error({ error }));
   }
 
   public isRequired(control: string): boolean {
-    return this.form.controls['name'].hasValidator(Validators.required);
+    return this.form.controls[control].hasValidator(Validators.required);
   }
 
   public getControlErrors(control: string): Array<string> {
@@ -87,7 +88,7 @@ export class AddRoleComponent implements OnInit {
   public getRole(id: string): Subscription {
     return this._rolesSvc.getRole(id, true).subscribe(
       role => {
-        console.log({ role });
+        // console.log({ role });
         if (typeof role === 'undefined') {
           const msg: string = 'The provided Id did not match any role in the DB';
           console.error(msg, 404);
@@ -116,7 +117,7 @@ export class AddRoleComponent implements OnInit {
 
   public submit(): void | NzNotificationRef | Promise<void> {
 
-    console.log({ form: this.form });
+    // console.log({ form: this.form });
 
     if (!this.form.valid) return this.invalidForm();
 
@@ -130,7 +131,7 @@ export class AddRoleComponent implements OnInit {
       return this._rolesSvc.updateRole(id, body)
         .then(
           response => {
-            console.log({ response });
+            // console.log({ response });
             const selectedList: Array<IRole> = JSON.parse(localStorage.getItem(localStorageLabels.role.selectedList) ?? '[]');
 
             if (selectedList.length > 0) {
@@ -155,7 +156,7 @@ export class AddRoleComponent implements OnInit {
     return this._rolesSvc.addRole({ ...value, createdAt: d, lastUpdate: d })
       .then(
         response => {
-          console.log({ response });
+          // console.log({ response });
           this.successful();
         }
       )

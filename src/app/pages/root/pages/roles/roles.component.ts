@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { RolesService } from './roles.service';
 import { localStorageLabels, RoutesApp } from '../../../../enums';
 import { IContentHeaderInfoItem, IPageTableInfo, IRole, ITableItem, TRoleChangeState } from '../../../../interfaces';
 
-import { ContentHeaderComponent } from '../components/content-header/content-header.component';
+// import { ContentHeaderComponent } from '../components/content-header/content-header.component';
 import { TableComponent } from '../components/table/table.component';
 
 import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-roles',
-  imports: [ContentHeaderComponent, TableComponent],
+  // imports: [ContentHeaderComponent, TableComponent],
+  imports: [RouterLink, TableComponent],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.css'
 })
@@ -72,7 +73,7 @@ export class RolesComponent implements OnInit {
       .getFilteredRoles(query)
       .subscribe(
         (roles) => {
-          console.log({ roles });
+          // console.log({ roles });
           this.roles = roles;
         },
         error => {
@@ -127,7 +128,7 @@ export class RolesComponent implements OnInit {
     const { loading } = localStorageLabels;
     localStorage.setItem(loading, loading);
     return this._roleSvc.updateRole(id, { state }).then(changeStateResponse => {
-      console.log({ changeStateResponse });
+      // console.log({ changeStateResponse });
       const selectedList: Array<IRole> = JSON.parse(localStorage.getItem(localStorageLabels.role.selectedList) ?? '[]');
 
       if (selectedList.length > 0) {

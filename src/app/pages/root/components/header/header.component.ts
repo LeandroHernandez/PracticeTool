@@ -11,6 +11,7 @@ import {
   NzNotificationService,
 } from 'ng-zorro-antd/notification';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { RootComponent } from '../../root.component';
 
 @Component({
   selector: 'app-header',
@@ -32,6 +33,7 @@ export class HeaderComponent {
   constructor(
     private _router: Router,
     private _authSvc: AuthService,
+    private _rootCmp: RootComponent,
     private _nzNotificationSvc: NzNotificationService
   ) { }
 
@@ -57,4 +59,9 @@ export class HeaderComponent {
   public languageChange(val: string): void {
     return localStorage.setItem(localStorageLabels.localCurrentLanguage, val);
   };
+
+  public showTuto(): void {
+    localStorage.removeItem(localStorageLabels.tutoFinished);
+    this._rootCmp.showTuto();
+  }
 }

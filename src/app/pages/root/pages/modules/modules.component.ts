@@ -85,7 +85,7 @@ export class ModulesComponent implements OnInit {
       .getFilteredModules(query)
       .subscribe(
         (modules) => {
-          console.log({ modules });
+          // console.log({ modules });
           this.modules = modules;
         },
         error => {
@@ -140,7 +140,7 @@ export class ModulesComponent implements OnInit {
     const { loading } = localStorageLabels;
     localStorage.setItem(loading, loading);
     return this._moduleSvc.updateModule(id, { state }).then(changeStateResponse => {
-      console.log({ changeStateResponse });
+      // console.log({ changeStateResponse });
       const selectedList: Array<IModule> = JSON.parse(localStorage.getItem(localStorageLabels.module.selectedList) ?? '[]');
 
       if (selectedList.length > 0) {

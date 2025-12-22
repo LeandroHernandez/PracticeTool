@@ -4,22 +4,13 @@
 <main class="main">
   <div class="main_container">
     <div class="content-header">
-      <app-content-header
-        [contentHeaderInfo]="contentHeaderInfo"
-      ></app-content-header>
+      <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header>
     </div>
-    <div class="table">
-      <app-table
-        [tableInfo]="tableInfo"
-        [itemList]="elementsToPractice"
-        [page]="page"
-        [filterFormFields]="filterFormFields"
-        (editAction)="elementToPracticeEdit($event)"
-        (deleteAction)="elementToPracticeDelete($event)"
-        (pageEmitter)="page = $event"
-        (filterAction)="getElementsToPractice($event)"
-        (deleteAllAction)="deleteAll($event)"
-      ></app-table>
+    <div class="table module-table">
+      <app-table [tableInfo]="tableInfo" [itemList]="elementsToPractice" [page]="page"
+        [filterFormFields]="filterFormFields" (editAction)="elementToPracticeEdit($event)"
+        (deleteAction)="elementToPracticeDelete($event)" (pageEmitter)="page = $event"
+        (filterAction)="getElementsToPractice($event)" (deleteAllAction)="deleteAll($event)"></app-table>
     </div>
   </div>
 </main>

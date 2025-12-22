@@ -170,6 +170,11 @@
     .p-footer-label {
         padding-top: 2rem;
     }
+
+    .span-privacy-policy {
+        cursor: pointer;
+        color: rgb(43, 142, 255);
+    }
 }
 
 @media (max-width: 950px) {

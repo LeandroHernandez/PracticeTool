@@ -158,7 +158,7 @@ export class AddUserComponent implements OnInit {
   public getRoles(): Subscription {
     return this._rolesSvc.getRoles().subscribe(
       (roles) => {
-        console.log({ roles });
+        // console.log({ roles });
         this.roles = roles;
       },
       (error) => console.error({ error })
@@ -193,7 +193,7 @@ export class AddUserComponent implements OnInit {
   public getUser(id: string): Subscription {
     return this._usersSvc.getUser(id, true).subscribe(
       (user) => {
-        console.log({ user });
+        // console.log({ user });
         if (typeof user === 'undefined') {
           const msg: string =
             'The provided Id did not match any user in the DB';
@@ -233,7 +233,7 @@ export class AddUserComponent implements OnInit {
   }
 
   public submit(): void | NzNotificationRef | Promise<void> {
-    console.log({ form: this.form });
+    // console.log({ form: this.form });
 
     if (!this.form.valid) return this.invalidForm();
 
@@ -247,7 +247,7 @@ export class AddUserComponent implements OnInit {
       return this._usersSvc
         .updateUser(id, body)
         .then((response) => {
-          console.log({ response });
+          // console.log({ response });
           const selectedList: Array<IUser> = JSON.parse(
             localStorage.getItem(localStorageLabels.user.selectedList) ?? '[]'
           );
@@ -280,7 +280,7 @@ export class AddUserComponent implements OnInit {
     return this._usersSvc
       .addUser({ ...value, createdAt: d, lastUpdate: d })
       .then((response) => {
-        console.log({ response });
+        // console.log({ response });
         this.successful();
       })
       .catch((error) => {

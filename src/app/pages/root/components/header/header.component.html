@@ -1,7 +1,7 @@
 <!-- <p>header works!</p> -->
 
 <div class="container_div">
-  <button type="button" class="button-menu" title="Menu" (click)="changeMenu.emit(true)">
+  <button type="button" class="button-menu main-button-menu" title="Menu" (click)="changeMenu.emit(true)">
     <i class="bi bi-list"></i>
   </button>
 
@@ -23,6 +23,7 @@
           <option value="es">{{ localLanguage === 'en' ? 'Spanish' : 'Español'}}</option>
         </select>
       </li>
+      <li nz-menu-item class="li-clickable" (click)="showTuto()">Show Tuto</li>
       <li nz-menu-item class="li-clickable danger" title="Log out" nz-popover nzPopoverTitle="Log out"
         nzPopoverTrigger="click" [nzPopoverContent]="contentTemplate">
         Log Out

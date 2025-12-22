@@ -10,7 +10,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-practice-lists',
-  imports: [ ContentHeaderComponent, TableComponent ],
+  imports: [ContentHeaderComponent, TableComponent],
   templateUrl: './practice-lists.component.html',
   styleUrl: './practice-lists.component.css'
 })
@@ -45,30 +45,33 @@ export class PracticeListsComponent implements OnInit {
 
   public verbInfoKey: string = 'verbInfo';
 
-  public tableInfo: Array<ITableItem> = [
-    // {
-    //   header: 'Created By',
-    //   key: `createdBy`
-    // },
-    {
-      header: 'Title',
-      key: 'title'
-    },
-    {
-      header: 'Number of items',
-      key: 'list'
-    },
-  ]
-  // public itemList: Array<IWord> = [];
   public itemList: Array<any> | null = null;
 
-  constructor(private _router: Router, private _practiceListsSvc: PracticeListsService, private _notificationSvc: NzNotificationService) {}
+  get tableInfo(): Array<ITableItem> {
+    const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) === 'en';
+    return [
+      // {
+      //   header: 'Created By',
+      //   key: `createdBy`
+      // },
+      {
+        header: en ? 'Title' : 'Titulo',
+        key: en ? 'title.en' : 'title.es'
+      },
+      {
+        header: 'Number of items',
+        key: 'list'
+      },
+    ]
+  }
+
+  constructor(private _router: Router, private _practiceListsSvc: PracticeListsService, private _notificationSvc: NzNotificationService) { }
 
   ngOnInit() {
     this.getPracticeLists();
   }
 
-  public getPracticeLists(query?: any ): void {
+  public getPracticeLists(query?: any): void {
     // console.log({ query });
 
     if (!query) localStorage.removeItem(localStorageLabels.pl.filerBody);
@@ -90,28 +93,28 @@ export class PracticeListsComponent implements OnInit {
 
   public practiceListDelete(id: string, all?: boolean): void {
     this._practiceListsSvc.deletePracticeList(id)
-    .then(
-      (deleteResponse) => {
-        // console.log({deleteResponse});
-        if (!all) {
-          const selectedList: IPracticeList[] = JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedList) ?? '[]');
-          const selectedIndex: number = selectedList.findIndex(item => item.id === id);
-          if (selectedIndex >= 0) {
-            selectedList.splice(selectedIndex, 1);
-            localStorage.setItem(localStorageLabels.pl.selectedList, JSON.stringify(selectedList));
+      .then(
+        (deleteResponse) => {
+          // console.log({deleteResponse});
+          if (!all) {
+            const selectedList: IPracticeList[] = JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedList) ?? '[]');
+            const selectedIndex: number = selectedList.findIndex(item => item.id === id);
+            if (selectedIndex >= 0) {
+              selectedList.splice(selectedIndex, 1);
+              localStorage.setItem(localStorageLabels.pl.selectedList, JSON.stringify(selectedList));
+            }
+            this._notificationSvc.success('Success', 'practice list deleted successfully.');
           }
-          this._notificationSvc.success('Success', 'practice list deleted successfully.');
         }
-      }
-    )
-    .catch(
-      (error) => {
-        console.log({error});
-        this._notificationSvc.error('Error', 'There was an error and we were not able to delete the practice list.');
-      }
-    )
+      )
+      .catch(
+        (error) => {
+          console.log({ error });
+          this._notificationSvc.error('Error', 'There was an error and we were not able to delete the practice list.');
+        }
+      )
   }
-  
+
   public deleteAll(event: any): void {
     // console.log({ deleteAllEvent: event });
     JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedList) ?? '[]').forEach((item: any) => this.practiceListDelete(item.id, true));

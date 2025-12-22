@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {
   IElementToPractice,
@@ -11,7 +11,9 @@ import {
   ITableItem,
   IWord,
 } from '../../../../../interfaces';
-import { localStorageLabels, RoutesApp } from '../../../../../enums';
+import { localStorageLabels, RoleIds, RoutesApp } from '../../../../../enums';
+
+import { RootService } from '../../../root.service';
 
 import { FiltersComponent } from './filters/filters.component';
 
@@ -21,6 +23,7 @@ import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
@@ -28,12 +31,14 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   imports: [
     DatePipe,
     FormsModule,
+    ReactiveFormsModule,
     NzPopconfirmModule,
     NzModalModule,
     NzTableModule,
     NzPaginationModule,
     NzCheckboxModule,
     NzSwitchModule,
+    NzPopoverModule,
     NzIconModule,
   ],
   templateUrl: './table.component.html',
@@ -118,12 +123,44 @@ export class TableComponent implements OnInit {
     return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   }
 
-  constructor(private _router: Router, private _nzModalSvc: NzModalService) { }
+  public modifyAction: boolean = true;
+  public availableToModify: RoleIds[] = [RoleIds.admin];
+
+  public form: FormGroup
+
+  constructor(
+    private _fb: FormBuilder,
+    private _router: Router,
+    private _rootSvc: RootService,
+    private _nzModalSvc: NzModalService
+  ) {
+    const form: FormGroup = this._fb.group({});
+    this.tableInfo.filter(item => item.filter).forEach(item => {
+      form.addControl(item.key, item.filter === 'text' ? '' : [])
+    })
+    this.form = form;
+  }
 
   ngOnInit(): void {
+    this.getUserInfo();
     for (const item of this.actualSelectedItems) {
       this.setOfCheckedId.add(item.id);
     }
+  }
+
+  public letters(w: string): string[] {
+    return w.split('');
+  }
+
+  public getUserInfo(): void {
+    this._rootSvc.user$.subscribe(
+      userInfo => {
+        if (!userInfo) return;
+        const { role } = userInfo;
+        if (!role) return;
+        if (!this.availableToModify.includes(role)) this.modifyAction = false;
+      }
+    )
   }
 
   getItemIndex(i: number): number | void {
@@ -162,7 +199,7 @@ export class TableComponent implements OnInit {
   }
 
   getKeys(item: IWord): Array<string> {
-    console.log({ item });
+    // console.log({ item });
     return Object.keys(item);
   }
 
@@ -188,9 +225,9 @@ export class TableComponent implements OnInit {
     return valueItem;
   }
 
-  public show(valueForm: any): void {
-    console.log({ valueForm });
-  }
+  // public show(valueForm: any): void {
+  //   console.log({ valueForm });
+  // }
 
   public showFiltersModal(): void {
     const modal: NzModalRef = this._nzModalSvc.create({
@@ -203,7 +240,7 @@ export class TableComponent implements OnInit {
     instance.filterFormFields = this.filterFormFields;
 
     instance.valueFormEmitter.subscribe((value: any) => {
-      console.log('Cambio en filtros:', value);
+      // console.log('Cambio en filtros:', value);
       this.filterAction.emit(value);
     });
   }
@@ -223,7 +260,7 @@ export class TableComponent implements OnInit {
   }
 
   public changeState({ id, state }: TRoleChangeState): void {
-    console.log({ id, state });
+    // console.log({ id, state });
     return this.changeStateEmitter.emit({ id, state });
   }
 }

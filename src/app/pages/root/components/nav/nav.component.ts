@@ -17,9 +17,10 @@ import { RolesService } from '../../pages/roles';
       <ul class="ul">
         @for(item of navList; track item.route) {
         <li
-          class="li {{ url.startsWith('/' + item.route) ? 'active' : '' }}"
+          class="li {{ url.startsWith('/' + item.route) ? 'active' : '' }} main-li-menu-{{item.route}}"
           [title]="item.title[this.localLanguage === 'en' ? 'en' : 'es']"
           [routerLink]="['/' + item.route]"
+          (click)="item.route !== 'test' ? false : resetSelectedItems()"
         >
           <i [class]="'bi bi-' + item.icon"></i>
           {{ item.label[this.localLanguage === 'en' ? 'en' : 'es'] }}
@@ -173,48 +174,51 @@ export class NavComponent implements OnInit {
     //   route: RoutesApp.expressions,
     //   icon: 'translate'
     // },
-    {
-      label: { en: 'Modules', es: 'Módulos' },
-      title: { en: 'Modules', es: 'Módulos' },
-      route: RoutesApp.modules,
-      icon: 'microsoft',
-    },
-    {
-      label: { en: 'Roles', es: 'Roles' },
-      title: { en: 'Roles', es: 'Roles' },
-      route: RoutesApp.roles,
-      icon: 'columns',
-    },
-    {
-      label: { en: 'Users', es: 'Usuarios' },
-      title: { en: 'Users', es: 'Usuarios' },
-      route: RoutesApp.users,
-      icon: 'people-fill',
-    },
-    {
-      label: { en: 'Dashboard', es: 'Tablero' },
-      title: { en: 'Dashboard', es: 'Tablero' },
-      route: RoutesApp.dashboard,
-      icon: 'columns-gap',
-    },
-    {
-      label: { en: 'Elements to Practice', es: 'Elementos a Practicar' },
-      title: { en: 'Elements to Practice', es: 'Elementos a Practicar' },
-      route: RoutesApp.elementsToPractice,
-      icon: 'translate',
-    },
-    {
-      label: { en: 'Practice Lists', es: 'Listas de Práctica' },
-      title: { en: 'Practice Lists', es: 'Listas de Práctica' },
-      route: RoutesApp.practiceLists,
-      icon: 'list-check',
-    },
-    {
-      label: { en: 'Test', es: 'Prueba' },
-      title: { en: 'Test', es: 'Prueba' },
-      route: RoutesApp.test,
-      icon: 'play-fill',
-    },
+
+
+
+    // {
+    //   label: { en: 'Modules', es: 'Módulos' },
+    //   title: { en: 'Modules', es: 'Módulos' },
+    //   route: RoutesApp.modules,
+    //   icon: 'microsoft',
+    // },
+    // {
+    //   label: { en: 'Roles', es: 'Roles' },
+    //   title: { en: 'Roles', es: 'Roles' },
+    //   route: RoutesApp.roles,
+    //   icon: 'columns',
+    // },
+    // {
+    //   label: { en: 'Users', es: 'Usuarios' },
+    //   title: { en: 'Users', es: 'Usuarios' },
+    //   route: RoutesApp.users,
+    //   icon: 'people-fill',
+    // },
+    // {
+    //   label: { en: 'Dashboard', es: 'Tablero' },
+    //   title: { en: 'Dashboard', es: 'Tablero' },
+    //   route: RoutesApp.dashboard,
+    //   icon: 'columns-gap',
+    // },
+    // {
+    //   label: { en: 'Elements to Practice', es: 'Elementos a Practicar' },
+    //   title: { en: 'Elements to Practice', es: 'Elementos a Practicar' },
+    //   route: RoutesApp.elementsToPractice,
+    //   icon: 'translate',
+    // },
+    // {
+    //   label: { en: 'Practice Lists', es: 'Listas de Práctica' },
+    //   title: { en: 'Practice Lists', es: 'Listas de Práctica' },
+    //   route: RoutesApp.practiceLists,
+    //   icon: 'list-check',
+    // },
+    // {
+    //   label: { en: 'Test', es: 'Prueba' },
+    //   title: { en: 'Test', es: 'Prueba' },
+    //   route: RoutesApp.test,
+    //   icon: 'play-fill',
+    // },
   ];
 
 
@@ -261,5 +265,9 @@ export class NavComponent implements OnInit {
         this._router.navigate([RoutesApp.landingPage]);
       }
     });
+  }
+
+  public resetSelectedItems(): void {
+    return localStorage.removeItem(localStorageLabels.etp.customSelectedList);
   }
 }

@@ -2,9 +2,33 @@
 
 <div class="pricing-container">
     <header class="header-pricing">
-        <h4 class="h4-section-title-pricing"> {{ currentLanguage === 'en' ? 'Ready to expand your vocabulary?' : '¿Listo para ampliar tu vocabulario?' }} </h4>
-        <p class="p-header-pricing"> {{ currentLanguage === 'en' ? 'Join thousands of learners who are already improving their English with VocabMaster' : 'Únase a miles de estudiantes que ya están mejorando su inglés con VocabMaster' }} </p>
+        <h4 class="h4-section-title-pricing">
+            {{ currentLanguage === 'en' ?
+            'Ready to expand your vocabulary?' :
+            '¿Listo para ampliar tu vocabulario?'
+            }}
+        </h4>
+        <p class="p-header-pricing">
+            {{
+            currentLanguage === 'en' ?
+            'Join thousands of learners who are already improving their English with Practice Tool' :
+            'Únase a miles de estudiantes que ya están mejorando su inglés con Practice Tool'
+            }}
+        </p>
     </header>
-    <button class="button-pricing"> {{ currentLanguage === 'en' ? 'Start Your Free Trial' : 'Comience su prueba gratuita' }} <i class="bi bi-arrow-right-short"></i> </button>
-    <span class="span-pricing-footer"> {{ currentLanguage === 'en' ? 'Cancel anytime • No commitment required' : 'Cancelar en cualquier momento • Sin compromiso requerido' }} </span>
+    <button class="button-pricing" [routerLink]="['/auth']">
+        {{
+        currentLanguage === 'en' ?
+        'Start your practice now' :
+        'Comience a practicar ahora'
+        }}
+        <i class="bi bi-arrow-right-short"></i>
+    </button>
+    <!-- <span class="span-pricing-footer">
+        {{ 
+            currentLanguage === 'en' ?
+            'Cancel anytime • No commitment required' :
+            'Cancelar en cualquier momento • Sin compromiso requerido'
+        }}
+    </span> -->
 </div>

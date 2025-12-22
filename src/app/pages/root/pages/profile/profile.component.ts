@@ -20,15 +20,16 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
 })
 
 export class ProfileComponent implements OnInit {
-  
+
   public user: IUser | null = null;
   public form: FormGroup;
 
   public showErrors: boolean = false;
   public showPassword: boolean = false;
 
-  get localLanguage(): string {
-    return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+  get en(): boolean {
+    const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+    return en === 'en';
   }
 
   constructor(
@@ -39,10 +40,10 @@ export class ProfileComponent implements OnInit {
     private _nzNotificationSvc: NzNotificationService
   ) {
     this.form = this._fb.group({
-      email: ['', [ Validators.required, Validators.email, Validators.maxLength(30) ]],
-      names: ['', [ Validators.required, Validators.minLength(2), Validators.maxLength(30) ]],
-      lastnames: ['', [ Validators.required, Validators.minLength(2), Validators.maxLength(30) ]],
-      password: ['', [ Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20) ]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
+      names: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
+      lastnames: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
+      password: ['', [Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20)]],
       role: [''],
       // createdAt: [],
       // lastUpdate: [new Date],
@@ -53,9 +54,9 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.getUser();
   }
-  
+
   public getUser(): Subscription {
-    
+
     const notFindUser = (err?: any): Promise<boolean> => {
       if (err) console.log({ err });
       this._nzNotificationSvc.error('User info not found', 'There was not found any user info');
@@ -64,14 +65,14 @@ export class ProfileComponent implements OnInit {
 
     return this._authSvc.userState().subscribe(userInfo => {
 
-      if ( !userInfo ) return notFindUser();
+      if (!userInfo) return notFindUser();
 
-      console.log({ userInfo });
+      // console.log({ userInfo });
       const { email } = userInfo
-      return this._usersSvc.getFilteredUsers({email}).subscribe(users => {
-        console.log({ users });
-        if ( users.length < 1 ) return notFindUser()
-          this.user = users[0];
+      return this._usersSvc.getFilteredUsers({ email }).subscribe(users => {
+        // console.log({ users });
+        if (users.length < 1) return notFindUser()
+        this.user = users[0];
         const { names, lastnames, email, password, role, state } = this.user;
         return this.form.patchValue({ names, lastnames, email, password, role, state });
       }, err => notFindUser(err));
@@ -81,13 +82,13 @@ export class ProfileComponent implements OnInit {
   public letters(word: string): string[] {
     return word.split('');
   }
-  
+
   public getControlErrors(control: string): Array<string> {
     return Object.keys(this.form.get(control)?.errors ?? {});
   }
 
-  public submit(): void {
-    console.log({ form: this.form });
-  }
+  // public submit(): void {
+  //   console.log({ form: this.form });
+  // }
 
 }

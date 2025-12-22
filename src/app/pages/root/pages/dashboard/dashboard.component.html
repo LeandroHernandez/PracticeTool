@@ -1,1 +1,90 @@
-<p>dashboard works!</p>
+<!-- <p>dashboard works!</p> -->
+
+<main class="main-dashboard">
+    <div class="first-section">
+        <div class="boxes">
+            <div class="box-1">
+                <div class="avatar">
+                    <!-- <span class="icon-span"></span> -->
+                    <i class="bi bi-translate"></i>
+                </div>
+                <span class="label-span"> {{ en ? 'Elements Reviewed' :'Elementos repasados' }} </span>
+                <div class="numbers">
+                    <strong class="data">{{ reports.etps.today.length }}</strong>
+                    <!-- <span class="percentage">
+                        <i class="bi bi-arrow-up"></i>
+                        11.01%
+                    </span> -->
+                </div>
+            </div>
+            <div class="box-2">
+                <div class="avatar">
+                    <!-- <span class="icon-span"></span> -->
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <span class="label-span"> {{ en ? 'List Reviewed' : 'Listas Repasadas'}} </span>
+                <div class="numbers">
+                    <strong class="data">{{ reports.practiceLists.today }}</strong>
+                    <!-- <span class="percentage">
+                        <i class="bi bi-arrow-down"></i>
+                        9.05%
+                    </span> -->
+                </div>
+            </div>
+        </div>
+        <section class="chart-section">
+            <header class="header-chart">
+                <h4 class="chart-title"> {{ en ? 'Weekly Reviews' : 'Repasos Semanales' }} </h4>
+                <i class="bi bi-three-dots-vertical"></i>
+            </header>
+            <div class="chart-div">
+                <canvas id="chart"> {{ chart }} </canvas>
+            </div>
+        </section>
+    </div>
+    <aside class="second-section">
+        <div class="card">
+            <header class="second-header">
+                <h5 class="title"> {{ en ? 'Monthly Target' : 'Objetivo Mensual' }} </h5>
+                <h6 class="subtitle">
+                    {{
+                    en ?
+                    'Target you have set for each month' :
+                    'Objetivo que hayas establecido para cada mes'
+                    }}
+                </h6>
+            </header>
+            <div class="arc-container" style="--progress: {{ monthlyProgress }}">
+                <svg viewBox="0 0 200 100" class="arc">
+                    <!-- Arco de fondo -->
+                    <path class="arc-bg" d="M10,95 A90,90 0 0,1 190,95" />
+                    <!-- Arco de progreso -->
+                    <path class="arc-progress" d="M10,95 A90,90 0 0,1 190,95" />
+                </svg>
+                <div class="arc-text">{{ monthlyProgress | number}}%</div>
+            </div>
+            <p class="p">
+                {{
+                en ?
+                'You have reached the 75.55% of your monthly target.' :
+                'Has alcanzado el 75.55% de tu objetivo mensual.'
+                }}
+            </p>
+        </div>
+        <footer class="footer">
+            <div class="item-1">
+                <span class="label-item"> {{ en ? 'Elements' : 'Elementos' }} </span>
+                <span class="data-item"> {{ reports.etps.total.length }} <i class="bi bi-arrow-up"></i> </span>
+            </div>
+            <div class="item-2">
+                <span class="label-item"> {{ en ? 'Lists' : 'Listas' }} </span>
+                <span class="data-item"> {{ reports.practiceLists.total }} <i class="bi bi-arrow-up"></i> </span>
+            </div>
+            <div class="item-3">
+                <span class="label-item"> {{ en ? 'Today' : 'Hoy' }} </span>
+                <span class="data-item"> {{ reports.etps.total.length + reports.practiceLists.total }} <i
+                        class="bi bi-arrow-up"></i> </span>
+            </div>
+        </footer>
+    </aside>
+</main>

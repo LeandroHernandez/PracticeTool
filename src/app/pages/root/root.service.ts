@@ -8,7 +8,7 @@ import { IUser } from '../../interfaces';
 export class RootService {
   private _userS = new BehaviorSubject<IUser | null>(null);
 
-  get user$(): Observable<IUser | null> {
+  get user$(): Observable<IUser | null | any> {
     return this._userS.asObservable();
   }
 

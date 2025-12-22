@@ -1,18 +1,16 @@
 import { Routes } from '@angular/router';
 import { RoleIds, RoutesApp } from '../../enums';
 import { canActivateAuthStateRole } from '../../guards/auth-state-role.guard';
-// import { canActivateWithRole } from '../../guards/auth-role.guard';
-// import { canActivateRole } from '../../guards';
 
 export const rootRoutes: Routes = [
   {
-    canActivate: [canActivateAuthStateRole],
+    canActivate: [canActivateAuthStateRole()],
     path: RoutesApp.profile,
     loadComponent: () =>
       import('./pages/profile').then((m) => m.ProfileComponent),
   },
   {
-    canActivate: [canActivateAuthStateRole],
+    canActivate: [canActivateAuthStateRole()],
     path: RoutesApp.dashboard,
     loadComponent: () =>
       import('./pages/dashboard').then((m) => m.DashboardComponent),
@@ -33,7 +31,7 @@ export const rootRoutes: Routes = [
     loadChildren: () => import('./pages/users').then((m) => m.usersRoutes),
   },
   {
-    canActivate: [canActivateAuthStateRole],
+    canActivate: [canActivateAuthStateRole()],
     path: RoutesApp.elementsToPractice,
     loadComponent: () =>
       import('./pages/elements-to-practice').then(
@@ -45,7 +43,7 @@ export const rootRoutes: Routes = [
       ),
   },
   {
-    canActivate: [canActivateAuthStateRole],
+    canActivate: [canActivateAuthStateRole()],
     path: RoutesApp.practiceLists,
     loadChildren: () =>
       import('./pages/practice-lists/practice-lists.routes').then(
@@ -53,7 +51,7 @@ export const rootRoutes: Routes = [
       ),
   },
   {
-    canActivate: [canActivateAuthStateRole],
+    canActivate: [canActivateAuthStateRole()],
     path: RoutesApp.test,
     loadComponent: () =>
       import('./pages/test/test.component').then((m) => m.TestComponent),

@@ -1,63 +1,140 @@
 <!-- <p>profile works!</p> -->
 
+@if (user) {
 <main class="main">
-    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-        <div class="input-box">
-            <label class="label-input">
-                <div class="span-label-div">
-                    @for (letter of letters( localLanguage === 'en' ? 'Names' : 'Nombres' ); track $index) {
-                        <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
-                    }
-                </div>
-                <input type="text" formControlName="names" placeholder="" class="input">
-            </label>
-            @if ( showErrors && getControlErrors('names').length > 0 ) {
-                <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="localLanguage === 'en' ? 'Invalid Names' : 'Nombres Invalidos' " [nzPopoverContent]="localLanguage === 'en' ? 'Please enter a valid name between 2 and 30 characters long.' : 'Ingrese un nombre válido de entre 2 y 30 caracteres.' " ></i>
-            }
+    <!-- <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+            <div class="input-box">
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Names' : 'Nombres' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                        }
+                    </div>
+                    <input type="text" formControlName="names" placeholder="" class="input">
+                </label>
+                @if ( showErrors && getControlErrors('names').length > 0 ) {
+                    <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="localLanguage === 'en' ? 'Invalid Names' : 'Nombres Invalidos' " [nzPopoverContent]="localLanguage === 'en' ? 'Please enter a valid name between 2 and 30 characters long.' : 'Ingrese un nombre válido de entre 2 y 30 caracteres.' " ></i>
+                }
+            </div>
+            <div class="input-box">
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Last names' : 'Apellidos' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
+                        }
+                    </div>
+                    <input type="text" formControlName="lastnames" placeholder="" class="input">
+                </label>
+                @if ( showErrors && getControlErrors('lastnames').length > 0 ) {
+                     <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="localLanguage === 'en' ? 'Invalid Last Names' : 'Apellidos Invalidos' " [nzPopoverContent]="localLanguage === 'en' ? 'Please enter a valid lastname between 2 and 30 characters long.' : 'Ingrese un apellido válido de entre 2 y 30 caracteres.'" ></i>
+                }
+            </div>
+            <div class="input-box">
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Email' : 'Correo' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
+                        }
+                    </div>
+                    <input type="email" formControlName="email" placeholder="" class="input">
+                </label>
+                @if ( showErrors && getControlErrors('email').length > 0 ) {
+                     <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Email' : 'Correo Invalido' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres' " ></i>
+                }
+            </div>
+            <div class="input-box">
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Password' : 'Contraseña' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
+                        }
+                    </div>
+                    <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder="" class="input">
+                    <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" [title]=" localLanguage === 'en' ? showPassword ? 'Hide Password' : 'Show Password' : showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña' " (click)="showPassword = !showPassword"></i>
+                </label>
+                @if ( showErrors && getControlErrors('password').length > 0 ) {
+                     <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Password' : 'Contraseña Invalida' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial' " ></i>
+                }
+            </div>
+            <span class="span-url" title="Ask for a new password" > Forgot password? </span>
+            <button type="submit" class="button-submit">{{ localLanguage === 'en' ? 'Update' : 'Actualizar'}}</button>
+        
+        </form> -->
+    <header class="header-main">
+        <div class="div-user">
+            <span class="span-picture">
+                <i class="bi bi-person"></i>
+            </span>
+            <div class="texts">
+                <h3 class="title"> {{ user.names }} {{ user.lastnames }} </h3>
+                <h6 class="subtitle"> {{ user.role?.name }} | Medellín, Colombia </h6>
+            </div>
         </div>
-        <div class="input-box">
-            <label class="label-input">
-                <div class="span-label-div">
-                    @for (letter of letters( localLanguage === 'en' ? 'Last names' : 'Apellidos' ); track $index) {
-                        <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
-                    }
-                </div>
-                <input type="text" formControlName="lastnames" placeholder="" class="input">
-            </label>
-            @if ( showErrors && getControlErrors('lastnames').length > 0 ) {
-                 <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover [nzPopoverTitle]="localLanguage === 'en' ? 'Invalid Last Names' : 'Apellidos Invalidos' " [nzPopoverContent]="localLanguage === 'en' ? 'Please enter a valid lastname between 2 and 30 characters long.' : 'Ingrese un apellido válido de entre 2 y 30 caracteres.'" ></i>
-            }
+        <div class="actions">
+            <button class="button-edit" [title]="en ? 'Edit': 'Editar'">
+                <i class="bi bi-pencil"></i> {{ en ? 'Edit': 'Editar' }}
+            </button>
         </div>
-        <div class="input-box">
-            <label class="label-input">
-                <div class="span-label-div">
-                    @for (letter of letters( localLanguage === 'en' ? 'Email' : 'Correo' ); track $index) {
-                        <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
-                    }
-                </div>
-                <input type="email" formControlName="email" placeholder="" class="input">
-            </label>
-            @if ( showErrors && getControlErrors('email').length > 0 ) {
-                 <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Email' : 'Correo Invalido' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a valid email with a maximum of 30 characters.' : 'Por favor ingrese un correo valido con un maximo de 30 caracteres' " ></i>
-            }
+    </header>
+    <section class="section-personal">
+        <header class="header-section">
+            <h4 class="title"> {{ en ? 'Personal Information' : 'Información Personal' }} </h4>
+            <button class="button-edit" [title]="en ? 'Edit': 'Editar'">
+                <i class="bi bi-pencil"></i> {{ en ? 'Edit': 'Editar' }}
+            </button>
+        </header>
+        <div class="div-info">
+            <div class="div-field">
+                <span class="span-label">
+                    {{en ? 'Names': 'Nombres'}}
+                </span>
+                <span class="value">
+                    {{ user.names }}
+                </span>
+            </div>
+            <div class="div-field">
+                <span class="span-label">
+                    {{ en ? 'Lastnames' : 'Apellidos' }}
+                </span>
+                <span class="value">
+                    {{ user.lastnames }}
+                </span>
+            </div>
+            <div class="div-field">
+                <span class="span-label">
+                    {{ en ? 'Email' : 'Correo' }}
+                </span>
+                <span class="value">
+                    {{ user.email }}
+                </span>
+            </div>
+            <div class="div-field">
+                <span class="span-label">
+                    {{ en ? 'Role' : 'Rol' }}
+                </span>
+                <span class="value">
+                    {{ user.role?.name }}
+                </span>
+            </div>
+            <div class="div-field">
+                <span class="span-label">
+                    {{ en ? 'State' : 'Estado' }}
+                </span>
+                <span class="value">
+                    {{ user.state ? en ? 'Active' : 'Activo' : en ? 'Inactive' : 'Inhabilitado' }}
+                </span>
+            </div>
         </div>
-        <div class="input-box">
-            <label class="label-input">
-                <div class="span-label-div">
-                    @for (letter of letters( localLanguage === 'en' ? 'Password' : 'Contraseña' ); track $index) {
-                        <span class="span-letter" [style.--i]="$index" > {{letter}} </span>
-                    }
-                </div>
-                <input [type]=" showPassword ? 'text' : 'password'" formControlName="password" placeholder="" class="input">
-                <i [class]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'" [title]=" localLanguage === 'en' ? showPassword ? 'Hide Password' : 'Show Password' : showPassword ? 'Ocultar Contraseña' : 'Mostrar Contraseña' " (click)="showPassword = !showPassword"></i>
-            </label>
-            @if ( showErrors && getControlErrors('password').length > 0 ) {
-                 <i class="bi bi-exclamation-circle-fill invalid-icon"  nz-popover  [nzPopoverTitle]=" localLanguage === 'en' ? 'Invalid Password' : 'Contraseña Invalida' " [nzPopoverContent]=" localLanguage === 'en' ? 'Please enter a password that is between 6 and 20 characters long, contains one uppercase letter, one lowercase letter, one number, and one special character.' : 'Por favor ingrese una contraseña valida que tenga entre 6 y 20 caracteres de largo, que contenga almenos una letra mayuscula, una minuscula, un número y un caracter especial' " ></i>
-            }
-        </div>
-        <!-- <span class="span-url" title="Ask for a new password" > Forgot password? </span> -->
-        <button type="submit" class="button-submit">{{ localLanguage === 'en' ? 'Update' : 'Actualizar'}}</button>
-    
-    </form>
+    </section>
+    <!-- <section class="section-address">
+            <header class="header-section">
+                <h4> {{ en ? 'Address' : 'Dirección' }} </h4>
+                <button class="button-edit" [title]="en ? 'Edit': 'Editar'">
+                    <i class="bi bi-pencil"></i> {{ en ? 'Edit': 'Editar' }}
+                </button>
+            </header>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt exercitationem ut ex, laborum saepe
+                praesentium. Harum fugiat cupiditate iure aliquam.</p>
+        </section> -->
 </main>
-
+}

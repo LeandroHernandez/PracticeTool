@@ -1,12 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-// import {
-//   FormBuilder,
-//   FormControl,
-//   FormGroup,
-//   ReactiveFormsModule,
-//   Validator,
-// } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
 import {
@@ -22,6 +15,8 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { Subscription } from 'rxjs';
 import { PracticeListsService } from '../../../pages/practice-lists';
 import { TestService } from '../../../pages/test';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ListComponent } from './list/list.component';
 
 interface INode {
   // selected: boolean;
@@ -34,7 +29,7 @@ interface INode {
 
 @Component({
   selector: 'app-test-confirmation',
-  imports: [FormsModule, NzSelectModule, NzTreeSelectModule],
+  imports: [FormsModule, ListComponent, NzSelectModule, NzTreeSelectModule, NzModalModule],
   // imports: [ReactiveFormsModule, NzSelectModule, NzTreeSelectModule],
   templateUrl: './test-confirmation.component.html',
   styleUrl: './test-confirmation.component.css',
@@ -43,27 +38,16 @@ export class TestConfirmationComponent {
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter();
 
   @Input() practiceList: boolean = false;
+  public showList: boolean = false;
   public types: Array<IType> = [];
 
   // public form: FormGroup;
   public selectedItems: Array<string> = [];
   readonly nodes: Array<any> = [];
 
-  // constructor(private _fb: FormBuilder, private _typeSvc: TypeService) {
-  constructor(
-    private _router: Router,
-    private _testSvc: TestService,
-    private _typeSvc: TypeService,
-    private _elementToPracticeSvc: ElementToPracticeService,
-    private _practiceListsSvc: PracticeListsService,
-    private _nzNotificationSvc: NzNotificationService
-  ) {
-    // this.form = this._fb.group({
-    //   selectedItems: [[]],
-    //   selectedETP: [true],
-    // });
-    // this.formInit();
-    if (!this.practiceList) this.getTypes();
+  get en(): boolean {
+    const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en'
+    return en === 'en'
   }
 
   get selectedListOfETP(): Array<IElementToPractice> {
@@ -76,6 +60,28 @@ export class TestConfirmationComponent {
     return JSON.parse(
       localStorage.getItem(localStorageLabels.pl.selectedList) ?? '[]'
     );
+  }
+
+  // constructor(private _fb: FormBuilder, private _typeSvc: TypeService) {
+  constructor(
+    private _router: Router,
+    private _testSvc: TestService,
+    private _typeSvc: TypeService,
+    private _elementToPracticeSvc: ElementToPracticeService,
+    private _practiceListsSvc: PracticeListsService,
+    private _nzNotificationSvc: NzNotificationService,
+    private _nzModalSvc: NzModalService,
+  ) {
+    // this.form = this._fb.group({
+    //   selectedItems: [[]],
+    //   selectedETP: [true],
+    // });
+    // this.formInit();
+    if (!this.practiceList) this.getTypes();
+  }
+
+  public letters(w: string): string[] {
+    return w.split('');
   }
 
   public getTypes(): void {
@@ -158,12 +164,11 @@ export class TestConfirmationComponent {
   public navigate(error?: boolean): Promise<boolean> | void {
     this.closeEmitter.emit(true);
     if (!this._testSvc.currentStatus) return;
-    console.log('Redireccionando al test');
+    // console.log('Redireccionando al test');
     return this._router.navigateByUrl(
-      `/${
-        !this.practiceList
-          ? RoutesApp.elementsToPractice
-          : RoutesApp.practiceLists
+      `/${!this.practiceList
+        ? RoutesApp.elementsToPractice
+        : RoutesApp.practiceLists
       }/${!error ? RoutesApp.test : ''}`
     );
   }
@@ -172,6 +177,7 @@ export class TestConfirmationComponent {
     // console.log({ list });
     const finalList: any[] = [];
     list.forEach((item) => {
+      // console.log({ item });
       if (!finalList.some((subItem) => subItem.id === item.id))
         finalList.push(item);
     });
@@ -181,17 +187,15 @@ export class TestConfirmationComponent {
     );
   }
 
-  public goToTest(): void | Subscription | Promise<boolean> {
-    // console.log({
-    //   selectedItems: this.selectedItems,
-    //   nodes: this.nodes,
-    // });
-
-    // console.log({ practiceList: this.practiceList, selectedListOfPL: this.selectedListOfPL });
-    console.log({
-      practiceListCondition: this.practiceList,
-      selectedListOfPL: this.selectedListOfPL,
-    });
+  public goToTest(): void | Subscription | Promise<boolean> | boolean {
+    // const showList = (condition?: boolean) => condition ? this.navigate(true) : this._nzModalSvc.info({
+    //   nzTitle: this.en ? 'The elements that you are about to practice are these ones' : 'Los elementos que estas por practicar son estos',
+    //   nzContent: ListComponent,
+    //   // nzFooter: null,
+    //   nzOnOk: () => this.navigate(),
+    //   nzOnCancel: () => this.closeEmitter.emit(),
+    //   nzWidth: '90vw',
+    // })
     if (this.practiceList) {
       if (this.selectedListOfPL.length === 0)
         return this._practiceListsSvc.getPracticeLists().subscribe(
@@ -202,11 +206,15 @@ export class TestConfirmationComponent {
                 'Without practice lists',
                 'There are not any practice lists'
               );
+              // return this.navigate(true);
+              // return showList(true);
               return this.navigate(true);
             }
             // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify([...new Set(practiceLists.flatMap(item => item.list))]));
             this.setCustomList(practiceLists.flatMap((item) => item.list));
-            return this.navigate();
+            // return this.navigate();
+            // return showList();
+            return this.showList = true;
           },
           (error) => {
             console.log({ error });
@@ -214,13 +222,16 @@ export class TestConfirmationComponent {
               'Something was wrong',
               'We have just had an error, lets try again.'
             );
-            return this.navigate(true);
+            // return showList();
+            return this.showList = true;
           }
         );
 
       // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify([...new Set(this.selectedListOfPL)]))
       this.setCustomList(this.selectedListOfPL.flatMap((item) => item.list));
-      return this.navigate();
+      // return this.navigate();
+      // return showList();
+      return this.showList = true;
     }
 
     const selectedOption: boolean = this.selectedItems[0] === '1';
@@ -230,12 +241,11 @@ export class TestConfirmationComponent {
       // if (selectedOption) localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify(this.selectedListOfETP))
       // console.log({ selectedOption });
       if (selectedOption) this.setCustomList(this.selectedListOfETP);
-      return this.navigate();
+      // return this.navigate();
+      // return showList();
+      return this.showList = true;
     }
 
-    // if (this.selectedItems.length > 0) {
-    //   // return this._elementToPracticeSvc.getFilteredElementsToPractice({ type: this.selectedItems}).subscribe((filteredEtpsByKind) => console.log({ filteredEtpsByKind }));
-    // }
     return this._elementToPracticeSvc
       .getFilteredElementsToPractice(
         this.selectedItems.length ? { type: this.selectedItems } : undefined
@@ -250,7 +260,9 @@ export class TestConfirmationComponent {
             );
           // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify(filteredEtpsByKind));
           this.setCustomList(filteredEtpsByKind);
-          return this.navigate();
+          // return this.navigate();
+          // return showList();
+          return this.showList = true;
         },
         (error) => {
           console.log({ error });
@@ -258,7 +270,8 @@ export class TestConfirmationComponent {
             'Something was wrong',
             'We have just had an error, lets try again.'
           );
-          return this.navigate(true);
+          // return showList();
+          return this.showList = true;
         }
       );
   }

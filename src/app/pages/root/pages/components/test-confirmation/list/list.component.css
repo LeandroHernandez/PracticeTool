@@ -1,0 +1,8 @@
+.paginator {
+    margin-top: 1lh;
+}
+
+.th-i,
+.td-i {
+    max-width: fit-content !important;
+}

@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ContentHeaderComponent } from '../../components/content-header/content-header.component';
 import { TableComponent } from '../../components/table/table.component';
 import {
+  filterFieldTypes,
   IContentHeaderInfoItem,
   IElementToPractice,
   IFilterFormField,
@@ -10,13 +11,13 @@ import {
   ITableItem,
   IType,
 } from '../../../../../interfaces';
-import { localStorageLabels, RoutesApp } from '../../../../../enums';
+import { localStorageLabels, RoleIds, RoutesApp } from '../../../../../enums';
 import { TypeService } from '../../types/types.service';
 import { ElementToPracticeService } from '../element-to-practice.service';
 import { PracticeListsService } from '../../practice-lists';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { Subscription } from 'rxjs';
-import { RootService } from '../../../root.service';
+// import { Subscription } from 'rxjs';
+// import { RootService } from '../../../root.service';
 
 @Component({
   selector: 'app-elements-to-practice-content',
@@ -73,10 +74,12 @@ export class ElementsToPracticeContentComponent implements OnInit {
     {
       header: 'Type',
       key: `type.name`,
+      filter: filterFieldTypes.multiselect,
     },
     {
       header: 'Basic',
       key: 'en',
+      filter: filterFieldTypes.text,
     },
     {
       header: 'Meanings',
@@ -93,10 +96,11 @@ export class ElementsToPracticeContentComponent implements OnInit {
   public elementsToPractice: Array<IElementToPractice> | null = null;
 
   public types: Array<IType> = [];
+  public admin: boolean = true;
 
   constructor(
     private _router: Router,
-    private _rootSvc: RootService,
+    // private _rootSvc: RootService,
     private _typeSvc: TypeService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _practiceListsSvc: PracticeListsService,
@@ -105,16 +109,19 @@ export class ElementsToPracticeContentComponent implements OnInit {
 
   ngOnInit(): void {
     this.getElementsToPractice();
-    this.getUserInfo();
   }
 
-  public getUserInfo(): void {
-    this._rootSvc.user$.subscribe(
-      userInfo => {
-        console.log({ userInfo });
-      }
-    )
-  }
+  // public getUserInfo(): void {
+  //   this._rootSvc.user$.subscribe(
+  //     userInfo => {
+  //       console.log({ userInfo });
+  //       if (!userInfo) return;
+  //       const { role } = userInfo;
+  //       if (!role) return;
+  //       if (role !== RoleIds.admin) this.admin = false;
+  //     }
+  //   )
+  // }
 
   public getElementsToPractice(query?: any, options?: any): void {
     if (!query) localStorage.removeItem(localStorageLabels.etp.filerBody);

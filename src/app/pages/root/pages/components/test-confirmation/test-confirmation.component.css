@@ -7,7 +7,15 @@
   justify-content: center;
 }
 
+.form {
+  width: 100%;
+}
+
 .treeSelect {
+  width: 100%;
+}
+
+.div-list {
   width: 100%;
 }
 

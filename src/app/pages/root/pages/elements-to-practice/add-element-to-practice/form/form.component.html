@@ -1,179 +1,216 @@
 <!-- <p>form works!</p> -->
 
 <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-  <header class="form_header">
-    <h4>{{ !id ? "New" : "Edit" }} {{ formLabel }}</h4>
-    
-    <!-- @if (url.endsWith('test')) {
-                <h4>{{formLabel}}</h4>
-            } @else {
-                <h4>{{ !id ? 'New' : 'Edit'}} {{formLabel}}</h4>
-            }
-            @if( form.value.verbInfo && form.value.verbInfo.wordType === verbId ) {
-                <div formGroupName="verbInfo" class="form-check form-switch">
-                    <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"></nz-switch>
-                </div>
-            } -->
+  <header class="form-header">
+    <h4>{{ !etpItem ? !id ? language === 'en' ? "Register" : 'Registrar' : language === 'en' ? "Edit" : 'Editar' : '' }}
+      {{
+      formLabel }}</h4>
   </header>
-  <div class="form_content">
-    <label class="label">
-      <span> Type: </span>
-      <select class="select" formControlName="type">
-        @for(type of typesList; track $index){
-        <option [value]="type.id" class="option">{{ type.name }}</option>
-        }
-      </select>
-    </label>
+  <fieldset class="fieldset">
 
-    <label class="label">
-      <span> {{ grammarLesson ? "Title" : "Base" }}: </span>
-      <!-- <input type="text" formControlName="en" class="input {{ url.endsWith('test') ? 'disable' : '' }}" placeholder="Base Form" /> -->
-      <input
-        type="text"
-        formControlName="en"
-        class="input"
-        [placeholder]="grammarLesson ? 'Lesson Title' : 'Base Form'"
-      />
-    </label>
-
-    <!-- Modificación -->
-
-    @if (word) {
-    <!-- <label class="label"> -->
-    <span> Uses: </span>
-    <!-- [(ngModel)]="listOfSelectedValue" -->
-    <nz-select
-      nzMode="multiple"
-      nzPlaceHolder="Please select"
-      formControlName="selectedUses"
-    >
-      @for (item of usesList; track item) {
-      <!-- <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option> -->
-      <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+    <div class="input-box">
+      @if ( isRequired('type') && form.controls['type'].enabled ) {
+      <i class="bi bi-asterisk" nz-popover
+        [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
       }
-    </nz-select>
-    <!-- </label> -->
-
-    <div formArrayName="uses" class="uses_div">
-      <!-- @for (group of uses.controls; track $index) { -->
-      @for (group of uses && uses.controls.length > 0 ? uses.controls : []; track group.value.id; let i = $index) {
-      <div class="use_container" [formGroupName]="i">
-        <header>
-          <h6>
-            <span> {{ group.value.name }} </span> Meanings:
-            {{ getMeanings(i).value.length }}
-          </h6>
-        </header>
-        @if (group.value.id === verbId) {
-        <div formGroupName="verbInfo" class="verbInfo">
-          <label class="label irregular_label">
-            <span>Irregular Verb:</span>
-            <nz-switch
-              nzCheckedChildren="Irregular"
-              nzUnCheckedChildren="Regular"
-              formControlName="irregular"
-            ></nz-switch>
-          </label>
-
-          <div class="verbInfo_input_section">
-            <label class="label">
-              <span> Simple Past </span>
-              <input
-                type="text"
-                placeholder="Simple Past"
-                formControlName="simplePast"
-              />
-            </label>
-            <label class="label">
-              <span> Past Participle </span>
-              <input
-                type="text"
-                placeholder="Past Participle"
-                formControlName="pastParticiple"
-              />
-            </label>
-          </div>
-        </div>
-
-        <strong>Meanings</strong>
-        <hr />
-        }
-        <div formArrayName="meanings" class="use_meanings">
-          <!-- @for (meaning of getMeanings(i).controls; track $index; let i = $index) { -->
-          @for (meaning of getMeanings(i).controls; track meaning; let j =
-          $index) {
-          <div class="meaning_container">
-            <input type="text" [formControlName]="j" placeholder="Meaning" />
-            @if (getMeanings(i).value.length > 1 && showMeaningActions(group)) {
-            <i
-              class="bi bi-trash"
-              (click)="removeWordMeaning(i, j)"
-              title="Remove"
-            ></i>
-            }
-          </div>
+      <label class="label-input">
+        <div class="span-label-div">
+          @for (letter of letters( language === 'en' ? 'Type' : 'Tipo' );
+          track $index)
+          {
+          <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
           }
         </div>
-        @if (showMeaningActions(group)) {
-        <footer class="use_footer">
-          <button
-            type="button"
-            class="btn add_btn"
-            (click)="addWordMeaning(i)"
-            title="Add Meaning"
-          >
-            <i class="bi bi-plus-circle"></i>
-          </button>
-        </footer>
-        }
-      </div>
+        <select formControlName="type" [class]="!form.controls['type'].enabled ? 'select disabled' : 'select'">
+          @for (type of typesList; track type) {
+          <option [value]="type.id"> {{ type.name }} </option>
+          }
+        </select>
+      </label>
+      @if ( showErrors && getControlErrors('type').length > 0 ) {
+      <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover
+        [nzPopoverTitle]=" language === 'en' ? 'Invalid Type' : 'Tipo Invalido' "
+        [nzPopoverContent]=" language === 'en' ? 'Please select one type.' : 'Por favor seleccione un tipo.' "></i>
       }
     </div>
-    <!-- } @else if (etpItem?.content?.etp?.meanings) { -->
+    <div class="input-box">
+      @if ( isRequired('en') && form.controls['en'].enabled ) {
+      <i class="bi bi-asterisk" nz-popover
+        [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
+      }
+      <label class="label-input">
+        <div class="span-label-div">
+          @for (letter of letters( language === 'en' ? 'Base form' : 'Forma base' ); track $index) {
+          <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+          }
+        </div>
+        <input type="text" formControlName="en" placeholder=""
+          [class]="!form.controls['en'].enabled ? 'input disabled' : 'input'">
+      </label>
+      @if ( showErrors && getControlErrors('en').length > 0 ) {
+      <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover
+        [nzPopoverTitle]=" language === 'en' ? 'Invalid base form' : 'Forma base invalida' "
+        [nzPopoverContent]=" language === 'en' ? 'Please enter a valid base form with a maximum of 60 characters.' : 'Por favor ingrese un nombre valido con un maximo de 60 caracteres' "></i>
+      }
+    </div>
+
+    @if (word) {
+    <fieldset class="subfieldset">
+      <legend class="legend">Uses</legend>
+
+      <div class="input-box">
+        @if ( isRequired('selectedUses') && form.controls['selectedUses'].enabled ) {
+        <i class="bi bi-asterisk" nz-popover
+          [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
+        }
+        <label class="label-input">
+          <div class="span-label-div">
+            @for (letter of letters( language === 'en' ? 'Selected Uses' : 'Usos Seleccionados' ); track $index) {
+            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+            }
+          </div>
+          <nz-select nzMode="multiple" nzAllowClear formControlName="selectedUses"
+            class=" {{ !form.controls['selectedUses'].enabled ? 'multiselect-disabled' : '' }} {{form.get('selectedUses')?.value?.length > 0 ? 'with-content' : ''}}">
+            @for (item of usesList; track item) {
+            <nz-option [nzLabel]=" item.name" [nzValue]="item.id"></nz-option>
+            }
+          </nz-select>
+        </label>
+        @if ( showErrors && getControlErrors('selectedUses').length > 0 ) {
+        <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover
+          [nzPopoverTitle]=" language === 'en' ? 'Invalid Selected Uses' : 'Usos Seleccionados Invalidos' "
+          [nzPopoverContent]=" language === 'en' ? 'Please select at least one use.' : 'Por favor seleccione al menos un uso.' "></i>
+        }
+      </div>
+
+      <div formArrayName="uses" class="uses-div">
+        @for(group of uses && uses.controls.length > 0 ? uses.controls : []; track group.value.id; let i = $index) {
+
+        <fieldset class="subfieldset" [formGroupName]="i">
+          <legend class="legend"> {{ group.value.name }}: <span class="accent">{{getMeanings(i).value.length}}</span>
+          </legend>
+
+          @if (group.value.id === verbId) {
+          <fieldset class="subfieldset" formGroupName="verbInfo">
+            <header class="header-verb-info">
+
+              <h6 class="verb-info-title"> {{ language === 'en' ? 'Aditional' : 'Adicional' }} </h6>
+
+              <label class="label irregular-label">
+                <span>{{language === 'en' ? 'Irregular Verb' : 'Verbo Irregular'}}:</span>
+                <nz-switch nzCheckedChildren="Irregular" nzUnCheckedChildren="Regular" formControlName="irregular"
+                  [class]="verbInfoControl(i, 'switch')"></nz-switch>
+              </label>
+            </header>
+
+            <div class="input-box">
+              <label class="label-input">
+                <div class="span-label-div">
+                  @for (letter of letters( language === 'en' ? 'Simple Past' : 'Pasado Simple' ); track $index)
+                  {
+                  <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                  }
+                </div>
+                <input type="text" formControlName="simplePast" placeholder="" [class]=" verbInfoControl(i) ">
+              </label>
+            </div>
+
+            <div class="input-box">
+              <label class="label-input">
+                <div class="span-label-div">
+                  @for (letter of letters( language === 'en' ? 'Past Participle' : 'Pasado Participio' ); track $index)
+                  {
+                  <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                  }
+                </div>
+                <input type="text" formControlName="pastParticiple" placeholder="" [class]=" verbInfoControl(i) ">
+              </label>
+            </div>
+
+          </fieldset>
+
+          <h6 class="verb-meanings-title"> {{ language === 'en' ? 'Meanings' : 'Significados' }}: <span
+              class="accent">{{
+              getMeanings(i).controls.length }}</span> </h6>
+          }
+
+          <div class="meanings-box" formArrayName="meanings">
+            @for (meaning of getMeanings(i).controls; track meaning; let j =
+            $index) {
+            <div class="meaning-box">
+              <div class="input-box">
+                <label class="label-input">
+                  <div class="span-label-div">
+                    @for (letter of letters( language === 'en' ? 'Meaning' : 'Significado' ); track $index) {
+                    <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                    }
+                  </div>
+                  <!-- <input type="text" [formControlName]="i" placeholder="" class="input"> -->
+                  <textarea [formControlName]="j" placeholder=""
+                    [class]="!meaning.enabled ? 'textarea disabled' : 'textarea'"></textarea>
+
+                </label>
+              </div>
+              @if (getMeanings(i).value.length > 1 && showMeaningActions(group)) {
+              <i class="bi bi-trash" (click)="removeWordMeaning(i, j)" title="Remove"></i>
+              }
+            </div>
+            }
+            @if (showMeaningActions(group)) {
+            <footer class="use-footer">
+              <button type="button" class="button add-button" (click)="addWordMeaning(i)" title="Add Meaning">
+                <i class="bi bi-plus-circle"></i>
+              </button>
+            </footer>
+            }
+          </div>
+        </fieldset>
+        }
+      </div>
+
+    </fieldset>
     } @else {
-    <div class="use_container">
-      <header>
-        <h6>Meanings: {{ meanings.value.length }}</h6>
-      </header>
-      <div formArrayName="meanings" class="use_meanings">
-        <!-- @for (meaning of getMeanings(i).controls; track $index; let i = $index) { -->
+    <fieldset class="subfieldset" formArrayName="meanings">
+      <legend class="legend"> {{ language === 'en' ? 'Meanings: ' : 'Significados: ' }} <span class="accent"> {{
+          meanings.value.length
+          }} </span>
+      </legend>
+
+      <div class="meanings-box">
         @for (meaning of meanings.controls; track meaning; let i = $index) {
-        <div class="meaning_container">
-          <input type="text" [formControlName]="i" placeholder="Meaning" />
+        <div class="meaning-box">
+          <div class="input-box">
+            <label class="label-input">
+              <div class="span-label-div">
+                @for (letter of letters( language === 'en' ? 'Meaning' : 'Significado' ); track $index) {
+                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                }
+              </div>
+              <!-- <input type="text" [formControlName]="i" placeholder="" class="input"> -->
+              <textarea [formControlName]="i" placeholder=""
+                [class]="meanings.disabled ? 'textarea disabled' : 'textarea'"></textarea>
+
+            </label>
+          </div>
           @if (meanings.value.length > 1 && meaning.enabled) {
           <i class="bi bi-trash" (click)="removeMeaning(i)" title="Remove"></i>
           }
         </div>
         }
-        <button
-          type="button"
-          class="btn add_btn"
-          (click)="addMeaning()"
-          title="Add Meaning"
-        >
+        @if ( meanings.enabled ) {
+        <button type="button" class="button add-button" (click)="addMeaning()" title="Add Meaning">
           <i class="bi bi-plus-circle"></i>
         </button>
+        }
       </div>
-    </div>
+    </fieldset>
     }
 
-    <!-- <section class="section use_section">
-                @for (use of usesList; track $index) {
-                    @if (use.name === 'Word') {
 
-                    }
-                }
-            </section> -->
+  </fieldset>
 
-    <!-- Modificación -->
-
-    <button
-      type="submit"
-      class="btn register_btn"
-      [title]="!id ? 'Register' : 'Editar'"
-    >
-      <!-- {{ etp$ ? "Validar" : !id ? "Registrar" : "Editar" }} -->
-      {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
-    </button>
-  </div>
+  <button type="submit" class="button register-button" [title]="!id ? 'Register' : 'Editar'">
+    <!-- {{ etp$ ? "Validar" : !id ? "Registrar" : "Editar" }} -->
+    {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
+  </button>
 </form>

@@ -5,16 +5,10 @@
         <div class="content-header">
             <app-content-header [contentHeaderInfo]="contentHeaderInfo"></app-content-header>
         </div>
-        <div class="table">
-            <app-table 
-                [tableInfo]="tableInfo" 
-                [itemList]="itemList" 
-                [filterFormFields]="filterFormFields" 
-                (editAction)="practiceListEdit($event)" 
-                (deleteAction)="practiceListDelete($event)"
-                (filterAction)="getPracticeLists($event)"
-                (deleteAllAction)="deleteAll($event)"
-            ></app-table>
+        <div class="table module-table">
+            <app-table [tableInfo]="tableInfo" [itemList]="itemList" [filterFormFields]="filterFormFields"
+                (editAction)="practiceListEdit($event)" (deleteAction)="practiceListDelete($event)"
+                (filterAction)="getPracticeLists($event)" (deleteAllAction)="deleteAll($event)"></app-table>
         </div>
     </div>
 </main>

@@ -4,6 +4,8 @@ import { IContentHeaderInfoItem, IType } from '../../../../../interfaces';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { TestConfirmationComponent } from '../test-confirmation/test-confirmation.component';
 import { TestService } from '../../../pages/test';
+import { RootService } from '../../../root.service';
+import { localStorageLabels, RoleIds } from '../../../../../enums';
 
 @Component({
   selector: 'app-content-header',
@@ -15,10 +17,11 @@ import { TestService } from '../../../pages/test';
     <div class="main_content">
       <button
         type="button"
-        class="button-add"
+        [class]="!addEditAction ? 'button-add disabled' : 'button-add' "
         title="Add Word"
         [routerLink]="[contentHeaderInfo.add.route]"
         [title]="contentHeaderInfo.add.title"
+        [disabled]="!addEditAction"
       >
         {{ contentHeaderInfo.add.label }}
         <i class="bi bi-plus-lg"></i>
@@ -28,7 +31,7 @@ import { TestService } from '../../../pages/test';
       @if ( contentHeaderInfo.test ) {
       <button
         type="button"
-        class="button-test"
+        class="button-test header-test-button"
         title="Test"
         (click)="goToTest()"
         [title]="contentHeaderInfo.test.title"
@@ -83,6 +86,33 @@ import { TestService } from '../../../pages/test';
         }
       }
 
+      [class="button-add disabled"] {
+        position: relative;
+        cursor: not-allowed;
+        transition: none;
+
+        &:hover {
+          transform: none;
+
+          .bi::before {
+            transition: none;
+            transform: none;
+            color: var(--primary);
+          }
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          background-color: var(--primary);
+          opacity: .3 
+        }
+      }
+
       .button-test {
         border: 0.15rem solid var(--accent);
         background-color: var(--primary);
@@ -105,19 +135,43 @@ export class ContentHeaderComponent {
   @Input() contentHeaderInfo: IContentHeaderInfoItem | null = null;
   // @Input() types: Array<IType> = [];
 
+  public addEditAction: boolean = true;
+  public availableToAdd: RoleIds[] = [RoleIds.admin];
+
+  get en(): boolean {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) === 'en';
+  }
+
   constructor(
     private _nzModalSvc: NzModalService,
-    private _testSvc: TestService
-  ) {}
+    private _testSvc: TestService,
+    private _rootSvc: RootService,
+  ) { }
+
+  ngOnInit(): void {
+    this.getUserInfo();
+  }
+
+  public getUserInfo(): void {
+    this._rootSvc.user$.subscribe(
+      userInfo => {
+        if (!userInfo) return;
+        const { role } = userInfo;
+        if (!role) return;
+        if (!this.availableToAdd.includes(role)) this.addEditAction = false;
+      }
+    )
+  }
 
   public goToTest(): void {
-    console.log(' Showing test confirmation ');
+    // console.log(' Showing test confirmation ');
     this._testSvc.setStatus(true);
     const modal: NzModalRef = this._nzModalSvc.create({
       // nzTitle: 'Test Confirmation',
-      nzTitle: 'What kind of elements do you want to practice?',
+      nzTitle: this.en ? 'Test conformation' : 'Confirmación de test',
       nzContent: TestConfirmationComponent,
       nzFooter: null,
+      nzWidth: '90vw'
     });
 
     const instance = modal.getContentComponent();

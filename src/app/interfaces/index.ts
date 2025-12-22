@@ -9,6 +9,7 @@ export * from './page-table-info.interface';
 export * from './practice-list.interface';
 export * from './role.interface';
 export * from './table-item.interface';
+export * from './test.interface';
 export * from './type.interface';
 export * from './user.interface';
 export * from './word.interface';

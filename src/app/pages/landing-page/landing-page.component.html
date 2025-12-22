@@ -12,99 +12,62 @@
                 <li class="li-nav">
                     <!-- [routerLink]="[baseRoute]"
                     fragment="main" -->
-                    <a
-                        (click)="scrollTop()"
-                        class="a-nav"
-                        [class.active]="activeSection === 'home'"
-                    >
+                    <a (click)="scrollTop()" class="a-nav" [class.active]="activeSection === 'home'">
                         {{ localLanguage === 'en' ? 'Home' : 'Inicio'}}
                     </a>
                 </li>
                 <li class="li-nav">
-                    <a
-                        [routerLink]="[baseRoute]"
-                        fragment="features"
-                        class="a-nav"
-                        [class.active]="activeSection === 'features'"
-                    >
+                    <a [routerLink]="[baseRoute]" fragment="features" class="a-nav"
+                        [class.active]="activeSection === 'features'">
                         {{ localLanguage === 'en' ? 'Features' : 'Caracterisitcas'}}
                     </a>
                 </li>
                 <li class="li-nav">
-                    <a
-                        [routerLink]="[baseRoute]"
-                        fragment="reviews"
-                        class="a-nav"
-                        [class.active]="activeSection === 'reviews'"
-                    >
+                    <a [routerLink]="[baseRoute]" fragment="reviews" class="a-nav"
+                        [class.active]="activeSection === 'reviews'">
                         {{ localLanguage === 'en' ? 'Reviews' : 'Reseñas'}}
                     </a>
                 </li>
                 <li class="li-nav">
-                    <a
-                        [routerLink]="[baseRoute]"
-                        fragment="pricing"
-                        class="a-nav"
-                        [class.active]="activeSection === 'pricing'"
-                    >
+                    <a [routerLink]="[baseRoute]" fragment="pricing" class="a-nav"
+                        [class.active]="activeSection === 'pricing'">
                         {{ localLanguage === 'en' ? 'Pricing' : 'Precios'}}
                     </a>
                 </li>
-                <li class="li-nav"><button [routerLink]="signInRoute" class="button-nav-signIn">{{ localLanguage === 'en' ? 'Sign In' : 'Iniciar secion'}}</button></li>
-                <li class="li-nav"><button [routerLink]="signUpRoute" class="button-nav-signUp">{{ localLanguage === 'en' ? 'Get Started' : 'Registrarse'}}</button></li>
+                <li class="li-nav"><button [routerLink]="signInRoute" class="button-nav-signIn">{{ localLanguage ===
+                        'en' ? 'Sign In' : 'Iniciar secion'}}</button></li>
+                <li class="li-nav"><button [routerLink]="signUpRoute" class="button-nav-signUp">{{ localLanguage ===
+                        'en' ? 'Get Started' : 'Registrarse'}}</button></li>
                 <li class="li-nav">
-                    <select class="form-select" [(ngModel)]="currentLanguage" (ngModelChange)="languageChange(currentLanguage)">
-                        <option value="en">{{ localLanguage === 'en' ?  'English' : 'Ingles'}}</option>
-                        <option value="es">{{ localLanguage === 'en' ?  'Spanish' : 'Español'}}</option>
+                    <select class="form-select" [(ngModel)]="currentLanguage"
+                        (ngModelChange)="languageChange(currentLanguage)">
+                        <option value="en">{{ localLanguage === 'en' ? 'English' : 'Ingles'}}</option>
+                        <option value="es">{{ localLanguage === 'en' ? 'Spanish' : 'Español'}}</option>
                     </select>
                 </li>
-                
+
             </ul>
         </nav>
-        <i class="bi bi-list" (click)="navShow = !navShow" ></i>
+        <i class="bi bi-list" (click)="navShow = !navShow"></i>
     </header>
 
-    <section id="home"
-        appObserveSection
-        [thresholdDesktop]="0.6"
-        [thresholdMobile]="0.5"
-        sectionId="home"
-        (sectionInView)="activeSection = 'home'"
-        class="section-home"
-    >
-        <app-home [currentLanguage]="localLanguage" ></app-home>
+    <section id="home" appObserveSection [thresholdDesktop]="0.6" [thresholdMobile]="0.5" sectionId="home"
+        (sectionInView)="activeSection = 'home'" class="section-home">
+        <app-home [currentLanguage]="localLanguage"></app-home>
     </section>
 
-    <section id="features"
-        appObserveSection
-        [thresholdDesktop]="0.6"
-        [thresholdMobile]="0.5"
-        sectionId="features"
-        (sectionInView)="activeSection = 'features'"
-        class="section-features"
-    >
-        <app-features [currentLanguage]="localLanguage" ></app-features>
+    <section id="features" appObserveSection [thresholdDesktop]="0.6" [thresholdMobile]="0.5" sectionId="features"
+        (sectionInView)="activeSection = 'features'" class="section-features">
+        <app-features [currentLanguage]="localLanguage"></app-features>
     </section>
 
-    <section id="reviews"
-        appObserveSection
-        [thresholdDesktop]="0.6"
-        [thresholdMobile]="0.5"
-        sectionId="reviews"
-        (sectionInView)="activeSection = 'reviews'"
-        class="section-reviews"
-    >
-        <app-reviews [currentLanguage]="localLanguage" ></app-reviews>
+    <section id="reviews" appObserveSection [thresholdDesktop]="0.6" [thresholdMobile]="0.5" sectionId="reviews"
+        (sectionInView)="activeSection = 'reviews'" class="section-reviews">
+        <app-reviews [currentLanguage]="localLanguage"></app-reviews>
     </section>
-    <section id="pricing"
-        appObserveSection
-        [thresholdDesktop]="0.6"
-        [thresholdMobile]="0.5"
-        sectionId="pricing"
-        (sectionInView)="activeSection = 'pricing'"
-        class="section-pricing"
-    >
-        <app-pricing [currentLanguage]="localLanguage" ></app-pricing>
+    <section id="pricing" appObserveSection [thresholdDesktop]="0.6" [thresholdMobile]="0.5" sectionId="pricing"
+        (sectionInView)="activeSection = 'pricing'" class="section-pricing">
+        <app-pricing [currentLanguage]="localLanguage"></app-pricing>
     </section>
 
     <footer class="footer-main">
@@ -114,24 +77,32 @@
                     <img src="images/pt-logo.webp" alt="Logo" class="img-tittle-header">
                     <h2>Practice Tool</h2>
                 </div>
-                <p class="p-footer">{{localLanguage === 'en' ? 'The most effective way to learn and master English vocabulary.' : 'La forma más efectiva de aprender y dominar el vocabulario en Inlges'}}</p>
+                <p class="p-footer">{{localLanguage === 'en' ? 'The most effective way to learn and master English
+                    vocabulary.' : 'La forma más efectiva de aprender y dominar el vocabulario en Inlges'}}</p>
             </div>
 
             <div class="lists-footer">
                 @for (list of footerLists; track $index) {
-                    <div class="list-footer">
-                        <strong class="tittle-footer-list"> {{ localLanguage === 'en' ? list.tittle.en : list.tittle.es }} </strong>
-                        <ul class="ul-footer">
-                            @for (item of list.items; track $index) {
-                                <li class="li-footer"> <a [routerLink]="[baseRoute]" fragment="{{item.route}}" class="a-footer"> {{ localLanguage === 'en' ? item.label.en : item.label.es }} </a> </li>
-                            }
-                        </ul>
-                    </div>
+                <div class="list-footer">
+                    <strong class="tittle-footer-list"> {{ localLanguage === 'en' ? list.tittle.en : list.tittle.es }}
+                    </strong>
+                    <ul class="ul-footer">
+                        @for (item of list.items; track $index) {
+                        <li class="li-footer"> <a [routerLink]="[baseRoute]" fragment="{{item.route}}" class="a-footer">
+                                {{ localLanguage === 'en' ? item.label.en : item.label.es }} </a> </li>
+                        }
+                    </ul>
+                </div>
                 }
                 <div></div>
             </div>
         </div>
 
-        <p class="p-footer-label">© 2025 Practice Tool. {{ localLanguage === 'en' ? 'All rights reserved.' : 'Todos los derechos reservados.'}}</p>
+        <p class="p-footer-label">
+            © 2025 Practice Tool |
+            <span [routerLink]="['/privacy-policy']" class="span-privacy-policy">
+                {{ localLanguage === 'en' ? 'Privacy Policy and Cookies.' : 'Política de Privacidad y Cookies.'}}
+            </span>
+        </p>
     </footer>
 </main>

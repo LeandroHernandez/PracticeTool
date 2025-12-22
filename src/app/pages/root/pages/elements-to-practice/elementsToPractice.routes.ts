@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { RoutesApp } from '../../../../enums';
+import { RoleIds, RoutesApp } from '../../../../enums';
+import { subMenuGuard } from '../../../../guards/sub-menu.guard';
 
 export const elementsToPracticeRoutes: Routes = [
   {
@@ -10,6 +11,7 @@ export const elementsToPracticeRoutes: Routes = [
       ),
   },
   {
+    canActivate: [subMenuGuard([RoleIds.admin])],
     path: RoutesApp.add,
     loadComponent: () =>
       import('./add-element-to-practice').then(
@@ -17,6 +19,7 @@ export const elementsToPracticeRoutes: Routes = [
       ),
   },
   {
+    canActivate: [subMenuGuard([RoleIds.admin])],
     path: `${RoutesApp.add}/:id`,
     loadComponent: () =>
       import('./add-element-to-practice').then(

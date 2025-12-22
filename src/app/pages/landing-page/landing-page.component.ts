@@ -5,6 +5,7 @@ import { FeaturesComponent, HomeComponent, PricingComponent, ReviewsComponent } 
 import { ObserveSectionDirective } from './observe-section.directive';
 import { FormsModule } from '@angular/forms';
 import { ViewportScroller } from '@angular/common';
+import { AdsenseBannerComponent } from '../../adsense-banner/adsense-banner.component';
 
 interface IEnEs {
   en: string;
@@ -23,7 +24,16 @@ interface IFooterList {
 
 @Component({
   selector: 'app-landing-page',
-  imports: [RouterLink, FormsModule, FeaturesComponent, HomeComponent, PricingComponent, ReviewsComponent, ObserveSectionDirective],
+  imports:
+    [
+      RouterLink,
+      FormsModule,
+      FeaturesComponent,
+      HomeComponent,
+      PricingComponent,
+      ReviewsComponent,
+      ObserveSectionDirective,
+    ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css'
 })
@@ -90,12 +100,12 @@ export class LandingPageComponent implements AfterViewInit {
   public navShow: boolean = false;
   public activeSection: string = 'home';
   public currentLanguage: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
-  
+
   get localLanguage(): string {
     return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   }
 
-  constructor(private _viewportScroller: ViewportScroller) {}
+  constructor(private _viewportScroller: ViewportScroller) { }
 
   ngAfterViewInit() {
     this.scrollTop();

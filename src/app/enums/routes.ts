@@ -21,5 +21,6 @@ export enum RoutesApp {
     practiceLists = 'practice-lists',
     add = 'add',
     test = 'test',
+    privacyPolicy = 'privacy-policy',
     other = '**'
 }

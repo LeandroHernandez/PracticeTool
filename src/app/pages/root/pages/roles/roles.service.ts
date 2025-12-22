@@ -11,10 +11,8 @@ import {
   query,
   where,
   QueryConstraint,
-  orderBy,
   limit,
   startAfter,
-  getDocs,
   QueryDocumentSnapshot,
   DocumentData,
   collectionSnapshots,
@@ -22,23 +20,14 @@ import {
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { IModule, IRole, IRoleBody } from '../../../../interfaces';
-import { DbCollections, typesOfWords } from '../../../../enums';
-import { TypeService } from '../types/types.service';
-import { Query, setDoc } from 'firebase/firestore';
+import { DbCollections } from '../../../../enums';
+import { setDoc } from 'firebase/firestore';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class RolesService {
-  // private rolesRef: CollectionReference<IRole>;
-
-  // constructor(private firestore: Firestore) {
-  //   this.rolesRef = collection(
-  //     this.firestore,
-  //     DbCollections.roles
-  //   ) as CollectionReference<IRole>;
-  // }
 
   private firestore = inject(Firestore);
   private injector = inject(EnvironmentInjector); // ✅ para asegurar contexto
@@ -111,48 +100,6 @@ export class RolesService {
       );
     });
   }
-
-  // getRole(id: string): Observable<IRole> {
-  //   const roleDoc = doc(
-  //     this.firestore,
-  //     `${DbCollections.roles}/${id}`
-  //   );
-  //   return docData(roleDoc, {
-  //     idField: 'id',
-  //   }) as Observable<IRole>;
-  // }
-  // getRole(id: string, noPopulate?: boolean): Observable<IRole> {
-  //   const roleDoc = doc(this.firestore, `${DbCollections.roles}/${id}`);
-
-  //   return docData(roleDoc, { idField: 'id' }).pipe(
-  //     switchMap((role: any) => {
-  //       if (noPopulate) {
-  //         return of(role as IRole);
-  //       }
-  //       // Si no tiene módulos asignados, devolvemos el rol tal cual
-  //       const assigned = role.assignedModules;
-  //       console.log({ assigned });
-  //       if (!assigned || !Array.isArray(assigned) || assigned.length === 0) {
-  //         return of(role as IRole);
-  //       }
-
-  //       // Consultamos los módulos cuyos ids estén en 'assigned'
-  //       const modulesRef = collection(this.firestore, DbCollections.modules);
-  //       const q = query(modulesRef, where('id', 'in', assigned));
-
-  //       return from(getDocs(q)).pipe(
-  //         map(snapshot => snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as IModule)),
-  //         map((modules: IModule[]) => {
-  //           console.log({ assignedModules: modules });
-  //           return {
-  //             ...role,
-  //             assignedModules: modules, // reemplazamos los ids por los módulos completos
-  //           } as IRole;
-  //         })
-  //       );
-  //     })
-  //   );
-  // }
 
   getRole(id: string, noPopulate?: boolean): Observable<IRole> {
     return runInInjectionContext(this.injector, () => {

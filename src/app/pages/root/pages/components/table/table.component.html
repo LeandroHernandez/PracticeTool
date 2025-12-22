@@ -12,6 +12,7 @@
       }
     </div>
   </div>
+  @if ( itemList && paginatedItems.length > 0 ) {
   <div class="filters_section">
     <div class="filterButton_div">
       @if (filterFormFields) {
@@ -26,7 +27,7 @@
       }
     </div>
 
-    @if (actualSelectedItems.length > 1) {
+    @if (modifyAction && actualSelectedItems.length > 1) {
     <button class="button-delete-all" nz-popconfirm nzPopconfirmTitle="Sure to delete all of selected items?"
       (nzOnConfirm)="deleteAllAction.emit(true)" title="Delete all selection">
       Delete selection
@@ -34,7 +35,8 @@
     </button>
     }
   </div>
-  <div class="table_container">
+  }
+  <div class="table-container">
     @if ( !itemList ) {
     <p class="loading-p"> Charging files <nz-icon nzType="loading" nzTheme="outline" /> </p>
     } @else {
@@ -48,6 +50,33 @@
           @for(item of tableInfo; track $index) {
           <th class="th">
             {{ item.header }}
+            <!-- @if ( item.filter ) {
+            <button class="button-filter" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="menu"> <i
+                class="bi bi-search"></i> </button>
+            <ng-template #menu>
+              <form [formGroup]="form" class="form">
+                <fieldset class="fieldset">
+                  <div class="input-box">
+                    <label class="label-input">
+
+                      <div class="span-label-div">
+                        @for (letter of letters( localLanguage === 'en' ? 'Select' : 'Seleccionar' ); track $index) {
+                        <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                        }
+                      </div>
+                      <nz-select nzMode="multiple" nzAllowClear [formControlName]="item.key.split('.')[0]" class="">
+                        @for (item of usesList; track item) {
+                        <nz-option [nzLabel]=" item.name" [nzValue]="item.id"></nz-option>
+                        }
+                      </nz-select>
+
+                    </label>
+                  </div>
+                </fieldset>
+              </form>
+              @if (item.filter === 'multiselect') {}
+            </ng-template>
+            } -->
           </th>
           }
           <th class="th">Actions</th>
@@ -84,6 +113,7 @@
                 }
                 }
                 }
+
                 @else if ( keyItem.key ==='list' ) {
                 <span> {{ item.list.length }} </span>
                 }
@@ -103,9 +133,14 @@
           </td>
           }
           <td class="td actions_td">
-            <i class="bi bi-pencil-square" title="Edit Word" (click)="editAction.emit(item.id)"></i>
+            <i [class]="!modifyAction ? 'bi bi-pencil-square -disabled' : 'bi bi-pencil-square' " title="Edit Word"
+              (click)=" modifyAction ? editAction.emit(item.id) : false"></i>
+            @if (modifyAction) {
             <i nz-popconfirm nzPopconfirmTitle="Sure to delete?" (nzOnConfirm)="deleteAction.emit(item.id)"
               class="bi bi-x-circle" title="Delete Word"></i>
+            } @else {
+            <i class=" bi bi-x-circle -disabled" title="Delete Word"></i>
+            }
           </td>
         </tr>
         }

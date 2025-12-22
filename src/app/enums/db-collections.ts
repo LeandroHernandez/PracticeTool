@@ -6,6 +6,7 @@ export enum DbCollections {
     elementsToPractice = 'elementsToPractice',
     types = 'types',
     words = 'words',
+    tests = 'tests',
     phrasalVerbs = 'phrasal-verbs',
     practiceLists = 'practice-lists',
 }

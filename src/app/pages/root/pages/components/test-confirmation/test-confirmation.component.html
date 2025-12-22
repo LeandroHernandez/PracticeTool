@@ -1,23 +1,40 @@
 <!-- <p>test-confirmation works!</p> -->
 
 <div class="container">
+  @if (!showList) {
   @if (practiceList) {
   <p>
     You are about to practice
-    {{ selectedListOfPL.length > 0 ? `the ${ selectedListOfPL.length } that you have selected` : 'all the practice lists'}}
+    {{ selectedListOfPL.length > 0 ? `the ${ selectedListOfPL.length } that you have selected` : 'all the practice
+    lists'}}
   </p>
   } @else {
-  <nz-tree-select
-    nzMode="multiple"
-    class="treeSelect"
-    [(ngModel)]="selectedItems"
-    [nzNodes]="nodes"
-    [nzMultiple]="true"
-    (ngModelChange)="onChange($event)"
-    nzShowSearch
-    nzCheckable
-    nzPlaceHolder="Please select"
-  ></nz-tree-select>
+  <div class="form">
+    <fieldset class="fieldset">
+      <div class="input-box">
+        <label class="label-input">
+          <div class="span-label-div">
+            @for (letter of letters( en ? 'Please select' : 'Por favor seleccione' );
+            track $index)
+            {
+            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+            }
+          </div>
+          <nz-tree-select nzMode="multiple" class="treeSelect {{ selectedItems.length > 0 ? 'with-content' : '' }}"
+            [(ngModel)]="selectedItems" [nzNodes]="nodes" [nzMultiple]="true" (ngModelChange)="onChange($event)"
+            nzShowSearch nzCheckable nzPlaceHolder="">
+          </nz-tree-select>
+        </label>
+      </div>
+    </fieldset>
+  </div>
   }
-  <button class="button" type="submit" (click)="goToTest()">Go to Test</button>
+  } @else {
+  <div class="div-list">
+    <app-list></app-list>
+  </div>
+  }
+  <button class="button" type="submit" (click)=" showList ? navigate() : goToTest()">{{ showList ? en ? 'Go to Test' :
+    'Ir a la prueba' : en ?
+    'Check' : 'Revisar'}}</button>
 </div>

@@ -39,7 +39,7 @@ export class AddElementToPracticeComponent {
       return this._elementToPracticeService
         .addElementToPractice(elementToPractice)
         .then((reponse) => {
-          console.log({ reponse });
+          // console.log({ reponse });
           this._nzNotificationService.success(
             'Registered',
             'The element to practice was registered successfully'
@@ -51,7 +51,7 @@ export class AddElementToPracticeComponent {
     return this._elementToPracticeService
       .updateElementToPractice2(this.id, elementToPractice)
       .then((reponse) => {
-        console.log({ reponse });
+        // console.log({ reponse });
         const selectedList: Array<IElementToPractice> = JSON.parse(
           localStorage.getItem(localStorageLabels.etp.selectedList) ?? '[]'
         );

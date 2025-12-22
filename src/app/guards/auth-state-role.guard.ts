@@ -21,6 +21,11 @@ export const canActivateAuthStateRole = (allowedRoles?: string[]) => {
             // const usersSvc = inject(UsersService);
             const nzNotificationSvc = inject(NzNotificationService);
 
+            const fResponse = () => {
+                rootSvc.setUser(null);
+                return false
+            }
+
             return authSvc.userState().pipe(
                 switchMap((firebaseUser) => {
                     if (!firebaseUser) {
@@ -30,6 +35,7 @@ export const canActivateAuthStateRole = (allowedRoles?: string[]) => {
                     }
 
                     return runInInjectionContext(envInjector, () => {
+
                         const usersRef = collection(firestore, 'users');
                         const q = query(usersRef, where('email', '==', firebaseUser.email));
                         const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) === 'en';
@@ -45,11 +51,11 @@ export const canActivateAuthStateRole = (allowedRoles?: string[]) => {
                                     );
                                     router.navigate(['/landing-page']);
                                     authSvc.logOut();
-                                    return false;
+                                    return fResponse();
                                 }
 
-                                const userData = snapshot.docs[0].data() as any;
-                                console.log({ userData });
+                                const register = snapshot.docs[0];
+                                const userData = { id: register.id, ...register.data() } as any;
                                 if (!userData.state) {
                                     nzNotificationSvc.error(
                                         en ? 'User disabled' : 'Usuario deshabilitado',
@@ -59,7 +65,7 @@ export const canActivateAuthStateRole = (allowedRoles?: string[]) => {
                                     );
                                     router.navigate(['/landing-page']);
                                     authSvc.logOut();
-                                    return false;
+                                    return fResponse();
                                 }
 
                                 const roleList = allowedRoles || [];
@@ -71,7 +77,7 @@ export const canActivateAuthStateRole = (allowedRoles?: string[]) => {
                                             : 'No tiene permiso para acceder a esta sección.'
                                     );
                                     router.navigate(['/dashboard']);
-                                    return false;
+                                    return fResponse();
                                 }
 
                                 rootSvc.setUser(userData);

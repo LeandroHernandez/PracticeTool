@@ -1,0 +1,85 @@
+<!-- <p>list works!</p> -->
+<div class="table-container">
+    <table class="table">
+        <thead class="thead">
+            <tr class="tr">
+                <th class="th th-i">#</th>
+                <th class="th"> {{ en ? 'Basic Form' : 'Forma Basica' }} </th>
+                <th class="th"> {{ en ? 'Meanings' : 'Significados' }} </th>
+                @if (verbPerSheet) {
+                <th class="th"> Irregular </th>
+                <th class="th"> {{ en ? 'Simple Past' : 'Pasado Simple' }} </th>
+                <th class="th"> {{ en ? 'Pasado Participio' : 'Pasado Participio' }} </th>
+                }
+            </tr>
+        </thead>
+        <tbody class="tbody">
+            @for (item of paginatedItems; track $index) {
+            <tr class="tr {{ ($index + 1) % 2 === 0 ? 'pair' : '' }} ">
+                <td class="td td-i">{{ getItemIndex(item.id ?? '') }}</td>
+                <td class="td"> {{ item.en }} </td>
+                @if (item.uses) {
+                @if ( hasVerb(item.uses) >= 0 ) {
+                <td class="td">
+                    @for (use of item.uses; track $index) {
+                    <span> [
+                        <span class="useName">{{ use.name }}:</span>
+                    </span>
+                    @for (meaning of use.meanings; track $index; let j = $index) {
+                    {{ meaning }}
+                    @if (use.meanings.length > 1 && j + 1 < use.meanings.length) { <span> - </span>
+                        }
+                        }
+                        <span>]</span>
+                        }
+                </td>
+                <td class="td"> {{item.uses[hasVerb(item.uses)].verbInfo?.irregular}} </td>
+                <td class="td"> {{item.uses[hasVerb(item.uses)].verbInfo?.simplePast}} </td>
+                <td class="td"> {{item.uses[hasVerb(item.uses)].verbInfo?.pastParticiple}} </td>
+                } @else if(verbPerSheet) {
+                @for (use of item.uses; track $index) {
+                <td class="td">
+                    <span> [
+                        <span class="useName">{{ use.name }}:</span>
+                    </span>
+                    @for (meaning of use.meanings; track $index; let j = $index) {
+                    {{ meaning }}
+                    @if (use.meanings.length > 1 && j + 1 < use.meanings.length) { <span> - </span>
+                        }
+                        }
+                        <span>]</span>
+                </td>
+                <td class="td"> Empty </td>
+                <td class="td"> Empty </td>
+                <td class="td"> Empty </td>
+                }
+                }
+                }
+                @else if(item.meanings) {
+                <td class="td">
+                    @for (meaning of item.meanings; track $index; let i = $index) {
+                    {{ meaning }}
+                    @if (item.meanings.length > 1 && i + 1 < item.meanings.length) { <span> - </span>
+                        }
+                        }
+                </td>
+                @if (verbPerSheet) {
+                <td class="td"> --- </td>
+                <td class="td"> --- </td>
+                <td class="td"> --- </td>
+                }
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<!-- @if ( list && list.length > paginatedItems.length ) { -->
+@if ( list && list.length > 10 ) {
+<div class="paginator">
+    <span class="span itemListLength"> {{ list.length + ' items' }} </span>
+    <nz-pagination [(nzPageIndex)]="page.index" [(nzPageSize)]="page.size" [nzPageSizeOptions]="[5, 10, 20, 30, 40, 50]"
+        [nzTotal]="list.length" [nzSize]="'default'" nzShowSizeChanger nzShowQuickJumper
+        (nzPageIndexChange)="page.index = $event" (nzPageSizeChange)="page.size = $event"></nz-pagination>
+</div>
+}

@@ -183,7 +183,7 @@ export class AddModuleComponent {
   public getModule(id: string): Subscription {
     return this._modulesSvc.getModule(id).subscribe(
       module => {
-        console.log({ module });
+        // console.log({ module });
         if (typeof module === 'undefined') {
           const msg: string = 'The provided Id did not match any module in the DB';
           console.error(msg, 404);
@@ -212,7 +212,7 @@ export class AddModuleComponent {
 
   public submit(): void | NzNotificationRef | Promise<void> {
 
-    console.log({ form: this.form });
+    // console.log({ form: this.form });
 
     if (!this.form.valid) return this.invalidForm();
 
@@ -226,7 +226,7 @@ export class AddModuleComponent {
       return this._modulesSvc.updateModule(id, body)
         .then(
           response => {
-            console.log({ response });
+            // console.log({ response });
             const selectedList: Array<IModule> = JSON.parse(localStorage.getItem(localStorageLabels.module.selectedList) ?? '[]');
 
             if (selectedList.length > 0) {
@@ -251,7 +251,7 @@ export class AddModuleComponent {
     return this._modulesSvc.addModule({ ...value, createdAt: d, lastUpdate: d })
       .then(
         response => {
-          console.log({ response });
+          // console.log({ response });
           this.successful();
         }
       )

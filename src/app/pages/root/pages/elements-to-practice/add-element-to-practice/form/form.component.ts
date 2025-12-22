@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 
 import {
+  localStorageLabels,
   RoutesApp,
   typesOfElementsToPractice,
   typesOfWords,
@@ -34,6 +35,7 @@ import {
 import { ElementToPracticeService } from '../../element-to-practice.service';
 import { ActivatedRoute } from '@angular/router';
 import { TestService } from '../../../test/test.service';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 
 @Component({
   selector: 'app-form',
@@ -42,6 +44,7 @@ import { TestService } from '../../../test/test.service';
     // RouterLink,
     NzSwitchModule,
     NzSelectModule,
+    NzPopoverModule
   ],
   templateUrl: './form.component.html',
   styleUrl: './form.component.css',
@@ -68,6 +71,43 @@ export class FormComponent implements OnInit {
 
   // public etpItem: IEtpItem | null = null;
   public checkingWord = false;
+
+  public showErrors: boolean = false;
+
+  get language(): string {
+    const res: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
+    return res;
+  }
+
+  get etpItem(): IEtpItem | null {
+    return this._testSvc.current;
+  }
+
+  get type(): FormControl {
+    return this.form.get('type') as FormControl;
+  }
+
+  get grammarLesson(): boolean {
+    return this.type.value === typesOfElementsToPractice.grammarLesson
+      ? true
+      : false;
+  }
+
+  get word(): boolean {
+    return this.type.value === typesOfElementsToPractice.word ? true : false;
+  }
+
+  get uses(): FormArray {
+    return this.form.get('uses') as FormArray;
+  }
+
+  get meanings(): FormArray {
+    return this.form.get('meanings') as FormArray;
+  }
+
+  get verbInfo(): FormGroup {
+    return this.form.get('verbInfo') as FormGroup;
+  }
 
   constructor(
     private _fb: FormBuilder,
@@ -103,51 +143,29 @@ export class FormComponent implements OnInit {
     this.setSupscriptions();
   }
 
-  get etpItem(): IEtpItem | null {
-    return this._testSvc.current;
-  }
-
-  get type(): FormControl {
-    return this.form.get('type') as FormControl;
-  }
-
-  get grammarLesson(): boolean {
-    return this.type.value === typesOfElementsToPractice.grammarLesson
-      ? true
-      : false;
-  }
-
-  get word(): boolean {
-    return this.type.value === typesOfElementsToPractice.word ? true : false;
-  }
-
-  get uses(): FormArray {
-    return this.form.get('uses') as FormArray;
-  }
-
-  get meanings(): FormArray {
-    return this.form.get('meanings') as FormArray;
-  }
-
   ngOnInit(): void {
     this.getTypes();
 
     // this.etpInit();
   }
 
-  // public etpInit(): Subscription | void {
-  //   if (!this._testSvc.current) return;
+  public verbInfoControl(i: number, s?: 'switch'): string {
+    if (this.uses.controls[i].get('verbInfo')?.enabled) return s ?? 'input';
 
-  //   return this._testSvc.etp$.subscribe((etpItem) => {
-  //     // console.log({ etpItem });
-  //     if (!etpItem) return;
-  //     // this.etpItem = etpItem;
-  //     const { content } = etpItem;
-  //     if (!content) return;
-  //     this.formInit(content.etp, content);
-  //     this.setSupscriptions();
-  //   });
-  // }
+    return `${s ?? 'input'} disabled`;
+  }
+
+  public isRequired(control: string): boolean {
+    return this.form.controls[control].hasValidator(Validators.required);
+  }
+
+  public letters(w: string): string[] {
+    return w.split('');
+  }
+
+  public getControlErrors(control: string): Array<string> {
+    return Object.keys(this.form.get(control)?.errors ?? {});
+  }
 
   public setSupscriptions(): void {
     this.form.get('selectedUses')?.valueChanges.subscribe((value) => {
@@ -254,12 +272,11 @@ export class FormComponent implements OnInit {
       } else bodyForm.removeControl('meanings');
       const selectedUses: Array<string> | null = body.selectedUses
         ? body.selectedUses.map(
-            (selectedUseItem: IType, j: number) =>
-              selectedUseItem.id ?? body.uses[j].id
-          )
+          (selectedUseItem: IType, j: number) =>
+            selectedUseItem.id ?? body.uses[j].id
+        )
         : null;
 
-      // content.etp.selectedUses?.map((selectedUseItem, j) => { const uses: Array<IUse> = content.etp.uses ?? []; console.log({ selectedUseItem, useItem: uses[j] }); return selectedUseItem ?? uses[j].id} );
       if (selectedUses) body.selectedUses = selectedUses;
       const { type } = body;
       bodyForm.patchValue({
@@ -306,8 +323,8 @@ export class FormComponent implements OnInit {
           !word && !aplications
             ? Math.floor(Math.random() * 2) === 0
             : word
-            ? false
-            : true
+              ? false
+              : true
         );
       }
 
@@ -452,7 +469,7 @@ export class FormComponent implements OnInit {
   }
 
   public submit(): void | NzNotificationRef {
-    console.log({ valid: this.form.valid, value: this.form.value });
+    // console.log({ valid: this.form.valid, value: this.form.value, form: this.form });
 
     const meanings: Array<string> | null =
       this.form.get('meanings')?.value ?? null;
@@ -464,8 +481,10 @@ export class FormComponent implements OnInit {
 
     if (!this.form.valid) {
       this.setUses();
+      this.showErrors = true;
       return this.invalidFormResponse();
     }
+    this.showErrors = false;
 
     let etpForm: FormGroup | null = null;
     if (this.etpItem) {
@@ -476,23 +495,13 @@ export class FormComponent implements OnInit {
     const formBody = etpForm
       ? { ...etpForm.value }
       : {
-          ...this.form.value,
-        };
+        ...this.form.value,
+      };
 
     if (meanings) formBody.meanings = meanings;
 
-    // if (isWord && !this.etp$) {
-    //   formBody.selectedUses = this.form.controls['selectedUses'].value.map(
-    //     (selectedUseItem: IType | string) =>
-    //       typeof selectedUseItem !== 'string'
-    //         ? selectedUseItem
-    //         : this.usesList.find(
-    //             (useListItem) => useListItem.id === selectedUseItem
-    //           ) ?? selectedUseItem
-    //   );
-    // }
 
-    console.log({ etpItemToCheck: this.etpItem });
+    // console.log({ etpItemToCheck: this.etpItem });
     if (this.etpItem) {
       const etpItem = { ...this.etpItem };
       return this.etpEmitter.emit({

@@ -1,4 +1,3 @@
-
 .reviews-container {
     background-color: rgba(243, 244, 238, 0.2);
     /* height: 100vh; */
@@ -102,8 +101,8 @@
     }
 }
 
-@supports ( animation-timeline: auto ) {
-    
+@supports (animation-timeline: auto) {
+
     .cards-reviews .card-review {
         animation-name: from-bottom;
 
@@ -168,5 +167,5 @@
             animation-name: from-right;
         }
     }
-    
+
 }

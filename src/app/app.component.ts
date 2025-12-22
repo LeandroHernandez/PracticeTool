@@ -14,7 +14,7 @@ import { localStorageLabels } from './enums';
 export class AppComponent {
   title = 'practiceTool';
 
-  get loadingClass (): string {
+  get loadingClass(): string {
     return localStorage.getItem(localStorageLabels.loading) ?? '';
   }
 
@@ -28,13 +28,13 @@ export class AppComponent {
   //   // }
   //   const target = event.target as HTMLElement;
   //   const tagName = target.tagName.toLowerCase();
-    
+
   //   // Lista de etiquetas que NO deberían cerrar el nav
   //   const exceptions = ['input', 'select', 'textarea', 'button', 'label'];
-    
+
   //   if (!exceptions.includes(tagName)) {
   //     this.showNav = false;
   //   }
   // }
-  
+
 }

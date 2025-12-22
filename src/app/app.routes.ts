@@ -10,6 +10,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/landing-page').then(m => m.LandingPageComponent),
     },
     {
+        path: RoutesApp.privacyPolicy,
+        loadComponent: () => import('./pages/privacy-policy').then(m => m.PrivacyPolicyComponent),
+    },
+    {
         path: RoutesApp.auth,
         ...canActivate(() => redirectLoggedInTo([RoutesApp.dashboard])),
         loadComponent: () => import('./pages/auth').then(m => m.AuthComponent),

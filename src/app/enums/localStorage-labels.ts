@@ -31,6 +31,7 @@ enum pl {
 
 export const localStorageLabels = {
   module,
+  tutoFinished: 'tutoFinished',
   role,
   user,
   etp,

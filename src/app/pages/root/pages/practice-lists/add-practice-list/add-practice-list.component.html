@@ -2,49 +2,96 @@
 
 <main class="main">
     <header class="header">
-        <button class="button" type="button" [routerLink]="[ '/practice-lists' ]" >
+        <button class="button" type="button" [routerLink]="[ '/practice-lists' ]">
             Volver
         </button>
     </header>
 
-    <div class="content_div">
-        <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+        <header class="header-form">
+            <h4> {{ !id ? 'New' : '' }} Practice List </h4>
+        </header>
 
-            <!-- <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" [formControlName]="'state'" [disabled]="true"></nz-switch> -->
+        <!-- <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" [formControlName]="'state'" [disabled]="true"></nz-switch> -->
 
-            <div class="fileds">
-                <label class="label">
-                    <span>Title</span>
-                    <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'title'" >
-                </label>
-    
-                <div class="select_container">
-                    <span>Content</span>
-                    <!-- <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'" [formControlName]="'list'" > -->
-                    <nz-select
-                        nzMode="multiple"
-                        nzPlaceHolder="Please select"
-                        formControlName="list"
-                        class="select"
-                    >
-                        @for (item of elementsToPractice; track item.id) {
-                            <!-- <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option> -->
-                            <nz-option [nzLabel]="item.en" [nzValue]="item.id"></nz-option>
+        <fieldset class="fieldset">
+            <!-- <label class="label">
+                <span>Title</span>
+                <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'"
+                    [formControlName]="'title'">
+            </label> -->
+            <fieldset class="subfieldset" formGroupName="title">
+                <legend class="legend"> {{ language === 'en' ? 'Title' : 'Titulo' }} </legend>
+                <div class="input-box">
+                    <i class="bi bi-asterisk" nz-popover
+                        [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters( language === 'en' ? 'English' : 'Ingles' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            }
+                        </div>
+                        <input type="text" formControlName="en" placeholder="" class="input">
+                    </label>
+                    @if ( showErrors && getControlErrors('title', 'en').length > 0 ) {
+                    <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover nzPopoverTitle="Invalid Title"
+                        nzPopoverContent="Please enter a valid title."></i>
+                    }
+                </div>
+                <div class="input-box">
+                    <i class="bi bi-asterisk" nz-popover
+                        [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
+                    <label class="label-input">
+                        <div class="span-label-div">
+                            @for (letter of letters( language === 'en' ? 'Spanish' : 'Español' ); track $index) {
+                            <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                            }
+                        </div>
+                        <input type="text" formControlName="es" placeholder="" class="input">
+                    </label>
+                    @if ( showErrors && getControlErrors('title', 'es').length > 0 ) {
+                    <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover nzPopoverTitle="Titulo Invalido"
+                        nzPopoverContent="Por favor ingrese un titulo valido."></i>
+                    }
+                </div>
+            </fieldset>
+            <!-- <div class="select_container">
+                <span>Content</span>
+                <nz-select nzMode="multiple" nzPlaceHolder="Please select" formControlName="list" class="select">
+                    @for (item of elementsToPractice; track item.id) {
+                    <nz-option [nzLabel]="item.en" [nzValue]="item.id"></nz-option>
+                    }
+                </nz-select>
+            </div> -->
+
+            <div class="input-box">
+                @if ( isRequired('list') && form.controls['list'].enabled ) {
+                <i class="bi bi-asterisk" nz-popover
+                    [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
+                }
+                <label class="label-input">
+                    <div class="span-label-div">
+                        @for (letter of letters( language === 'en' ? 'Content' : 'Contenido' ); track
+                        $index) {
+                        <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                        }
+                    </div>
+                    <nz-select nzMode="multiple" nzAllowClear formControlName="list"
+                        class=" {{form.get('list')?.value?.length > 0 ? 'with-content' : ''}}">
+                        @for (item of elementsToPractice; track item) {
+                        <nz-option [nzLabel]=" item.en" [nzValue]="item.id"></nz-option>
                         }
                     </nz-select>
-                </div>
+                </label>
+                @if ( showErrors && getControlErrors('list').length > 0 ) {
+                <i class="bi bi-exclamation-circle-fill invalid-icon" nz-popover
+                    [nzPopoverTitle]=" language === 'en' ? 'Invalid Content' : 'Contenido Invalido' "
+                    [nzPopoverContent]=" language === 'en' ? 'Please select at least one Element To Practice.' : 'Por favor seleccione al menos un Elemento a Practicar.' "></i>
+                }
             </div>
-            <button type="submit" class="submit" [title]=" !id ? 'Register' : 'Edit' + 'practice list'"> {{ !id ? 'Register' : 'Edit'}} </button>
-        </form>
-        <!-- <div class="table_container">
-            <app-table 
-                [tableInfo]="tableInfo" 
-                [itemList]="itemList" 
-                [filterFormFields]="filterFormFields" 
-                (editAction)="elementToPraciceEdit($event)" 
-                (deleteAction)="elementToPraciceDelete($event)"
-                (filterAction)="getElementsToPracice($event)"
-            ></app-table>
-        </div> -->
-    </div>
+
+        </fieldset>
+        <button type="submit" class="submit" [title]=" !id ? 'Register' : 'Edit' + 'practice list'"> {{ !id ? 'Register'
+            : 'Edit'}} </button>
+    </form>
 </main>

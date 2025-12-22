@@ -8,8 +8,11 @@
     </button>
 
     @if (url.endsWith('test')) {
-    <span> {{ practiceList.length }} </span>
+    <span class="span-test_lenght" [title]=" en ? 'Remaining elements' : 'Elementos restantes' "> {{ practiceList.length
+      }} </span>
     }
   </header>
-  <app-form (etpEmitter)="submit($event)"></app-form>
+  <div class="form-container">
+    <app-form [formLabel]="formLabel" (etpEmitter)="submit($event)"></app-form>
+  </div>
 </main>

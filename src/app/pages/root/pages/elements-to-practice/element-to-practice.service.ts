@@ -28,6 +28,7 @@ import { IElementToPractice } from '../../../../interfaces';
 import { TypeService } from '../types/types.service';
 
 import { Query, setDoc } from 'firebase/firestore';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Injectable({
   providedIn: 'root',
@@ -49,6 +50,7 @@ export class ElementToPracticeService {
   );
 
   private _typeSvc = inject(TypeService);
+  private _nzNotificationSvc = inject(NzNotificationService)
 
   getElementsToPractice(typeId?: string): Observable<IElementToPractice[]> {
 
@@ -155,19 +157,6 @@ export class ElementToPracticeService {
       // console.log({ validFilters });
 
       for (const [path, value] of validFilters) {
-        // const condition: boolean = path === 'type' && Array.isArray(value);
-        // const condition2: boolean = condition && value.some((val: string) => childrenTypes.includes(val));
-
-        // if ( condition2 )
-        //   constraints.push(
-        //     where(
-        //       'selectedUses',
-        //       'array-contains-any',
-        //       value.filter((val: string) => childrenTypes.includes(val))
-        //     )
-        //   );
-
-        // if (!condition || value.some((val: string) => !childrenTypes.includes(val))) constraints.push(where(path, condition ? 'in' : '==', condition2 ? value.filter((val: string) => !childrenTypes.includes(val)) : value));
 
         constraints.push(where(path, '==', value));
         // constraints.push(where(path, '>=', value));
@@ -243,42 +232,6 @@ export class ElementToPracticeService {
       );
     });
 
-    // if (options.pageSize) {
-    //   constraints.push(limit(options.pageSize));
-    // }
-
-    // if (options.startAfterDoc) {
-    //   constraints.push(startAfter(options.startAfterDoc));
-    // }
-
-    // const filteredQuery = query(elementsRef, ...constraints);
-
-    // return collectionSnapshots(filteredQuery).pipe(
-    //   map((snapshot) => snapshot.map((doc) => ({ id: doc.id, ...doc.data() }))),
-    //   switchMap((elements: any[]) => {
-    //     const enrichedElements$ = elements.map((element) => {
-    //       const wordTypeId = element.verbInfo?.wordType;
-
-    //       if (wordTypeId) {
-    //         return this._typeSvc.getType(wordTypeId).pipe(
-    //           map((wordTypeData) => ({
-    //             ...element,
-    //             verbInfo: {
-    //               ...element.verbInfo,
-    //               wordType: wordTypeData, // Reemplaza el ID por el objeto completo
-    //             },
-    //           }))
-    //         );
-    //       }
-
-    //       return of(element);
-    //     });
-
-    //     return enrichedElements$.length > 0
-    //       ? combineLatest(enrichedElements$)
-    //       : of([]);
-    //   })
-    // );
   }
 
   private executeQuery(
@@ -331,27 +284,48 @@ export class ElementToPracticeService {
     });
   }
 
-  async addElementToPractice(data: IElementToPractice | any): Promise<string> {
+  async addElementToPractice(data: IElementToPractice): Promise<string> {
     return runInInjectionContext(this.injector, async () => {
+      // 1️⃣ Crear una consulta para verificar si ya existe un documento con el mismo valor de "en"
+      const q = query(this.elementToPracticesRef, where('en', '==', data.en));
+      const existing = await getDocs(q);
+
+      // 2️⃣ Si ya existe, lanzar un error
+      if (!existing.empty) {
+        this._nzNotificationSvc.info('Basic Form in use', `There is already an Element To Practice which has the value: ${data.en}`);
+        throw new Error(`Ya existe un elemento con el valor "en" igual a "${data.en}".`);
+      }
+
+      // 3️⃣ Si no existe, agregar el nuevo documento
       const docRef = await addDoc(this.elementToPracticesRef, data);
       return docRef.id;
     });
   }
 
-  updateElementToPractice(
-    id: string,
-    elementToPractice: Partial<IElementToPractice>
-  ) {
+  // updateElementToPractice(
+  //   id: string,
+  //   elementToPractice: Partial<IElementToPractice>
+  // ) {
 
-    return runInInjectionContext(this.injector, () => {
-      // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
-      const elementToPracticeDoc = doc(
-        this.firestore,
-        `${DbCollections.elementsToPractice}/${id}`
-      );
-      return updateDoc(elementToPracticeDoc, elementToPractice);
-    });
-  }
+  //   return runInInjectionContext(this.injector, async () => {
+  //     // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
+  //     // 1️⃣ Crear una consulta para verificar si ya existe un documento con el mismo valor de "en"
+  //     const q = query(this.elementToPracticesRef, where('en', '==', elementToPractice.en));
+  //     const existing = await getDocs(q);
+
+  //     // 2️⃣ Si ya existe, lanzar un error
+  //     if (!existing.empty && existing.docs[0].id !== id) {
+  //       this._nzNotificationSvc.info('Basic Form in use', `There is already an Element To Practice which has the value: ${elementToPractice.en}`);
+  //       throw new Error(`Ya existe un elemento con el valor "en" igual a "${elementToPractice.en}".`);
+  //     }
+
+  //     const elementToPracticeDoc = doc(
+  //       this.firestore,
+  //       `${DbCollections.elementsToPractice}/${id}`
+  //     );
+  //     return updateDoc(elementToPracticeDoc, elementToPractice);
+  //   });
+  // }
 
   async updateElementToPractice2(
     id: string,
@@ -359,6 +333,15 @@ export class ElementToPracticeService {
   ) {
     return runInInjectionContext(this.injector, async () => {
       // const elementToPracticeDoc = doc(this.firestore, `elementToPractices/${id}`);
+      // 1️⃣ Crear una consulta para verificar si ya existe un documento con el mismo valor de "en"
+      const q = query(this.elementToPracticesRef, where('en', '==', elementToPractice.en));
+      const existing = await getDocs(q);
+
+      // 2️⃣ Si ya existe, lanzar un error
+      if (!existing.empty && existing.docs[0].id !== id) {
+        this._nzNotificationSvc.info('Basic Form in use', `There is already an Element To Practice which has the value: ${elementToPractice.en}`);
+        throw new Error(`Ya existe un elemento con el valor "en" igual a "${elementToPractice.en}".`);
+      }
       const elementToPracticeDoc = doc(
         this.firestore,
         `${DbCollections.elementsToPractice}/${id}`

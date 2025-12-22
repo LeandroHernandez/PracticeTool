@@ -60,7 +60,7 @@ export class PracticeListsService {
       const validFilters = extractValidFilters(filters);
       const constraints: QueryConstraint[] = [];
 
-      console.log({ validFilters });
+      // console.log({ validFilters });
 
       for (const [path, value] of validFilters) {
         constraints.push(where(path, '==', value));
