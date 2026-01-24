@@ -108,7 +108,7 @@ export class ElementsToPracticeContentComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getElementsToPractice();
+    this.getElementsToPractice(JSON.parse(localStorage.getItem(localStorageLabels.etp.filerBody) ?? 'false'));
   }
 
   // public getUserInfo(): void {

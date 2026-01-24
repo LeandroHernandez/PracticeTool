@@ -12,7 +12,7 @@
       }
     </div>
   </div>
-  @if ( itemList && paginatedItems.length > 0 ) {
+  @if ( itemList && paginatedItems.length > 0 || actualSelectedFilters ) {
   <div class="filters_section">
     <div class="filterButton_div">
       @if (filterFormFields) {
