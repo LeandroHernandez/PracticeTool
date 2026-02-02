@@ -152,15 +152,19 @@ export class ElementToPracticeService {
       delete filters['type'];
 
       const validFilters = extractValidFilters(filters);
+      console.log({ validFilters });
       const constraints: QueryConstraint[] = [];
 
       // console.log({ validFilters });
 
       for (const [path, value] of validFilters) {
 
-        constraints.push(where(path, '==', value));
-        // constraints.push(where(path, '>=', value));
-        // constraints.push(where(path, '<=', value + '\uf8ff'));
+        if (path === 'en') {
+          constraints.push(where(path, '>=', value));
+          constraints.push(where(path, '<=', value + '\uf7ff'));
+        } else {
+          constraints.push(where(path, '==', value));
+        }
       }
 
       // console.log({ constraints });

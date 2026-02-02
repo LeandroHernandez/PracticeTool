@@ -145,6 +145,7 @@ export class FiltersComponent implements OnInit {
   }
 
   public initForm(): void {
+    console.log({ filterFormFields: this.filterFormFields });
     this.form = this.buildForm(this.filterFormFields);
     const filerBodyForm = JSON.parse(
       localStorage.getItem(this.actualLabel) ?? 'null'
@@ -170,6 +171,7 @@ export class FiltersComponent implements OnInit {
     } else {
       localStorage.removeItem(this.actualLabel);
     }
+    console.log({ formValue: JSON.stringify(formValue) });
     this.valueFormEmitter.emit(formValue);
   }
 }
