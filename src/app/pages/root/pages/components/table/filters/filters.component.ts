@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { localStorageLabels, RoutesApp } from '../../../../../../enums';
+import { localStorageLabels, RoutesApp, typesOfElementsToPractice } from '../../../../../../enums';
 import { IFilterFormField } from '../../../../../../interfaces/filter-form-field.interface';
 
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -18,42 +18,44 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
         <h5 class="title">Filters</h5>
       </header>
       <fieldset class="fieldset">
-        @for (item of filterFormFields; track item.key) { 
-          <div class="input-box">
-            @if (item.type === 'multiselect') {
-              <label class="label-input">
-                <div class="span-label-div">
-                  @for (letter of letters( item.placeholder ?? ''); track $index) {
-                    <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+        @for (item of filterFormFields; track item.key) {
+          <!-- @if (item.key != 'selectedUses' || item.key === 'selectedUses' && includeWord) { -->
+            <div class="input-box">
+              @if (item.type === 'multiselect') {
+                <label class="label-input">
+                  <div class="span-label-div">
+                    @for (letter of letters( item.placeholder ?? ''); track $index) {
+                      <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                    }
+                  </div>
+                  <nz-select
+                    [class]=" form.controls[item.key].value.length > 0 ? 'multiselect with-content' : 'multiselect'"
+                    nzMode="multiple"
+                    nzPlaceHolder=""
+                    [formControlName]="item.key"
+                  >
+                  @for (item of item.selectOptions; track item) {
+                    <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
                   }
-                </div>
-                <nz-select
-                  [class]=" form.controls[item.key].value.length > 0 ? 'multiselect with-content' : 'multiselect'"
-                  nzMode="multiple"
-                  nzPlaceHolder=""
-                  [formControlName]="item.key"
-                >
-                @for (item of item.selectOptions; track item) {
-                  <nz-option [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+                </nz-select>
+              </label>
+              } @else {
+            <label class="label-input">
+              <div class="span-label-div">
+                @for (letter of letters( item.placeholder ?? ''); track $index) {
+                  <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
                 }
-              </nz-select>
+              </div>
+              <input
+                [type]="item.type"
+                class="input"
+                placeholder=""
+                [formControlName]="item.key"
+              />
             </label>
-            } @else {
-          <label class="label-input">
-            <div class="span-label-div">
-              @for (letter of letters( item.placeholder ?? ''); track $index) {
-                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
-              }
+            } 
             </div>
-            <input
-              [type]="item.type"
-              class="input"
-              placeholder=""
-              [formControlName]="item.key"
-            />
-          </label>
-          } 
-          </div>
+          <!-- }  -->
       }
       </fieldset>
       <button type="submit" title="Apply Filter" class="button-submit">
@@ -101,6 +103,9 @@ export class FiltersComponent implements OnInit {
     return res;
   }
 
+  // get includeWord(): boolean {
+  //   return this.form.controls['type'].value.includes(typesOfElementsToPractice.word);
+  // }
 
   constructor(private _fb: FormBuilder, private _router: Router) {
     this.form = this._fb.group({});
@@ -146,10 +151,27 @@ export class FiltersComponent implements OnInit {
 
   public initForm(): void {
     this.form = this.buildForm(this.filterFormFields);
-    const filerBodyForm = JSON.parse(
+    let filterBodyForm = JSON.parse(
       localStorage.getItem(this.actualLabel) ?? 'null'
     );
-    if (filerBodyForm) this.form.patchValue(filerBodyForm);
+    // if (filterBodyForm) this.form.patchValue(filterBodyForm);
+    if (!filterBodyForm) return;
+    if (this.actualLabel === localStorageLabels.etp.filerBody) {
+      const type: string[] = []
+      const selectedUses: string[] = []
+      filterBodyForm.type?.forEach((tId: string) => {
+        const { selectOptions } = this.filterFormFields[2];
+        if (selectOptions && selectOptions.findIndex(
+          (option: { name: string, id: string }) =>
+            option.id === tId
+        ) >= 0) {
+          selectedUses.push(tId);
+        } else type.push(tId);
+      });
+      filterBodyForm.type = type;
+      filterBodyForm.selectedUses = selectedUses;
+    }
+    this.form.patchValue(filterBodyForm);
     // console.log({ form: this.form });
   }
 

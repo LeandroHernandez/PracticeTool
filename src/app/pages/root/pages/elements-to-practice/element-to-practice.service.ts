@@ -158,9 +158,10 @@ export class ElementToPracticeService {
 
       for (const [path, value] of validFilters) {
 
-        constraints.push(where(path, '==', value));
-        // constraints.push(where(path, '>=', value));
-        // constraints.push(where(path, '<=', value + '\uf8ff'));
+        if (path === 'en') {
+          constraints.push(where(path, '>=', value));
+          constraints.push(where(path, '<=', value + '\uf8ff'));
+        } else constraints.push(where(path, '==', value));
       }
 
       // console.log({ constraints });

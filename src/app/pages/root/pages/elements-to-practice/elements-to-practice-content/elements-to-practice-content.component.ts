@@ -148,6 +148,11 @@ export class ElementsToPracticeContentComponent implements OnInit {
         this.getElementsToPracticeTypes(types);
         types.forEach((typeItem) => {
           const { name, id, father } = typeItem;
+          const index = !father ? 1 : 2;
+          if (
+            this.filterFormFields[index].selectOptions?.includes(
+              (item: { name: string, id: string }) => item.id === id)
+          ) return;
           return this.filterFormFields[!father ? 1 : 2].selectOptions?.push({
             name,
             id,
