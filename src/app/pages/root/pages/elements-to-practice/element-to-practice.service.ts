@@ -152,6 +152,7 @@ export class ElementToPracticeService {
       delete filters['type'];
 
       const validFilters = extractValidFilters(filters);
+      console.log({ validFilters });
       const constraints: QueryConstraint[] = [];
 
       // console.log({ validFilters });
