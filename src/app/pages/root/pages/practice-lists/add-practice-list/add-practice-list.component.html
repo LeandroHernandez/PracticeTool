@@ -12,14 +12,7 @@
             <h4> {{ !id ? 'New' : '' }} Practice List </h4>
         </header>
 
-        <!-- <nz-switch nzCheckedChildren="Active" nzUnCheckedChildren="Inactive" [formControlName]="'state'" [disabled]="true"></nz-switch> -->
-
         <fieldset class="fieldset">
-            <!-- <label class="label">
-                <span>Title</span>
-                <input [type]="'text'" [class]="'input'" [placeholder]="'Title of practice list'"
-                    [formControlName]="'title'">
-            </label> -->
             <fieldset class="subfieldset" formGroupName="title">
                 <legend class="legend"> {{ language === 'en' ? 'Title' : 'Titulo' }} </legend>
                 <div class="input-box">
@@ -55,16 +48,8 @@
                     }
                 </div>
             </fieldset>
-            <!-- <div class="select_container">
-                <span>Content</span>
-                <nz-select nzMode="multiple" nzPlaceHolder="Please select" formControlName="list" class="select">
-                    @for (item of elementsToPractice; track item.id) {
-                    <nz-option [nzLabel]="item.en" [nzValue]="item.id"></nz-option>
-                    }
-                </nz-select>
-            </div> -->
 
-            <div class="input-box">
+            <!-- <div class="input-box">
                 @if ( isRequired('list') && form.controls['list'].enabled ) {
                 <i class="bi bi-asterisk" nz-popover
                     [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
@@ -76,8 +61,12 @@
                         <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
                         }
                     </div>
-                    <nz-select nzMode="multiple" nzAllowClear formControlName="list"
-                        class=" {{form.get('list')?.value?.length > 0 ? 'with-content' : ''}}">
+                    <nz-select nzMode="multiple" nzAllowClear formControlName="list" class="
+                            {{
+                                form.get('list')?.value?.length > 0 ?
+                                'with-content' :
+                                ''
+                            }}">
                         @for (item of elementsToPractice; track item) {
                         <nz-option [nzLabel]=" item.en" [nzValue]="item.id"></nz-option>
                         }
@@ -88,6 +77,26 @@
                     [nzPopoverTitle]=" language === 'en' ? 'Invalid Content' : 'Contenido Invalido' "
                     [nzPopoverContent]=" language === 'en' ? 'Please select at least one Element To Practice.' : 'Por favor seleccione al menos un Elemento a Practicar.' "></i>
                 }
+            </div> -->
+
+            <div class="div-list">
+                <header class="header-list">
+                    <h6> {{ language === 'en' ? 'Content' : 'Contenido' }} </h6>
+                </header>
+
+                @if ( list.length > 0 ) {
+                <ul class="ul-list">
+                    @for (id of list; track $index) {
+                    <li class="li-list"> {{ getItemName(id) }} </li>
+                    }
+                </ul>
+                }
+            </div>
+
+            <div class="table module-table">
+                <app-table [tableInfo]="tableInfo" [itemList]="elementsToPractice" [page]="page"
+                    [filterFormFields]="filterFormFields" (pageEmitter)="page = $event"
+                    (filterAction)="getElementsToPractice($event)" (listEmitter)="selectionChange($event)"></app-table>
             </div>
 
         </fieldset>

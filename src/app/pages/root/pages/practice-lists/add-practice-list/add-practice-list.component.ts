@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { TableComponent } from '../../components/table/table.component';
@@ -8,15 +8,17 @@ import { ElementToPracticeService } from '../../elements-to-practice/element-to-
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
 import { PracticeListsService } from '../practice-lists.service';
-import { IPracticeList } from '../../../../../interfaces';
+import { filterFieldTypes, IElementToPractice, IFilterFormField, IPageTableInfo, IPracticeList, ITableItem, IType } from '../../../../../interfaces';
 import { localStorageLabels } from '../../../../../enums';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { TypeService } from '../../types/types.service';
 
 @Component({
   selector: 'app-add-practice-list',
   imports: [
     RouterLink,
     ReactiveFormsModule,
+    TableComponent,
     NzSwitchModule,
     NzSelectModule,
     NzPopoverModule
@@ -32,14 +34,68 @@ export class AddPracticeListComponent implements OnInit {
 
   public showErrors: boolean = false;
 
+  public filterFormFields: Array<IFilterFormField> = [
+    {
+      type: 'text',
+      label: 'Basic',
+      key: 'en',
+      placeholder: 'Basic form',
+    },
+    {
+      type: 'multiselect',
+      label: 'Type',
+      key: 'type',
+      placeholder: 'Type',
+      selectOptions: [],
+      intialValue: [],
+    },
+    {
+      type: 'multiselect',
+      label: 'Uses',
+      key: 'selectedUses',
+      placeholder: 'Uses',
+      selectOptions: [],
+      intialValue: [],
+    },
+  ];
+
+  public tableInfo: Array<ITableItem> = [
+    {
+      header: 'Type',
+      key: `type.name`,
+      filter: filterFieldTypes.multiselect,
+    },
+    {
+      header: 'Basic',
+      key: 'en',
+      filter: filterFieldTypes.text,
+    },
+    {
+      header: 'Meanings',
+      key: 'meanings',
+    },
+  ];
+
+  public page: IPageTableInfo | any = {
+    index: 1,
+    size: 10,
+  };
+
+  public types: Array<IType> = [];
+
   get language(): string {
     const res: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
     return res;
   }
 
+  get list(): string[] {
+    return this.form.get('list')?.value;
+  }
+
   constructor(
     private _fb: FormBuilder,
     private _route: ActivatedRoute,
+    private _typeSvc: TypeService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _practiceListsSvc: PracticeListsService,
     private _nzNotificationSvc: NzNotificationService
@@ -62,20 +118,65 @@ export class AddPracticeListComponent implements OnInit {
   public elementsToPractice: Array<any> = [];
 
   ngOnInit(): void {
-    this.getElementsToPracice();
+    this.getElementsToPractice();
   }
 
-  public getElementsToPracice(query?: any): void {
-    this._elementToPracticeSvc.getElementsToPractice().subscribe(
+  public getItemName(id: string): string {
+    return this.elementsToPractice.find(item => item.id === id)?.en;
+  }
+
+  public getElementsToPractice(query?: any, options?: any): void {
+    if (!query) localStorage.removeItem(localStorageLabels.etp.filerBody);
+    this._elementToPracticeSvc.getFilteredElementsToPractice(query).subscribe(
       (elementsToPractice) => {
         this.elementsToPractice = elementsToPractice;
-        // console.log({ elementsToPractice });
-      }, (error) => {
+        if (this.types.length === 0) {
+          this.getTypes();
+        } else {
+          this.getElementsToPracticeTypes(this.types);
+        }
+      },
+      (error) => {
+        console.error({ error });
+        this.elementsToPractice = [];
+      }
+    );
+  }
+
+  public getTypes(): void {
+    this._typeSvc.getTypes().subscribe(
+      (types) => {
+        this.types = types;
+        this.getElementsToPracticeTypes(types);
+        types.forEach((typeItem) => {
+          const { name, id, father } = typeItem;
+          const index = !father ? 1 : 2;
+          if (
+            this.filterFormFields[index].selectOptions?.includes(
+              (item: { name: string, id: string }) => item.id === id)
+          ) return;
+          return this.filterFormFields[!father ? 1 : 2].selectOptions?.push({
+            name,
+            id,
+          });
+        });
+      },
+      (error) => {
         console.log({ error });
       }
-    )
-    // console.log({ query });
-  };
+    );
+  }
+
+  public getElementsToPracticeTypes(types: IType[]): IElementToPractice[] {
+    if (!this.elementsToPractice) return [];
+    return (this.elementsToPractice = this.elementsToPractice.map(
+      (elementItem) => {
+        const typeId = elementItem.type;
+        elementItem.type = types.find((type) => type.id === typeId) ?? typeId;
+        return elementItem;
+      }
+    ));
+  }
 
   public getPracticeList(id: string): void {
     this._practiceListsSvc.getPracticeList(id).subscribe(
@@ -91,6 +192,13 @@ export class AddPracticeListComponent implements OnInit {
     const ctrl = this.form.controls[control];
     if (!ctrl) return [];
     return Object.keys(subControl ? ctrl.get(subControl)?.errors ?? {} : ctrl.errors ?? {});
+  }
+
+  public selectionChange(list: Set<number>) {
+    console.log({ list });
+    this.form.get('list')?.patchValue(this.elementsToPractice.filter((item) =>
+      list.has(item.id)
+    ).map(item => item.id));
   }
 
   public letters(w: string): string[] {

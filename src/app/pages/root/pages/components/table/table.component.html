@@ -16,11 +16,11 @@
   <div class="filters_section">
     <div class="filterButton_div">
       @if (filterFormFields) {
-      <button class="button-show" (click)="showFiltersModal()" title="Filter">
+      <button type="button" class="button-show" (click)="showFiltersModal()" title="Filter">
         Filter <i class="bi bi-filter"></i>
       </button>
       @if (actualSelectedFilters) {
-      <button class="button-clear" (click)="clearFilters()" title="Clear Filters">
+      <button type="button" class="button-clear" (click)="clearFilters()" title="Clear Filters">
         Clear <i class="bi bi-eraser-fill"></i>
       </button>
       }
@@ -79,7 +79,9 @@
             } -->
           </th>
           }
+          @if ( url !== '/practice-lists/add' ) {
           <th class="th">Actions</th>
+          }
         </tr>
       </thead>
       <tbody class="tbody">
@@ -132,6 +134,7 @@
                 }
           </td>
           }
+          @if ( url !== '/practice-lists/add' ) {
           <td class="td actions_td">
             <i [class]="!modifyAction ? 'bi bi-pencil-square -disabled' : 'bi bi-pencil-square' " title="Edit Word"
               (click)=" modifyAction ? editAction.emit(item.id) : false"></i>
@@ -142,6 +145,7 @@
             <i class=" bi bi-x-circle -disabled" title="Delete Word"></i>
             }
           </td>
+          }
         </tr>
         }
       </tbody>

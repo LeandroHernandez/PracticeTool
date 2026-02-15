@@ -49,8 +49,9 @@ export class TableComponent implements OnInit {
   @Input() tableInfo: Array<ITableItem> = [];
   @Input() page: IPageTableInfo = { index: 1, size: 10 };
   @Input() itemList: Array<any> | null = null;
-
   @Input() pageEmitter: EventEmitter<IPageTableInfo> = new EventEmitter();
+
+  @Output() listEmitter: EventEmitter<Set<number>> = new EventEmitter();
   @Output() filterAction: EventEmitter<IElementToPractice | null> =
     new EventEmitter();
   @Output() editAction: EventEmitter<string> = new EventEmitter();
@@ -58,11 +59,12 @@ export class TableComponent implements OnInit {
   @Output() deleteAllAction: EventEmitter<boolean> = new EventEmitter();
   @Output() changeStateEmitter: EventEmitter<{ id: string; state: any }> =
     new EventEmitter();
-  setOfCheckedId = new Set<number>();
 
-  // public actualLabel: string = localStorageLabels.etp.selectedList;
+  public setOfCheckedId = new Set<number>();
+
   get actualLabel(): string {
-    const urlA: string[] = this._router.url.split('/');
+    // const urlA: string[] = this._router.url.split('/');
+    const urlA: string[] = this.url.split('/');
     switch (urlA[urlA.length - 1]) {
       case RoutesApp.practiceLists:
         return localStorageLabels.pl.selectedList;
@@ -143,9 +145,14 @@ export class TableComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUserInfo();
-    for (const item of this.actualSelectedItems) {
-      this.setOfCheckedId.add(item.id);
-    }
+    // for (const item of this.actualSelectedItems) {
+    //   this.setOfCheckedId.add(item.id);
+    // }
+    this.setInit(this.actualSelectedItems.map(item => item.id));
+  }
+
+  public setInit(idList: any[]): void {
+    for (const id of idList) !this.setOfCheckedId.has(id) ? this.setOfCheckedId.add(id) : false;
   }
 
   public letters(w: string): string[] {
@@ -179,6 +186,7 @@ export class TableComponent implements OnInit {
     } else {
       this.setOfCheckedId.delete(id);
     }
+    if (this.url === `/${RoutesApp.practiceLists}/${RoutesApp.add}`) return this.listEmitter.emit(this.setOfCheckedId);
     return this.setSelectedList();
   }
 
