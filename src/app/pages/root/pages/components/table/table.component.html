@@ -2,11 +2,12 @@
 <main class="main">
   <div class="actual_selection">
     <div class="selectedItem_div">
-      @if (actualSelectedItems.length > 0) {
-      <span class="selectedItem_span"> You have selected <span class="number"> {{actualSelectedItems.length}} </span>
+      @if (actualSelectedItems.length > 0 || setOfCheckedId.size > 0) {
+      <span class="selectedItem_span"> You have selected <span class="number"> {{actualSelectedItems.length > 0 ?
+          actualSelectedItems.length : setOfCheckedId.size }} </span>
         items </span>
       <span> - </span>
-      <button class="button-clear" (click)="clearSelectedItems()" title="Clear selected items">
+      <button type="button" class="button-clear" (click)="clearSelectedItems()" title="Clear selected items">
         Clear <i class="bi bi-eraser-fill"></i>
       </button>
       }
@@ -36,7 +37,7 @@
     }
   </div>
   }
-  <div class="table-container">
+  <div class="table-container {{ startsWithCondition ? 'special' : 'regular' }}">
     @if ( !itemList ) {
     <p class="loading-p"> Charging files <nz-icon nzType="loading" nzTheme="outline" /> </p>
     } @else {
@@ -79,7 +80,7 @@
             } -->
           </th>
           }
-          @if ( url !== '/practice-lists/add' ) {
+          @if ( !startsWithCondition ) {
           <th class="th">Actions</th>
           }
         </tr>
@@ -134,7 +135,7 @@
                 }
           </td>
           }
-          @if ( url !== '/practice-lists/add' ) {
+          @if ( !startsWithCondition ) {
           <td class="td actions_td">
             <i [class]="!modifyAction ? 'bi bi-pencil-square -disabled' : 'bi bi-pencil-square' " title="Edit Word"
               (click)=" modifyAction ? editAction.emit(item.id) : false"></i>

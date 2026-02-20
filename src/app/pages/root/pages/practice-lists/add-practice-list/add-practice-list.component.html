@@ -49,7 +49,7 @@
                 </div>
             </fieldset>
 
-            <!-- <div class="input-box">
+            <div class="input-box">
                 @if ( isRequired('list') && form.controls['list'].enabled ) {
                 <i class="bi bi-asterisk" nz-popover
                     [nzPopoverContent]=" language === 'en' ? 'Required Field' : 'Campo Obligatorio' "></i>
@@ -77,9 +77,9 @@
                     [nzPopoverTitle]=" language === 'en' ? 'Invalid Content' : 'Contenido Invalido' "
                     [nzPopoverContent]=" language === 'en' ? 'Please select at least one Element To Practice.' : 'Por favor seleccione al menos un Elemento a Practicar.' "></i>
                 }
-            </div> -->
+            </div>
 
-            <div class="div-list">
+            <!-- <div class="div-list">
                 <header class="header-list">
                     <h6> {{ language === 'en' ? 'Content' : 'Contenido' }} </h6>
                 </header>
@@ -91,7 +91,7 @@
                     }
                 </ul>
                 }
-            </div>
+            </div> -->
 
             <div class="table module-table">
                 <app-table [tableInfo]="tableInfo" [itemList]="elementsToPractice" [page]="page"

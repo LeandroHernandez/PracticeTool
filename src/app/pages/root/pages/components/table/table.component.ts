@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +25,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { TableService } from './table.service';
 
 @Component({
   selector: 'app-table',
@@ -44,7 +45,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
   @Input() filterFormFields: Array<IFilterFormField> | null = null;
   @Input() tableInfo: Array<ITableItem> = [];
   @Input() page: IPageTableInfo = { index: 1, size: 10 };
@@ -108,6 +109,7 @@ export class TableComponent implements OnInit {
   }
 
   get actualSelectedItems(): any[] {
+    if (this.url.startsWith(`/${RoutesApp.practiceLists}/${RoutesApp.add}`)) return [];
     return JSON.parse(localStorage.getItem(this.actualLabel) ?? '[]');
   }
 
@@ -125,6 +127,10 @@ export class TableComponent implements OnInit {
     return localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
   }
 
+  get startsWithCondition(): boolean {
+    return this.url.startsWith(`/${RoutesApp.practiceLists}/${RoutesApp.add}`);
+  }
+
   public modifyAction: boolean = true;
   public availableToModify: RoleIds[] = [RoleIds.admin];
 
@@ -134,6 +140,7 @@ export class TableComponent implements OnInit {
     private _fb: FormBuilder,
     private _router: Router,
     private _rootSvc: RootService,
+    private _tableSvc: TableService,
     private _nzModalSvc: NzModalService
   ) {
     const form: FormGroup = this._fb.group({});
@@ -144,14 +151,20 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.startsWithCondition) this.modifyAction = false;
     this.getUserInfo();
     // for (const item of this.actualSelectedItems) {
     //   this.setOfCheckedId.add(item.id);
     // }
     this.setInit(this.actualSelectedItems.map(item => item.id));
+    this._tableSvc.list$.subscribe(list => {
+      if (!list) return;
+      if (list.length > 0) { this.setInit(list) } else this.setOfCheckedId = new Set<number>;
+    })
   }
 
   public setInit(idList: any[]): void {
+    if (this.startsWithCondition) this.setOfCheckedId.clear();
     for (const id of idList) !this.setOfCheckedId.has(id) ? this.setOfCheckedId.add(id) : false;
   }
 
@@ -186,7 +199,7 @@ export class TableComponent implements OnInit {
     } else {
       this.setOfCheckedId.delete(id);
     }
-    if (this.url === `/${RoutesApp.practiceLists}/${RoutesApp.add}`) return this.listEmitter.emit(this.setOfCheckedId);
+    if (this.startsWithCondition) return this.listEmitter.emit(this.setOfCheckedId);
     return this.setSelectedList();
   }
 
@@ -207,7 +220,6 @@ export class TableComponent implements OnInit {
   }
 
   getKeys(item: IWord): Array<string> {
-    // console.log({ item });
     return Object.keys(item);
   }
 
@@ -234,7 +246,6 @@ export class TableComponent implements OnInit {
   }
 
   // public show(valueForm: any): void {
-  //   console.log({ valueForm });
   // }
 
   public showFiltersModal(): void {
@@ -248,7 +259,6 @@ export class TableComponent implements OnInit {
     instance.filterFormFields = this.filterFormFields;
 
     instance.valueFormEmitter.subscribe((value: any) => {
-      // console.log('Cambio en filtros:', value);
       this.filterAction.emit(value);
     });
   }
@@ -260,6 +270,7 @@ export class TableComponent implements OnInit {
 
   public clearSelectedItems(): void {
     this.setOfCheckedId.clear();
+    if (this.startsWithCondition) return this.listEmitter.emit(this.setOfCheckedId);
     return localStorage.removeItem(this.actualLabel);
   }
 
@@ -268,7 +279,10 @@ export class TableComponent implements OnInit {
   }
 
   public changeState({ id, state }: TRoleChangeState): void {
-    // console.log({ id, state });
     return this.changeStateEmitter.emit({ id, state });
+  }
+
+  ngOnDestroy(): void {
+    return this._tableSvc.setlist(null);
   }
 }

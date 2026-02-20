@@ -109,3 +109,28 @@
     border: none;
   }
 }
+
+/* .regular {
+  min-width: max-content;
+} */
+
+.special {
+  max-width: 100%;
+  /* max-height: 60vh; */
+  height: 60vh;
+  min-height: 60vh;
+  overflow: auto;
+  resize: vertical;
+
+  .table {
+    position: relative;
+
+    .thead {
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+  }
+
+}

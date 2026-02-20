@@ -12,6 +12,7 @@ import { filterFieldTypes, IElementToPractice, IFilterFormField, IPageTableInfo,
 import { localStorageLabels } from '../../../../../enums';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { TypeService } from '../../types/types.service';
+import { TableService } from '../../components/table/table.service';
 
 @Component({
   selector: 'app-add-practice-list',
@@ -88,14 +89,15 @@ export class AddPracticeListComponent implements OnInit {
     return res;
   }
 
-  get list(): string[] {
-    return this.form.get('list')?.value;
-  }
+  // get list(): string[] {
+  //   return this.form.get('list')?.value;
+  // }
 
   constructor(
     private _fb: FormBuilder,
     private _route: ActivatedRoute,
     private _typeSvc: TypeService,
+    private _tableSvc: TableService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _practiceListsSvc: PracticeListsService,
     private _nzNotificationSvc: NzNotificationService
@@ -111,6 +113,11 @@ export class AddPracticeListComponent implements OnInit {
       state: [{ value: true, disabled: true }, [Validators.required]],
     })
 
+    this.form.get('list')?.valueChanges.subscribe(val => {
+      console.log({ val });
+      this._tableSvc.setlist(val);
+    })
+
     this.id = this._route.snapshot.paramMap.get('id');
     if (this.id) this.getPracticeList(this.id);
   }
@@ -119,6 +126,9 @@ export class AddPracticeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getElementsToPractice();
+    // this._tableSvc.list$.subscribe(tableSelectedList => {
+    //   console.log({ tableSelectedList })
+    // })
   }
 
   public getItemName(id: string): string {
@@ -182,8 +192,9 @@ export class AddPracticeListComponent implements OnInit {
     this._practiceListsSvc.getPracticeList(id).subscribe(
       (practiceList) => {
         // console.log({ practiceList });
-        const { title, list } = practiceList;
-        this.form.patchValue({ title, list })
+        // const { title, list } = practiceList;
+        const { list } = practiceList;
+        this.form.patchValue({ title: practiceList.title, list })
       }
     )
   }

@@ -382,12 +382,19 @@ ul {
     /* min-width: 1800px; */
     width: 100%;
     overflow-x: auto;
+    max-height: 70vh;
 
     .table {
         width: 100%;
-        min-width: max-content;
+        /* min-width: max-content; */
+        max-width: 100%;
+        position: relative;
 
         .thead {
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 10;
             font-size: 1.1rem;
             background-color: var(--secondary);
             color: var(--primary);
@@ -486,6 +493,12 @@ ul {
         }
     }
 
+}
+
+@media (max-width: 900px) {
+    .table-container .table {
+        min-width: max-content;
+    }
 }
 
 .paginator {
