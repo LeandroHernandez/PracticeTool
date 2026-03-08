@@ -67,10 +67,6 @@
   gap: .5rem;
   /* overflow: auto; */
 
-  &:first-child {
-    margin-bottom: 5px;
-  }
-
   .h5 {
     background-color: #8984c7;
     border-radius: .5rem;
@@ -188,6 +184,17 @@
       transform: scale(1.1);
       background-color: var(--accent);
     }
+  }
+}
+
+.footer {
+  margin-top: .5rem;
+  display: flex;
+  flex-direction: row-reverse;
+
+  .streak .number {
+    font-weight: 700;
+    color: var(--accent);
   }
 }
 

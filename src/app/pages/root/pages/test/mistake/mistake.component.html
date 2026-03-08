@@ -65,6 +65,15 @@
       </div>
       }
     </div>
+
+    @if ( correctNumber > 0 ) {
+    <footer class="footer">
+      <span class="streak">
+        {{ en ? 'Streak:' : 'Racha' }}
+        <span class="number"> {{ correctNumber }} </span>
+      </span>
+    </footer>
+    }
   </div>
   }
 </div>

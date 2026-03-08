@@ -9,8 +9,11 @@
 .section {
     height: 100%;
     width: calc(45% - 1rem);
-    display: grid;
-    gap: 2rem;
+    /* display: grid;
+    gap: 2rem; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     /* justify-content: center; */
     align-items: end;
     overflow-y: auto;

@@ -39,6 +39,7 @@ import { DateTime } from 'luxon';
 export class TestComponent implements OnInit, OnDestroy {
   public elementsToPractice: Array<IElementToPractice> = [];
   public practiceList: Array<IEtp> = [];
+  public correctNumber: number = 0;
 
   constructor(
     private _router: Router,
@@ -177,6 +178,9 @@ export class TestComponent implements OnInit, OnDestroy {
 
     const instance = modal.getContentComponent();
     instance.mistakeList = mistakeList;
+    instance.correctNumber = this.correctNumber;
+
+    this.correctNumber = 0;
 
     instance.confirmEmitter.subscribe(() => modal.close());
 
@@ -238,30 +242,6 @@ export class TestComponent implements OnInit, OnDestroy {
         this.useNormalize(useItem)
       );
 
-      // console.log({ usesList, enteredUsesList })
-
-      // !usesList.every((useItem) => {
-      //   const someCodition = enteredUsesList.some((enteredItem) => {
-      //     let subCondition =
-      //       useItem.name === enteredItem.name &&
-      //       useItem.meanings.every((useMeaning) =>
-      //         enteredItem.meanings.includes(useMeaning)
-      //       );
-      //     let subCondition2 = true;
-      //     if (useItem.verbInfo) {
-      //       const useVerbIndo: IVerbInfo = useItem.verbInfo;
-      //       const enterdeVerbInfo: IVerbInfo | undefined =
-      //         enteredItem.verbInfo;
-      //       subCondition2 = !enterdeVerbInfo
-      //         ? false
-      //         : useVerbIndo.irregular === enterdeVerbInfo.irregular &&
-      //         useVerbIndo.simplePast === enterdeVerbInfo.simplePast &&
-      //         useVerbIndo.pastParticiple === enterdeVerbInfo.pastParticiple;
-      //     }
-      //     return subCondition && subCondition2;
-      //   });
-      //   return someCodition;
-      // })
       if (usesList.length !== enteredUsesList.length) {
         mistakeList.push({
           property: 'Uses',
@@ -324,12 +304,14 @@ export class TestComponent implements OnInit, OnDestroy {
     // console.log({ mistakeList });
     return mistakeList;
   }
+
   public submit(etpToCheck: IEtpToCheck): void {
-    const { etpItem, checkingWord, formValue } = etpToCheck;
+    const { etpItem, checkingWord } = etpToCheck;
 
     const { content, index } = etpItem;
 
     const mistakeList = this.check(etpToCheck);
+    if (mistakeList.length === 0) this.correctNumber++;
     if (mistakeList.length > 0) return this.mistake(mistakeList, index);
 
     // console.log('Without mistakes');

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IMistake } from '../../../../../interfaces/mistake.interface';
 import { JsonPipe } from '@angular/common';
+import { localStorageLabels } from '../../../../../enums';
 
 @Component({
   selector: 'app-mistake',
@@ -10,10 +11,15 @@ import { JsonPipe } from '@angular/common';
 })
 export class MistakeComponent {
   @Input() mistakeList: Array<IMistake> = [];
+  @Input() correctNumber: number = 0;
 
   @Output() confirmEmitter: EventEmitter<boolean> = new EventEmitter();
 
+  get en(): boolean {
+    return localStorage.getItem(localStorageLabels.localCurrentLanguage) === 'en';
+  }
+
   public getEnteredAndCorrect(mistake: IMistake): Array<string | any> {
-    return [ mistake.input, mistake.right ]
+    return [mistake.input, mistake.right]
   }
 }

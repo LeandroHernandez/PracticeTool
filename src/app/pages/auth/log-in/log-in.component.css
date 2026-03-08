@@ -15,8 +15,11 @@
 .section {
     height: 100%;
     width: calc(45% - 1rem);
-    display: grid;
-    gap: 2rem;
+    /* display: grid; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* gap: 2rem; */
     /* justify-content: center; */
     align-items: end;
     overflow-y: auto;
@@ -233,6 +236,7 @@
 }
 
 .footer-section {
+    margin: auto;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
