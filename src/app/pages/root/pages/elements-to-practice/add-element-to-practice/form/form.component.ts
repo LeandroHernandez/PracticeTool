@@ -23,7 +23,7 @@ import {
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { TypeService } from '../../../types/types.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
   IElementToPractice,
   IEtp,
@@ -36,6 +36,8 @@ import { ElementToPracticeService } from '../../element-to-practice.service';
 import { ActivatedRoute } from '@angular/router';
 import { TestService } from '../../../test/test.service';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { giphyItem } from '../../../../../../interfaces/giphy.interfaces';
+import { RootService } from '../../../../root.service';
 
 @Component({
   selector: 'app-form',
@@ -73,6 +75,9 @@ export class FormComponent implements OnInit {
   public checkingWord = false;
 
   public showErrors: boolean = false;
+
+  public show: boolean = false;
+  public gif: giphyItem | null = null;
 
   get language(): string {
     const res: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
@@ -112,6 +117,7 @@ export class FormComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private _route: ActivatedRoute,
+    private _rootSvc: RootService,
     private _testSvc: TestService,
     private _elementToPracticeService: ElementToPracticeService,
     private _typeService: TypeService,
@@ -515,5 +521,15 @@ export class FormComponent implements OnInit {
 
     this.formInit(this.elementToPractice);
     this.setSupscriptions();
+  }
+
+  public getGifs(): Subscription | void {
+    if (!this.etpItem) return;
+    const q = this.etpItem.content.etp.en;
+    console.log({ q })
+    return this._rootSvc.loadTrendingGifs(q).subscribe(
+      giphyResponse => this.gif = giphyResponse.data[0],
+      error => console.log({ error })
+    )
   }
 }

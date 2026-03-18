@@ -41,6 +41,8 @@ export class TestComponent implements OnInit, OnDestroy {
   public practiceList: Array<IEtp> = [];
   public correctNumber: number = 0;
 
+  public gifs: any = [];
+
   constructor(
     private _router: Router,
     private _rootSvc: RootService,
@@ -328,6 +330,16 @@ export class TestComponent implements OnInit, OnDestroy {
     if (this.practiceList.length > 0) return this.getRandomETP(index);
 
     return this.win();
+  }
+
+  public loadGifs(): Subscription {
+    return this._rootSvc.loadTrendingGifs('laugh').subscribe(
+      giphyResponse => {
+        console.log({ giphyResponse });
+        this.gifs = giphyResponse.data
+      },
+      error => console.log({ error }),
+    )
   }
 
   ngOnDestroy(): void {

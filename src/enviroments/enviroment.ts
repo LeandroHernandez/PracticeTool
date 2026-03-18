@@ -8,5 +8,8 @@ export const environment = {
         messagingSenderId: "537722699913",
         appId: "1:537722699913:web:ecf70e83dce29efa468658",
         measurementId: "G-L2YGHRJBJ3"
-    }
-  };
+    },
+
+    giphyApiKey: "1Flxl8CD3rsrXue3CsQFPqDAigPEgKnb",
+    giphyUrl: 'https://api.giphy.com/v1',
+};
