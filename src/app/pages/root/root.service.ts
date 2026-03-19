@@ -25,8 +25,8 @@ export class RootService {
   loadTrendingGifs(q?: string): Observable<GiphyResponse> {
     let params: any = {
       api_key: environment.giphyApiKey,
-      // limit: 20
-      limit: 1
+      limit: 20
+      // limit: 1
     }
 
     if (q) params.q = q

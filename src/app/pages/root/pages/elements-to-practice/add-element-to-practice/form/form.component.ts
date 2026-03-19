@@ -144,6 +144,8 @@ export class FormComponent implements OnInit {
       if (!content) return;
       this.formInit(content.etp, content);
       this.setSupscriptions();
+
+      this.getGifs();
     });
 
     this.setSupscriptions();
@@ -528,7 +530,11 @@ export class FormComponent implements OnInit {
     const q = this.etpItem.content.etp.en;
     console.log({ q })
     return this._rootSvc.loadTrendingGifs(q).subscribe(
-      giphyResponse => this.gif = giphyResponse.data[0],
+      // giphyResponse => this.gif = giphyResponse.data[0],
+      giphyResponse => {
+        this.gif = giphyResponse.data[0];
+        console.log({ gif: this.gif });
+      },
       error => console.log({ error })
     )
   }

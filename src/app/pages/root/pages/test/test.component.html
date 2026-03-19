@@ -19,12 +19,12 @@
       Gifs
     </button>
 
-    <ul class="ul-gifs">
+    <ol class="ol-gifs">
       @for (gif of gifs; track $index) {
       <li class="li-gif">
         <span>{{ gif.images.fixed_height.url }}</span>
         <img [src]="gif.images.fixed_height.url" alt="gif" class="img-gif" height="50px" width="50px">
         }
-    </ul>
+    </ol>
   </div>
 </main>

@@ -15,6 +15,11 @@ export interface IUse {
   verbInfo?: IVerbInfo;
 }
 
+interface IEnEs {
+  en: string,
+  es: string,
+}
+
 export interface IElementToPractice {
   id?: string;
   // type: 'Verb' | 'Adjective' | 'Noun' | 'Preposition' | 'Adverb' ;
@@ -23,5 +28,8 @@ export interface IElementToPractice {
   selectedUses?: Array<IType>;
   uses?: Array<IUse>;
   meanings?: Array<string>;
+  description?: IEnEs;
+  examples?: IEnEs[];
+  gifs?: string[];
   // es: Array<IMeaning>;
 }

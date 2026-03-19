@@ -209,14 +209,52 @@
 
   </fieldset>
 
-  <button type="submit" class="button register-button" [title]="!id ? 'Register' : 'Editar'">
-    <!-- {{ etp$ ? "Validar" : !id ? "Registrar" : "Editar" }} -->
-    {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
-  </button>
+  <div class="div-actions">
+    <button type="submit" class="button register-button" [title]="!id ? 'Register' : 'Editar'">
+      <!-- {{ etp$ ? "Validar" : !id ? "Registrar" : "Editar" }} -->
+      {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
+    </button>
 
-  <nz-switch nzCheckedChildren="Hide" nzUnCheckedChildren="Show" (click)="getGifs()"></nz-switch>
+    @if (etpItem) {
+    @if (etpItem.content.etp.description || etpItem.content.etp.examples || etpItem.content.etp.gifs) {
+    <nz-switch [nzCheckedChildren]="language === 'en' ? 'Hide' : 'Ocultar'"
+      [nzUnCheckedChildren]="language === 'en' ? 'Hide' : 'Ocultar'" (click)="show = !show" class="nzSwitch-showGifs"
+      [title]="language === 'en' ? 'Info' : 'Información' "></nz-switch>
+    }
+    }
+  </div>
 
-  @if(gif) {
-  <img [src]="gif.images.fixed_height.url" [alt]="gif.title" [title]="gif.title">
+  <!-- @if(show && gif) { -->
+  @if(show && gif && etpItem) {
+  <section class="section-info">
+    @if (etpItem.content.etp.description || etpItem.content.etp.examples) {
+    <div class="div-texts">
+      @if (etpItem.content.etp.description) {
+      <div class="div-description">
+        <h4 class="h4"> {{ language === 'en' ? 'Description' : 'Descripción' }} </h4>
+        <p class="p">
+          {{ language === 'en' ? etpItem.content.etp.description.en : etpItem.content.etp.description.es}}
+        </p>
+      </div>
+      }
+      @if (etpItem.content.etp.examples) {
+      <div class="div-examples">
+        <h4 class="h4"> {{ language === 'en' ? 'Examples' : 'Ejemplos' }} </h4>
+        <ul class="ul">
+          @for (example of etpItem.content.etp.examples; track $index) {
+          <li class="li"> {{ language === 'en' ? example.en : example.es }} </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+    }
+    @if ( etpItem.content.etp.gifs ) {
+    @for (gif of etpItem.content.etp.gifs; track $index) {
+    <!-- <img [src]="gif.images.fixed_height.url" [alt]="gif.title" [title]="gif.title" class="img-gif"> -->
+    <img [src]="gif" alt="gif" title="gif" class="img-gif">
+    }
+    }
+  </section>
   }
 </form>
