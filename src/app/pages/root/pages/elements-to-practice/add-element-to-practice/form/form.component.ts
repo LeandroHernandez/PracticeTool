@@ -30,7 +30,6 @@ import {
   IEtpItem,
   IEtpToCheck,
   IType,
-  IUse,
 } from '../../../../../../interfaces';
 import { ElementToPracticeService } from '../../element-to-practice.service';
 import { ActivatedRoute } from '@angular/router';
@@ -78,6 +77,7 @@ export class FormComponent implements OnInit {
 
   public show: boolean = false;
   public gif: giphyItem | null = null;
+  public gifsToShow: giphyItem[] = [];
 
   get language(): string {
     const res: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
@@ -110,6 +110,14 @@ export class FormComponent implements OnInit {
     return this.form.get('meanings') as FormArray;
   }
 
+  get examples(): FormArray {
+    return this.form.get('examples') as FormArray;
+  }
+
+  get gifs(): FormArray {
+    return this.form.get('gifs') as FormArray;
+  }
+
   get verbInfo(): FormGroup {
     return this.form.get('verbInfo') as FormGroup;
   }
@@ -128,6 +136,13 @@ export class FormComponent implements OnInit {
       type: [typesOfElementsToPractice.word ?? '', [Validators.required]],
       selectedUses: [[], [Validators.required]],
       uses: this._fb.array([]),
+      description: this._fb.group({
+        en: ['', [Validators.required]],
+        es: ['', [Validators.required]],
+      }),
+      examples: this._fb.array([]),
+      gifReference: [''],
+      gifs: this._fb.array([]),
       // ...(isWord ? {} : { meanings: this._fb.array([this.newMeaning()]) }),
     });
     if (!this.elementToPractice) {
@@ -264,6 +279,13 @@ export class FormComponent implements OnInit {
       type: [typesOfElementsToPractice.word ?? '', [Validators.required]],
       selectedUses: [[], [Validators.required]],
       uses: this._fb.array([]),
+      description: this._fb.group({
+        en: ['', [Validators.required]],
+        es: ['', [Validators.required]],
+      }),
+      examples: this._fb.array([this.newExample()]),
+      gifReference: [''],
+      gifs: this._fb.array([]),
       ...(isWord ? {} : { meanings: this._fb.array([this.newMeaning()]) }),
     });
 
@@ -278,6 +300,16 @@ export class FormComponent implements OnInit {
           )
         );
       } else bodyForm.removeControl('meanings');
+      if (body.examples) {
+        bodyForm.setControl(
+          'examples',
+          this._fb.array(
+            body.examples.map((exampleVal: string) =>
+              this.newExample(!content ? exampleVal : '')
+            )
+          )
+        );
+      };
       const selectedUses: Array<string> | null = body.selectedUses
         ? body.selectedUses.map(
           (selectedUseItem: IType, j: number) =>
@@ -415,6 +447,14 @@ export class FormComponent implements OnInit {
     return new FormControl(val ?? '', [Validators.required]);
   }
 
+  public newExample(val?: string): FormControl {
+    return new FormControl(val ?? '', [Validators.required]);
+  }
+
+  public newGif(val?: string): FormControl {
+    return new FormControl(val ?? '', [Validators.required]);
+  }
+
   public addWordMeaning(i: number): void {
     this.getMeanings(i).push(this.newMeaning());
   }
@@ -429,10 +469,31 @@ export class FormComponent implements OnInit {
     this.meanings.push(this.newMeaning());
   }
 
+  public addGif(val?: string): void {
+    console.log({ val });
+    if (this.gifs.value.includes(val)) return
+    this.gifs.push(this.newGif(val));
+  }
+
   public removeMeaning(i: number): void {
     // if (this.getMeanings(i).length < 2) return;
 
     return this.meanings.removeAt(i);
+  }
+
+  public addExample(): void {
+    this.examples.push(this.newExample());
+  }
+
+  public removeExample(i: number): void {
+    // if (this.getexamples(i).length < 2) return;
+
+    return this.examples.removeAt(i);
+  }
+
+  public removeGif(i: number): void {
+
+    return this.gifs.removeAt(i);
   }
 
   public invalidFormResponse(): NzNotificationRef {
@@ -441,16 +502,6 @@ export class FormComponent implements OnInit {
       'El formulario no es valido, por favor rectifique los valores ingresados'
     );
   }
-
-  // public setUses(): void {
-  //   this.form.setControl('selectedUses', this.form.controls['selectedUses'] ?? new FormControl([], [Validators.required]));
-  //   this.form.setControl('uses', this.form.controls['uses'] ?? new FormControl(this._fb.array([])));
-  // }
-
-  // public removeUses(): void {
-  //   this.form.removeControl('selectedUses');
-  //   this.form.removeControl('uses');
-  // }
 
   public setUses(): void {
     if (this.etpItem) return;
@@ -508,7 +559,6 @@ export class FormComponent implements OnInit {
 
     if (meanings) formBody.meanings = meanings;
 
-
     // console.log({ etpItemToCheck: this.etpItem });
     if (this.etpItem) {
       const etpItem = { ...this.etpItem };
@@ -519,6 +569,8 @@ export class FormComponent implements OnInit {
       });
     }
 
+    delete formBody.gifReference;
+
     this.formInfoEmitter.emit(formBody);
 
     this.formInit(this.elementToPractice);
@@ -526,12 +578,10 @@ export class FormComponent implements OnInit {
   }
 
   public getGifs(): Subscription | void {
-    if (!this.etpItem) return;
-    const q = this.etpItem.content.etp.en;
-    console.log({ q })
-    return this._rootSvc.loadTrendingGifs(q).subscribe(
-      // giphyResponse => this.gif = giphyResponse.data[0],
+    // if (!this.etpItem) return;
+    return this._rootSvc.loadTrendingGifs(this.form.value.gifReference).subscribe(
       giphyResponse => {
+        this.gifsToShow = giphyResponse.data;
         this.gif = giphyResponse.data[0];
         console.log({ gif: this.gif });
       },

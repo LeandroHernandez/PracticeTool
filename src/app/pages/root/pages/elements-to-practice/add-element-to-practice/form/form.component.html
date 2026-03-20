@@ -206,6 +206,111 @@
     </fieldset>
     }
 
+    @if (!etpItem) {
+    <fieldset class="subfieldset" formGroupName="description">
+      <legend class="legend"> {{ language === 'en' ? 'Description' : 'Descripción' }} </legend>
+      <div class="input-box">
+        <label class="label-input">
+          <div class="span-label-div">
+            @for (letter of letters(language === 'en' ? 'English' : 'Inglés'); track $index) {
+            <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
+            }
+          </div>
+          <input type="text" formControlName="en" placeholder="" class="input" />
+        </label>
+      </div>
+      <div class="input-box">
+        <label class="label-input">
+          <div class="span-label-div">
+            @for (letter of letters(language === 'en' ? 'Spanish' : 'Español'); track $index) {
+            <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
+            }
+          </div>
+          <input type="text" formControlName="es" placeholder="" class="input" />
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="subfieldset" formArrayName="examples">
+      <legend class="legend">
+        {{ language === 'en' ? 'Examples: ' : 'Ejemplos: ' }}
+        <span class="accent"> {{ examples.value.length }} </span>
+      </legend>
+
+      <div class="examples-box">
+        @for (example of examples.controls; track example; let i = $index) {
+        <div class="example-box">
+          <div class="input-box">
+            <label class="label-input">
+              <div class="span-label-div">
+                @for (letter of letters( language === 'en' ? 'Example' : 'Ejemplo' ); track $index) {
+                <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
+                }
+              </div>
+              <!-- <input type="text" [formControlName]="i" placeholder="" class="input"> -->
+              <textarea [formControlName]="i" placeholder=""
+                [class]="examples.disabled ? 'textarea disabled' : 'textarea'"></textarea>
+
+            </label>
+          </div>
+          @if (examples.value.length > 1 && example.enabled) {
+          <i class="bi bi-trash" (click)="removeExample(i)" title="Remove"></i>
+          }
+        </div>
+        }
+        @if ( examples.enabled ) {
+        <button type="button" class="button add-button" (click)="addExample()" title="Add example">
+          <i class="bi bi-plus-circle"></i>
+        </button>
+        }
+      </div>
+    </fieldset>
+
+    <!-- <fieldset class="subfieldset" formArrayName="gifs"> -->
+    <fieldset class="subfieldset">
+      <legend class="legend">
+        Gifs
+        <span class="accent"> {{ gifs.value.length }} </span>
+      </legend>
+
+      <div class="input-box">
+        <label class="label-input">
+          <div class="span-label-div">
+            @for (letter of letters(language === 'en' ? 'Reference' : 'Referencia'); track $index) {
+            <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
+            }
+          </div>
+          <input type="text" formControlName="gifReference" placeholder="" class="input" />
+          <button class="button-searchGifs" type="button" [title]="
+              language === 'en' ?
+              'Search' :
+              'Buscar'
+            " (click)="getGifs()">
+            {{language === 'en' ? 'Search' : 'Buscar'}}
+          </button>
+        </label>
+      </div>
+
+      @if (gifs.value.length > 0) {
+      <h6> {{ language === 'en' ? 'Selected Gifs' : 'Gifs Seleccionados' }} </h6>
+      <div class="div-selectedGifs">
+        @for (gif of gifs.controls; track $index) {
+        <img [src]="gif.value" alt="gif" class="img-gif" (click)="removeGif($index)">
+        }
+      </div>
+      }
+
+      <h6> {{ language === 'en' ? 'Gifs for selecting' : 'Gifs para seleccionar' }} </h6>
+      <div class="div-shownGifs">
+        @for (gif of gifsToShow; track $index) {
+        <img [src]="gif.images.fixed_height.url" alt="gif"
+          [class]="gifs.value.includes(gif.images.fixed_height.url) ? 'img-gif-selected' : 'img-gif'"
+          (click)="gifs.value.includes(gif.images.fixed_height.url) ? removeGif($index) :addGif(gif.images.fixed_height.url)">
+        }
+      </div>
+
+    </fieldset>
+    }
 
   </fieldset>
 
@@ -242,7 +347,7 @@
         <h4 class="h4"> {{ language === 'en' ? 'Examples' : 'Ejemplos' }} </h4>
         <ul class="ul">
           @for (example of etpItem.content.etp.examples; track $index) {
-          <li class="li"> {{ language === 'en' ? example.en : example.es }} </li>
+          <li class="li"> {{ example }} </li>
           }
         </ul>
       </div>

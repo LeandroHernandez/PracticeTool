@@ -29,7 +29,7 @@ export interface IElementToPractice {
   uses?: Array<IUse>;
   meanings?: Array<string>;
   description?: IEnEs;
-  examples?: IEnEs[];
+  examples?: string[];
   gifs?: string[];
   // es: Array<IMeaning>;
 }

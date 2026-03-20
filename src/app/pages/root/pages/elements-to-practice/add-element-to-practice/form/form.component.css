@@ -54,14 +54,16 @@ h6 {
   padding-bottom: .5rem;
 }
 
-.meanings-box {
+.meanings-box,
+.examples-box {
   display: flex;
   justify-content: start;
   align-items: center;
   flex-wrap: wrap;
   gap: 1lh;
 
-  .meaning-box {
+  .meaning-box,
+  .example-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -105,6 +107,35 @@ h6 {
     .accent {
       color: var(--accent);
     }
+  }
+}
+
+[class^="img-gif"] {
+  cursor: pointer;
+}
+
+.div-selectedGifs {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 2rem;
+
+  .img-gif {
+    height: 5rem;
+  }
+}
+
+.div-shownGifs {
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: .5rem;
+
+  .img-gif-selected {
+    border: .5rem solid var(--accent);
+    cursor: pointer;
   }
 }
 
