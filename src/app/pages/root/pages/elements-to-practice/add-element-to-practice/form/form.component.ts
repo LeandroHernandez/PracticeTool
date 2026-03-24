@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -36,13 +36,26 @@ import { ActivatedRoute } from '@angular/router';
 import { TestService } from '../../../test/test.service';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { giphyItem } from '../../../../../../interfaces/giphy.interfaces';
-import { RootService } from '../../../../root.service';
+import { GifService } from '../../../../gif.service';
+import { WindowService } from '../../../../window.service';
+import stringSimilarity from 'string-similarity';
+import { DecimalPipe } from '@angular/common';
+
+interface IEnEs {
+  en: string;
+  es: string;
+}
+
+interface IPronunciation {
+  score: number;
+  label: IEnEs | null
+}
 
 @Component({
   selector: 'app-form',
   imports: [
     ReactiveFormsModule,
-    // RouterLink,
+    DecimalPipe,
     NzSwitchModule,
     NzSelectModule,
     NzPopoverModule
@@ -78,6 +91,8 @@ export class FormComponent implements OnInit {
   public show: boolean = false;
   public gif: giphyItem | null = null;
   public gifsToShow: giphyItem[] = [];
+
+  public enPronListening: boolean = false;
 
   get language(): string {
     const res: string = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
@@ -122,10 +137,17 @@ export class FormComponent implements OnInit {
     return this.form.get('verbInfo') as FormGroup;
   }
 
+  // get enPron(): IPronunciation | null {
+  //   // return this.pronunciations.find(item => item.key === 'en') ?? null;
+  //   return JSON.parse(localStorage.getItem('enPron') ?? 'null');
+  // }
+
   constructor(
     private _fb: FormBuilder,
     private _route: ActivatedRoute,
-    private _rootSvc: RootService,
+    private _ngZone: NgZone,
+    private _gifSvc: GifService,
+    private _windowSvc: WindowService,
     private _testSvc: TestService,
     private _elementToPracticeService: ElementToPracticeService,
     private _typeService: TypeService,
@@ -133,6 +155,13 @@ export class FormComponent implements OnInit {
   ) {
     this.form = this._fb.group({
       en: ['', [Validators.required]],
+      enPron: this._fb.group({
+        score: [''],
+        label: this._fb.group({
+          en: [''],
+          es: [''],
+        })
+      }),
       type: [typesOfElementsToPractice.word ?? '', [Validators.required]],
       selectedUses: [[], [Validators.required]],
       uses: this._fb.array([]),
@@ -170,6 +199,10 @@ export class FormComponent implements OnInit {
     this.getTypes();
 
     // this.etpInit();
+  }
+
+  public getGifUrl(gif: giphyItem): string {
+    return gif.images.fixed_height.url;
   }
 
   public verbInfoControl(i: number, s?: 'switch'): string {
@@ -233,10 +266,6 @@ export class FormComponent implements OnInit {
         if (useWithVerbInfoIndex >= 0) {
           const useControl = uses.controls[useWithVerbInfoIndex] as FormGroup;
           const verbInfo = useControl.get('verbInfo') as FormGroup;
-          // const { irregular, simplePast, pastParticiple } = verbInfo.controls;
-          // irregular.patchValue(false);
-          // simplePast.patchValue('');
-          // pastParticiple.patchValue('');
           verbInfo.patchValue({
             irregular: false,
             simplePast: '',
@@ -244,9 +273,6 @@ export class FormComponent implements OnInit {
           });
           useControl.enable();
           useControl.get('meanings')?.disable();
-          // useControl.setControl('verbInfo', verbInfo);
-          // uses.controls[useWithVerbInfoIndex].setControl
-          // formBody.get('verbInfo')?.enable();
         }
       }
     } else {
@@ -276,14 +302,22 @@ export class FormComponent implements OnInit {
     // const bodyForm: FormGroup = this._fb.group({
     let bodyForm: FormGroup = this._fb.group({
       en: ['', [Validators.required]],
+      enPron: this._fb.group({
+        score: [''],
+        label: this._fb.group({
+          en: [''],
+          es: [''],
+        })
+      }),
       type: [typesOfElementsToPractice.word ?? '', [Validators.required]],
       selectedUses: [[], [Validators.required]],
       uses: this._fb.array([]),
       description: this._fb.group({
-        en: ['', [Validators.required]],
-        es: ['', [Validators.required]],
+        en: [''],
+        es: [''],
       }),
-      examples: this._fb.array([this.newExample()]),
+      // examples: this._fb.array([this.newExample()]),
+      examples: this._fb.array([]),
       gifReference: [''],
       gifs: this._fb.array([]),
       ...(isWord ? {} : { meanings: this._fb.array([this.newMeaning()]) }),
@@ -300,16 +334,22 @@ export class FormComponent implements OnInit {
           )
         );
       } else bodyForm.removeControl('meanings');
-      if (body.examples) {
-        bodyForm.setControl(
-          'examples',
-          this._fb.array(
-            body.examples.map((exampleVal: string) =>
-              this.newExample(!content ? exampleVal : '')
-            )
+      if (body.examples) bodyForm.setControl(
+        'examples',
+        this._fb.array(
+          body.examples.map((exampleVal: string) =>
+            this.newExample(!content ? exampleVal : '')
           )
-        );
-      };
+        )
+      );
+      if (body.gifs) bodyForm.setControl(
+        'gifs',
+        this._fb.array(
+          body.gifs.map((gifVal: string) =>
+            this.newGif(!content ? gifVal : '')
+          )
+        )
+      );
       const selectedUses: Array<string> | null = body.selectedUses
         ? body.selectedUses.map(
           (selectedUseItem: IType, j: number) =>
@@ -415,7 +455,15 @@ export class FormComponent implements OnInit {
         const verbInfo: FormGroup = this._fb.group({
           irregular: [false],
           simplePast: [''],
-          pastParticiple: [''],
+          // simPron: this._fb.group({
+          //   score: ['', [Validators.required]],
+          //   label: ['', [Validators.required]]
+          // }),
+          // pastParticiple: [''],
+          // pastPron: this._fb.group({
+          //   score: ['', [Validators.required]],
+          //   label: ['', [Validators.required]]
+          // }),
         });
         group.setControl('verbInfo', verbInfo);
       }
@@ -491,9 +539,9 @@ export class FormComponent implements OnInit {
     return this.examples.removeAt(i);
   }
 
-  public removeGif(i: number): void {
+  public removeGif(i: number | string): void {
 
-    return this.gifs.removeAt(i);
+    return this.gifs.removeAt(typeof i === 'number' ? i : this.gifs.value.findIndex((item: string) => item === i));
   }
 
   public invalidFormResponse(): NzNotificationRef {
@@ -528,7 +576,7 @@ export class FormComponent implements OnInit {
   }
 
   public submit(): void | NzNotificationRef {
-    // console.log({ valid: this.form.valid, value: this.form.value, form: this.form });
+    console.log({ valid: this.form.valid, value: this.form.value, form: this.form });
 
     const meanings: Array<string> | null =
       this.form.get('meanings')?.value ?? null;
@@ -538,8 +586,15 @@ export class FormComponent implements OnInit {
       this.form.get('type')?.value === typesOfElementsToPractice.word;
     isWord ? this.setUses() : this.removeUses();
 
+    // const enPron = this.form.controls['enPron'];
+    // this.form.removeControl('enPron');
     if (!this.form.valid) {
       this.setUses();
+      this.showErrors = true;
+      // this.form.addControl('enPron', enPron);
+      return this.invalidFormResponse();
+    }
+    if (this.etpItem && !this.form.controls['en'].enabled && this.form.controls['enPron'].get('label')?.value.en.length === 0) {
       this.showErrors = true;
       return this.invalidFormResponse();
     }
@@ -569,7 +624,7 @@ export class FormComponent implements OnInit {
       });
     }
 
-    delete formBody.gifReference;
+    console.log({ formBody });
 
     this.formInfoEmitter.emit(formBody);
 
@@ -579,7 +634,7 @@ export class FormComponent implements OnInit {
 
   public getGifs(): Subscription | void {
     // if (!this.etpItem) return;
-    return this._rootSvc.loadTrendingGifs(this.form.value.gifReference).subscribe(
+    return this._gifSvc.loadTrendingGifs(this.form.value.gifReference).subscribe(
       giphyResponse => {
         this.gifsToShow = giphyResponse.data;
         this.gif = giphyResponse.data[0];
@@ -587,5 +642,88 @@ export class FormComponent implements OnInit {
       },
       error => console.log({ error })
     )
+  }
+
+  public evaluatePronunciation(key: string, transcript: string): void {
+
+    // const expectedText = this.form.controls[key].value;
+    // console.log({ expectedText, transcript });
+
+    const normalize = (str: string) => str
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    const score: number = stringSimilarity.compareTwoStrings(normalize(`${this.form.controls[key].value}.`), normalize(transcript)) * 100;
+
+    if (key != 'en') return;
+    this.enPronListening = false;
+    return this.form.controls['enPron'].patchValue({
+      score,
+      label: {
+        en: score < 70 ? 'Incorrect' : score < 80 ? 'Acceptable' : score < 90 ? 'Correct' : 'Perfect',
+        es: score < 70 ? 'Incorrecto' : score < 80 ? 'Aceptable' : score < 90 ? 'Correcto' : 'Perfecto'
+      }
+    })
+
+  }
+
+  // public startRecognition(expectedText: string) {
+  public startRecognition(key: string) {
+    const win = this._windowSvc.nativeWindow;
+
+    if (!win) return;
+    this.enPronListening = true;
+
+    const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      console.error('SpeechRecognition no soportado');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = 'en-US';
+    // recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event: any) => {
+      this._ngZone.run(() => {
+        const transcript: string = event.results[0][0].transcript;
+
+        // const result = this.evaluatePronunciation(key, `${expectedText}.`, transcript);
+        const result = this.evaluatePronunciation(key, transcript);
+
+        console.log({ result, transcript });
+      })
+    };
+
+    recognition.onspeechend = () => {
+      this._ngZone.run(() => {
+        this.enPronListening = false;
+        recognition.stop();
+      })
+    };
+
+    recognition.onerror = (event: any) => {
+      this._ngZone.run(() => {
+        console.error(event.error);
+        this.enPronListening = false;
+        recognition.stop();
+      })
+    };
+
+    recognition.start();
+  }
+
+  speak(key: string) {
+    const utterance = new SpeechSynthesisUtterance(this.form.controls[key].value);
+
+    utterance.lang = 'en-US';
+
+    speechSynthesis.speak(utterance);
   }
 }

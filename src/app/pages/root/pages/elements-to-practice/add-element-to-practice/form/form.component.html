@@ -53,6 +53,47 @@
         [nzPopoverContent]=" language === 'en' ? 'Please enter a valid base form with a maximum of 60 characters.' : 'Por favor ingrese un nombre valido con un maximo de 60 caracteres' "></i>
       }
     </div>
+    @if (!form.controls['en'].enabled) {
+    <div class="div-listenMicrophone">
+      <button class="button-listen" type="button" [title]="
+                  language === 'en' ?
+                  'Listen' :
+                  'Escuchar'
+                " (click)="speak('en')">
+        <div class="div-icon"></div>
+      </button>
+      <div class="div-microphone">
+        <button class="button-microphone" type="button" [title]="
+                    language === 'en' ?
+                    'Chenck' :
+                    'Probar'
+                  " (click)="startRecognition('en')">
+          <div [class]=" enPronListening ? 'div-icon-listening' : 'div-icon'"></div>
+        </button>
+        @if (!enPronListening) {
+        @if (form.controls['enPron'].value.label.en.length > 0) {
+        <span class="span-pronunciation-{{form.controls['enPron'].value.label.en}}">
+          {{
+          language === 'en' ?
+          form.controls['enPron'].value.label.en :
+          form.controls['enPron'].value.label.es
+          }}
+          @if(form.controls['enPron'].value.score >= 70) {
+          -
+          {{
+          form.controls['enPron'].value.score | number: '0.0-1'
+          }}%
+          }
+        </span>
+        }
+        @if ( showErrors && form.controls['enPron'].get('label')?.value.en.length === 0) {
+        <span class="span-empty"> {{ language === 'en' ? 'Empty' : 'Pendiente' }} </span>
+        }
+        }
+
+      </div>
+    </div>
+    }
 
     @if (word) {
     <fieldset class="subfieldset">
@@ -216,7 +257,7 @@
             <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
             }
           </div>
-          <input type="text" formControlName="en" placeholder="" class="input" />
+          <textarea type="text" formControlName="en" placeholder="" class="textarea"></textarea>
         </label>
       </div>
       <div class="input-box">
@@ -226,7 +267,7 @@
             <span class="span-letter" [style.--i]="$index"> {{ letter }} </span>
             }
           </div>
-          <input type="text" formControlName="es" placeholder="" class="input" />
+          <textarea type="text" formControlName="es" placeholder="" class="textarea"></textarea>
         </label>
       </div>
     </fieldset>
@@ -295,19 +336,34 @@
       <h6> {{ language === 'en' ? 'Selected Gifs' : 'Gifs Seleccionados' }} </h6>
       <div class="div-selectedGifs">
         @for (gif of gifs.controls; track $index) {
-        <img [src]="gif.value" alt="gif" class="img-gif" (click)="removeGif($index)">
+        <picture class="picture-gif">
+          <img [src]="gif.value" alt="gif" class="img-gif" [title]="language === 'en' ? 'Remove' : 'Remover'"
+            (click)="removeGif($index)">
+        </picture>
         }
       </div>
       }
 
+      @if (gifsToShow.length > 0) {
       <h6> {{ language === 'en' ? 'Gifs for selecting' : 'Gifs para seleccionar' }} </h6>
       <div class="div-shownGifs">
         @for (gif of gifsToShow; track $index) {
-        <img [src]="gif.images.fixed_height.url" alt="gif"
-          [class]="gifs.value.includes(gif.images.fixed_height.url) ? 'img-gif-selected' : 'img-gif'"
-          (click)="gifs.value.includes(gif.images.fixed_height.url) ? removeGif($index) :addGif(gif.images.fixed_height.url)">
+        <picture class="picture-gif"
+          [title]="gifs.value.includes(getGifUrl(gif)) ? language === 'en' ? 'Remove' : 'Remover' : language === 'en' ? 'Add' : 'Añadir'"
+          (click)="
+            gifs.value.includes(getGifUrl(gif)) ?
+            removeGif(getGifUrl(gif)) :
+            addGif(getGifUrl(gif))
+          ">
+          <img [src]="getGifUrl(gif)" alt="gif" [class]="
+                gifs.value.includes(getGifUrl(gif)) ?
+                'img-gif-selected' :
+                'img-gif'
+              ">
+        </picture>
         }
       </div>
+      }
 
     </fieldset>
     }
@@ -320,21 +376,21 @@
       {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
     </button>
 
-    @if (etpItem) {
+    @if (form.controls['en'] && !form.controls['en'].enabled && etpItem) {
     @if (etpItem.content.etp.description || etpItem.content.etp.examples || etpItem.content.etp.gifs) {
     <nz-switch [nzCheckedChildren]="language === 'en' ? 'Hide' : 'Ocultar'"
-      [nzUnCheckedChildren]="language === 'en' ? 'Hide' : 'Ocultar'" (click)="show = !show" class="nzSwitch-showGifs"
+      [nzUnCheckedChildren]="language === 'en' ? 'Show' : 'Mostrar'" (click)="show = !show" class="nzSwitch-showGifs"
       [title]="language === 'en' ? 'Info' : 'Información' "></nz-switch>
     }
     }
   </div>
 
-  <!-- @if(show && gif) { -->
+  @if (form.controls['en'] && !form.controls['en'].enabled) {
   @if(show && gif && etpItem) {
   <section class="section-info">
     @if (etpItem.content.etp.description || etpItem.content.etp.examples) {
     <div class="div-texts">
-      @if (etpItem.content.etp.description) {
+      @if (etpItem.content.etp.description && etpItem.content.etp.description.en.length > 0) {
       <div class="div-description">
         <h4 class="h4"> {{ language === 'en' ? 'Description' : 'Descripción' }} </h4>
         <p class="p">
@@ -342,12 +398,13 @@
         </p>
       </div>
       }
-      @if (etpItem.content.etp.examples) {
+      @if (etpItem.content.etp.examples && etpItem.content.etp.examples.length > 0) {
       <div class="div-examples">
-        <h4 class="h4"> {{ language === 'en' ? 'Examples' : 'Ejemplos' }} </h4>
+        <h4 class="h4"> {{ language === 'en' ? 'Examples' : 'Ejemplos' }}: {{ etpItem.content.etp.examples.length }}
+        </h4>
         <ul class="ul">
           @for (example of etpItem.content.etp.examples; track $index) {
-          <li class="li"> {{ example }} </li>
+          <li class="li"> <span> {{ $index + 1 }} - </span> {{ example }} </li>
           }
         </ul>
       </div>
@@ -355,11 +412,13 @@
     </div>
     }
     @if ( etpItem.content.etp.gifs ) {
-    @for (gif of etpItem.content.etp.gifs; track $index) {
-    <!-- <img [src]="gif.images.fixed_height.url" [alt]="gif.title" [title]="gif.title" class="img-gif"> -->
-    <img [src]="gif" alt="gif" title="gif" class="img-gif">
-    }
+    <div class="div-gifs">
+      @for (gif of etpItem.content.etp.gifs; track $index) {
+      <img [src]="gif" alt="gif" title="gif" class="img-gif">
+      }
+    </div>
     }
   </section>
+  }
   }
 </form>

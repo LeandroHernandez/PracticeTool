@@ -5,10 +5,8 @@ import { localStorageLabels } from '../../../../enums';
 import {
   IElementToPractice,
   IEtp,
-  IEtpItem,
   IEtpToCheck,
   IUse,
-  IVerbInfo,
   IMistake,
   IMistakenUse,
   IUser,
@@ -22,13 +20,12 @@ import { FormComponent } from '../elements-to-practice/add-element-to-practice/f
 import { MistakeComponent } from './mistake/mistake.component';
 
 import {
-  NzNotificationRef,
   NzNotificationService,
 } from 'ng-zorro-antd/notification';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { RootService } from '../../root.service';
-import { Subscription } from 'rxjs';
 import { DateTime } from 'luxon';
+// import { GifService } from '../../gif.service';
 
 @Component({
   selector: 'app-test',
@@ -46,6 +43,7 @@ export class TestComponent implements OnInit, OnDestroy {
   constructor(
     private _router: Router,
     private _rootSvc: RootService,
+    // private _gifSvc: GifService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _testSvc: TestService,
     private _nzNotificationSvc: NzNotificationService,
@@ -332,15 +330,15 @@ export class TestComponent implements OnInit, OnDestroy {
     return this.win();
   }
 
-  public loadGifs(): Subscription {
-    return this._rootSvc.loadTrendingGifs('laugh').subscribe(
-      giphyResponse => {
-        console.log({ giphyResponse });
-        this.gifs = giphyResponse.data
-      },
-      error => console.log({ error }),
-    )
-  }
+  // public loadGifs(): Subscription {
+  //   return this._gifSvc.loadTrendingGifs('laugh').subscribe(
+  //     giphyResponse => {
+  //       console.log({ giphyResponse });
+  //       this.gifs = giphyResponse.data
+  //     },
+  //     error => console.log({ error }),
+  //   )
+  // }
 
   ngOnDestroy(): void {
     this._testSvc.reset();
