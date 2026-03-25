@@ -26,6 +26,29 @@
   /* margin-bottom: 1.5lh; */
   color: var(--secondary);
   font-size: 1.5rem;
+
+  [class*="div-"] {
+    display: flex;
+    gap: .2rem;
+    align-items: center;
+
+    .div-icon {
+      height: 1.2rem;
+      aspect-ratio: 1/1;
+      background-image: url(/icons/microphone-icon-secondary.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  }
+
+  .div-checked .div-icon {
+    background-image: url(/icons/microphone-icon-silence.svg);
+  }
+
+  nz-switch:hover .div-unChecked .div-icon {
+    background-image: url(/icons/microphone-icon-accent.svg);
+  }
 }
 
 .header-verb-info {

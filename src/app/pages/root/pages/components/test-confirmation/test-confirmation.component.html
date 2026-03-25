@@ -5,24 +5,26 @@
   @if (practiceList) {
   <p>
     You are about to practice
-    {{ selectedListOfPL.length > 0 ? `the ${ selectedListOfPL.length } that you have selected` : 'all the practice
-    lists'}}
+    {{
+    selectedListOfPL.length > 0 ?
+    `the ${ selectedListOfPL.length } that you have selected` :
+    'all the practice lists'
+    }}
   </p>
   } @else {
   <div class="form">
     <fieldset class="fieldset">
       <div class="input-box">
-        <label class="label-input">
+        <label class="label-input" (click)="selectOpen = true">
           <div class="span-label-div">
-            @for (letter of letters( en ? 'Please select' : 'Por favor seleccione' );
-            track $index)
+            @for (letter of letters( en ? 'Please select' : 'Por favor seleccione' ); track $index)
             {
             <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
             }
           </div>
           <nz-tree-select nzMode="multiple" class="treeSelect {{ selectedItems.length > 0 ? 'with-content' : '' }}"
             [(ngModel)]="selectedItems" [nzNodes]="nodes" [nzMultiple]="true" (ngModelChange)="onChange($event)"
-            nzShowSearch nzCheckable nzPlaceHolder="">
+            nzShowSearch nzCheckable nzPlaceHolder="" [(nzOpen)]="selectOpen">
           </nz-tree-select>
         </label>
       </div>

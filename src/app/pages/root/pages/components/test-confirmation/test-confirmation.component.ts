@@ -44,6 +44,7 @@ export class TestConfirmationComponent {
   // public form: FormGroup;
   public selectedItems: Array<string> = [];
   readonly nodes: Array<any> = [];
+  public selectOpen: boolean = false;
 
   get en(): boolean {
     const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en'

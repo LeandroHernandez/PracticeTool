@@ -154,6 +154,7 @@ export class FormComponent implements OnInit {
     private _nzNotificationService: NzNotificationService
   ) {
     this.form = this._fb.group({
+      pronValidation: [true],
       en: ['', [Validators.required]],
       enPron: this._fb.group({
         score: [''],
@@ -172,7 +173,6 @@ export class FormComponent implements OnInit {
       examples: this._fb.array([]),
       gifReference: [''],
       gifs: this._fb.array([]),
-      // ...(isWord ? {} : { meanings: this._fb.array([this.newMeaning()]) }),
     });
     if (!this.elementToPractice) {
       this.id = this._route.snapshot.paramMap.get('id');
@@ -180,10 +180,8 @@ export class FormComponent implements OnInit {
     } else this.formInit(this.elementToPractice);
 
     this._testSvc.etp$.subscribe((etpItem) => {
-      // console.log({ etpItem });
       if (!etpItem) return;
       this.form.get('uses')?.reset();
-      // this.etpItem = etpItem;
       const { content } = etpItem;
       if (!content) return;
       this.formInit(content.etp, content);
@@ -197,8 +195,6 @@ export class FormComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTypes();
-
-    // this.etpInit();
   }
 
   public getGifUrl(gif: giphyItem): string {
@@ -293,6 +289,7 @@ export class FormComponent implements OnInit {
         formBody.get('meanings')?.enable();
       }
     }
+    formBody.get('pronValidation')?.enable();
     return formBody;
   }
 
@@ -301,6 +298,7 @@ export class FormComponent implements OnInit {
       this.form?.get('type')?.value === typesOfElementsToPractice.word;
     // const bodyForm: FormGroup = this._fb.group({
     let bodyForm: FormGroup = this._fb.group({
+      pronValidation: [true],
       en: ['', [Validators.required]],
       enPron: this._fb.group({
         score: [''],
@@ -323,6 +321,7 @@ export class FormComponent implements OnInit {
       ...(isWord ? {} : { meanings: this._fb.array([this.newMeaning()]) }),
     });
 
+    bodyForm.controls['pronValidation'].enable();
     if (body) {
       if (body.meanings) {
         bodyForm.setControl(
@@ -581,17 +580,13 @@ export class FormComponent implements OnInit {
     const meanings: Array<string> | null =
       this.form.get('meanings')?.value ?? null;
 
-    // this.word ? this.setUses() : this.removeUses();
     const isWord =
       this.form.get('type')?.value === typesOfElementsToPractice.word;
     isWord ? this.setUses() : this.removeUses();
 
-    // const enPron = this.form.controls['enPron'];
-    // this.form.removeControl('enPron');
     if (!this.form.valid) {
       this.setUses();
       this.showErrors = true;
-      // this.form.addControl('enPron', enPron);
       return this.invalidFormResponse();
     }
     if (this.etpItem && !this.form.controls['en'].enabled && this.form.controls['enPron'].get('label')?.value.en.length === 0) {
@@ -613,8 +608,10 @@ export class FormComponent implements OnInit {
       };
 
     if (meanings) formBody.meanings = meanings;
+    // delete formBody.pronValidation;
+    // delete formBody.enPron;
+    // delete formBody.gifReference;
 
-    // console.log({ etpItemToCheck: this.etpItem });
     if (this.etpItem) {
       const etpItem = { ...this.etpItem };
       return this.etpEmitter.emit({
@@ -646,9 +643,6 @@ export class FormComponent implements OnInit {
 
   public evaluatePronunciation(key: string, transcript: string): void {
 
-    // const expectedText = this.form.controls[key].value;
-    // console.log({ expectedText, transcript });
-
     const normalize = (str: string) => str
       .toLowerCase()
       .trim()
@@ -669,7 +663,6 @@ export class FormComponent implements OnInit {
 
   }
 
-  // public startRecognition(expectedText: string) {
   public startRecognition(key: string) {
     const win = this._windowSvc.nativeWindow;
 
@@ -686,7 +679,6 @@ export class FormComponent implements OnInit {
     const recognition = new SpeechRecognition();
 
     recognition.lang = 'en-US';
-    // recognition.interimResults = false;
     recognition.continuous = false;
     recognition.interimResults = false;
 
@@ -694,7 +686,6 @@ export class FormComponent implements OnInit {
       this._ngZone.run(() => {
         const transcript: string = event.results[0][0].transcript;
 
-        // const result = this.evaluatePronunciation(key, `${expectedText}.`, transcript);
         const result = this.evaluatePronunciation(key, transcript);
 
         console.log({ result, transcript });

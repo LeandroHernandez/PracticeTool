@@ -5,6 +5,23 @@
     <h4>{{ !etpItem ? !id ? language === 'en' ? "Register" : 'Registrar' : language === 'en' ? "Edit" : 'Editar' : '' }}
       {{
       formLabel }}</h4>
+    @if (etpItem && !form.controls['en'].enabled) {
+    <nz-switch formControlName="pronValidation" [nzCheckedChildren]="checkedValidate"
+      [nzUnCheckedChildren]="unCheckedValidate" class="nzSwitch-pronValidation"
+      [title]="language === 'en' ? 'Pronunciation validate' : 'Validación de pronunciación' "></nz-switch>
+    <ng-template #checkedValidate>
+      <div class="div-checked">
+        <span> {{ language === 'en' ? "Don't validate" : 'No validar' }} </span>
+        <div class="div-icon"></div>
+      </div>
+    </ng-template>
+    <ng-template #unCheckedValidate>
+      <div class="div-unChecked">
+        <span> {{ language === 'en' ? "Validate" : 'Validar' }} </span>
+        <div class="div-icon"></div>
+      </div>
+    </ng-template>
+    }
   </header>
   <fieldset class="fieldset">
 
@@ -56,10 +73,10 @@
     @if (!form.controls['en'].enabled) {
     <div class="div-listenMicrophone">
       <button class="button-listen" type="button" [title]="
-                  language === 'en' ?
-                  'Listen' :
-                  'Escuchar'
-                " (click)="speak('en')">
+          language === 'en' ?
+          'Listen' :
+          'Escuchar'
+        " (click)="speak('en')" [disabled]="!form.controls['pronValidation'].value">
         <div class="div-icon"></div>
       </button>
       <div class="div-microphone">
