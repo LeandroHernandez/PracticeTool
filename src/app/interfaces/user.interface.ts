@@ -5,6 +5,8 @@ export interface IUser {
   id: string;
   email: string;
   names: string;
+  age: number;
+  gender: string;
   lastnames: string;
   password: string;
   role?: IRole;

@@ -11,10 +11,12 @@ import { IUser } from '../../../../interfaces';
 
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 
 @Component({
   selector: 'app-profile',
-  imports: [ReactiveFormsModule, NzPopoverModule],
+  imports: [ReactiveFormsModule, NzPopoverModule, NzIconModule, NzCalendarModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -26,6 +28,8 @@ export class ProfileComponent implements OnInit {
 
   public showErrors: boolean = false;
   public showPassword: boolean = false;
+
+  public visible: boolean = false;
 
   get en(): boolean {
     const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
@@ -42,6 +46,8 @@ export class ProfileComponent implements OnInit {
     this.form = this._fb.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
       names: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
+      age: ['', [Validators.required, Validators.min(1), Validators.max(120)]],
+      gender: ['', [Validators.required, Validators.maxLength(20)]],
       lastnames: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
       password: ['', [Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20)]],
       role: [''],
@@ -87,8 +93,8 @@ export class ProfileComponent implements OnInit {
     return Object.keys(this.form.get(control)?.errors ?? {});
   }
 
-  // public submit(): void {
-  //   console.log({ form: this.form });
-  // }
+  public submit(): void {
+    console.log({ form: this.form });
+  }
 
 }
