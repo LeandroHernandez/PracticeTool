@@ -85,6 +85,10 @@ export class ElementsToPracticeContentComponent implements OnInit {
       header: 'Meanings',
       key: 'meanings',
     },
+    {
+      header: 'Gifs',
+      key: 'gifs',
+    },
   ];
 
   public page: IPageTableInfo | any = {
@@ -100,28 +104,14 @@ export class ElementsToPracticeContentComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    // private _rootSvc: RootService,
     private _typeSvc: TypeService,
     private _elementToPracticeSvc: ElementToPracticeService,
-    private _practiceListsSvc: PracticeListsService,
     private _notificationSvc: NzNotificationService
   ) { }
 
   ngOnInit(): void {
     this.getElementsToPractice(JSON.parse(localStorage.getItem(localStorageLabels.etp.filerBody) ?? 'false'));
   }
-
-  // public getUserInfo(): void {
-  //   this._rootSvc.user$.subscribe(
-  //     userInfo => {
-  //       console.log({ userInfo });
-  //       if (!userInfo) return;
-  //       const { role } = userInfo;
-  //       if (!role) return;
-  //       if (role !== RoleIds.admin) this.admin = false;
-  //     }
-  //   )
-  // }
 
   public getElementsToPractice(query?: any, options?: any): void {
     if (!query) localStorage.removeItem(localStorageLabels.etp.filerBody);

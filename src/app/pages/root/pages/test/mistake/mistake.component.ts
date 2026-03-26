@@ -11,6 +11,7 @@ import { localStorageLabels } from '../../../../../enums';
 })
 export class MistakeComponent {
   @Input() mistakeList: Array<IMistake> = [];
+  @Input() gifs: Array<string> = [];
   @Input() correctNumber: number = 0;
 
   @Output() confirmEmitter: EventEmitter<boolean> = new EventEmitter();

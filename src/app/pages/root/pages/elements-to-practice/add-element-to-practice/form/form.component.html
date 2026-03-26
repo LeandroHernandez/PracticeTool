@@ -11,13 +11,13 @@
       [title]="language === 'en' ? 'Pronunciation validate' : 'Validación de pronunciación' "></nz-switch>
     <ng-template #checkedValidate>
       <div class="div-checked">
-        <span> {{ language === 'en' ? "Don't validate" : 'No validar' }} </span>
+        <span> {{ language === 'en' ? "Validate" : 'Validar' }} </span>
         <div class="div-icon"></div>
       </div>
     </ng-template>
     <ng-template #unCheckedValidate>
       <div class="div-unChecked">
-        <span> {{ language === 'en' ? "Validate" : 'Validar' }} </span>
+        <span> {{ language === 'en' ? "Don't validate" : 'No validar' }} </span>
         <div class="div-icon"></div>
       </div>
     </ng-template>
@@ -79,15 +79,16 @@
         " (click)="speak('en')" [disabled]="!form.controls['pronValidation'].value">
         <div class="div-icon"></div>
       </button>
-      <div class="div-microphone">
+      <div [class]=" form.controls['pronValidation'].value ? 'div-microphone' : 'div-microphone disabled'">
         <button class="button-microphone" type="button" [title]="
-                    language === 'en' ?
+                    !form.controls['pronValidation'].value ? '' : language === 'en' ?
                     'Chenck' :
                     'Probar'
-                  " (click)="startRecognition('en')">
+                  " (click)=" form.controls['pronValidation'].value ? startRecognition('en') : null "
+          [disabled]="!form.controls['pronValidation'].value">
           <div [class]=" enPronListening ? 'div-icon-listening' : 'div-icon'"></div>
         </button>
-        @if (!enPronListening) {
+        @if (form.controls['pronValidation'].value && !enPronListening) {
         @if (form.controls['enPron'].value.label.en.length > 0) {
         <span class="span-pronunciation-{{form.controls['enPron'].value.label.en}}">
           {{
@@ -264,7 +265,7 @@
     </fieldset>
     }
 
-    @if (!etpItem) {
+    @if (!test) {
     <fieldset class="subfieldset" formGroupName="description">
       <legend class="legend"> {{ language === 'en' ? 'Description' : 'Descripción' }} </legend>
       <div class="input-box">
@@ -393,17 +394,16 @@
       {{ etpItem ? "Validar" : !id ? "Registrar" : "Editar" }}
     </button>
 
-    @if (form.controls['en'] && !form.controls['en'].enabled && etpItem) {
+    @if (etpItem) {
     @if (etpItem.content.etp.description || etpItem.content.etp.examples || etpItem.content.etp.gifs) {
-    <nz-switch [nzCheckedChildren]="language === 'en' ? 'Hide' : 'Ocultar'"
-      [nzUnCheckedChildren]="language === 'en' ? 'Show' : 'Mostrar'" (click)="show = !show" class="nzSwitch-showGifs"
+    <nz-switch [nzCheckedChildren]="language === 'en' ? 'Show' : 'Mostrar'"
+      [nzUnCheckedChildren]="language === 'en' ? 'Hide' : 'Ocultar'" (click)="show = !show" class="nzSwitch-showGifs"
       [title]="language === 'en' ? 'Info' : 'Información' "></nz-switch>
     }
     }
   </div>
 
-  @if (form.controls['en'] && !form.controls['en'].enabled) {
-  @if(show && gif && etpItem) {
+  @if(show && etpItem) {
   <section class="section-info">
     @if (etpItem.content.etp.description || etpItem.content.etp.examples) {
     <div class="div-texts">
@@ -415,7 +415,7 @@
         </p>
       </div>
       }
-      @if (etpItem.content.etp.examples && etpItem.content.etp.examples.length > 0) {
+      @if (form.controls['en'].enabled && etpItem.content.etp.examples && etpItem.content.etp.examples.length > 0) {
       <div class="div-examples">
         <h4 class="h4"> {{ language === 'en' ? 'Examples' : 'Ejemplos' }}: {{ etpItem.content.etp.examples.length }}
         </h4>
@@ -429,6 +429,7 @@
     </div>
     }
     @if ( etpItem.content.etp.gifs ) {
+    <h4 class="h4-gifs"> Gifs </h4>
     <div class="div-gifs">
       @for (gif of etpItem.content.etp.gifs; track $index) {
       <img [src]="gif" alt="gif" title="gif" class="img-gif">
@@ -436,6 +437,5 @@
     </div>
     }
   </section>
-  }
   }
 </form>

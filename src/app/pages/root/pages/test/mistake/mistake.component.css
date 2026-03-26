@@ -187,6 +187,21 @@
   }
 }
 
+.div-gifs {
+  margin-top: 1rem;
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  justify-content: start;
+
+  img {
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    border-radius: .5rem;
+  }
+}
+
 .footer {
   margin-top: .5rem;
   display: flex;

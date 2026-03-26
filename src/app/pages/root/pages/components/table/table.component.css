@@ -110,9 +110,51 @@
   }
 }
 
-/* .regular {
-  min-width: max-content;
-} */
+[class*="button-gif"] {
+  outline: none;
+  border: none;
+  cursor: not-allowed;
+  background-color: var(--accent3);
+  color: var(--primary);
+  border-radius: .25rem;
+  padding: .2rem .4rem;
+  font-size: 1rem;
+
+  &:hover {
+    transform: none;
+  }
+
+  &:not(.disabled) {
+    background-color: transparent;
+    color: var(--secondary);
+    /* border: .125rem solid; */
+    cursor: pointer;
+    /* transition: .2s ease;
+    transition-property: background-color, color, border-color; */
+
+    &:hover {
+      transform: scale(1.1);
+      background-color: var(--secondary);
+      color: var(--primary);
+    }
+  }
+}
+
+.div-gifs {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: .5rem;
+  max-width: min(32rem, 80dvw);
+  overflow-x: auto;
+
+  .gif {
+    height: 10rem;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: .5rem;
+  }
+}
 
 .special {
   max-width: 100%;

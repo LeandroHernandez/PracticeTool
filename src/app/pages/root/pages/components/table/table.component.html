@@ -51,33 +51,6 @@
           @for(item of tableInfo; track $index) {
           <th class="th">
             {{ item.header }}
-            <!-- @if ( item.filter ) {
-            <button class="button-filter" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="menu"> <i
-                class="bi bi-search"></i> </button>
-            <ng-template #menu>
-              <form [formGroup]="form" class="form">
-                <fieldset class="fieldset">
-                  <div class="input-box">
-                    <label class="label-input">
-
-                      <div class="span-label-div">
-                        @for (letter of letters( localLanguage === 'en' ? 'Select' : 'Seleccionar' ); track $index) {
-                        <span class="span-letter" [style.--i]="$index"> {{letter}} </span>
-                        }
-                      </div>
-                      <nz-select nzMode="multiple" nzAllowClear [formControlName]="item.key.split('.')[0]" class="">
-                        @for (item of usesList; track item) {
-                        <nz-option [nzLabel]=" item.name" [nzValue]="item.id"></nz-option>
-                        }
-                      </nz-select>
-
-                    </label>
-                  </div>
-                </fieldset>
-              </form>
-              @if (item.filter === 'multiselect') {}
-            </ng-template>
-            } -->
           </th>
           }
           @if ( !startsWithCondition ) {
@@ -93,7 +66,28 @@
           <td class="td">{{ getItemIndex(item.id) }}</td>
           @for(keyItem of tableInfo; track $index) {
           <td class="td {{ getClass(item, keyItem) }}">
-            @if (keyItem.key === 'meanings') {
+            @if ( keyItem.key === 'gifs' ) {
+            @if (item.gifs && item.gifs.length > 0) {
+            <button class="button-gifs" type="button" [title]=" localLanguage === 'en' ? 'View Gifs' : 'Ver Gifs' "
+              nz-popover [nzPopoverContent]="gifsTemplate" nzPopoverPlacement="topLeft">
+              {{ item.gifs.length }}
+              <nz-icon nzType="eye" nzTheme="outline" />
+            </button>
+            <ng-template #gifsTemplate>
+              <div class="div-gifs">
+                @for (gif of item.gifs; track $index) {
+                <img class="gif" [src]="gif" alt="Gif Image" />
+                }
+              </div>
+            </ng-template>
+
+            }@else {
+            <button class="button-gifs disabled" type="button" title="No Gifs Available" disabled>
+              0 <nz-icon nzType="eye-invisible" nzTheme="outline" />
+            </button>
+            }
+            }
+            @else if (keyItem.key === 'meanings') {
             @if ( item.uses ) {
             @for (use of item.uses; track $index; let i = $index) {
             <span>

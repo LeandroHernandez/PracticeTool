@@ -35,19 +35,21 @@
     .div-icon {
       height: 1.2rem;
       aspect-ratio: 1/1;
-      background-image: url(/icons/microphone-icon-secondary.svg);
+      background-image: url(/icons/microphone-icon-white.svg);
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
+
+      transition: .2s background-image ease;
     }
   }
 
-  .div-checked .div-icon {
+  .div-unChecked .div-icon {
     background-image: url(/icons/microphone-icon-silence.svg);
   }
 
-  nz-switch:hover .div-unChecked .div-icon {
-    background-image: url(/icons/microphone-icon-accent.svg);
+  &:has(.ant-switch:hover) .div-unChecked .div-icon {
+    background-image: url(/icons/microphone-icon-silence-accent.svg);
   }
 }
 
@@ -96,9 +98,11 @@ h6 {
       width: 100%;
 
       .textarea {
-        height: 2lh;
-        max-width: 72vw;
+        max-width: 75.1dvw;
         resize: both;
+        field-sizing: content;
+        min-height: 2lh;
+        min-width: 12rem;
         color: var(--secondary);
       }
     }
@@ -223,6 +227,29 @@ h6 {
 
       &:hover {
         background-image: url(/icons/microphone-recording-icon.svg);
+      }
+    }
+  }
+
+  .div-microphone.disabled {
+    cursor: not-allowed;
+
+    /* [class^="span-pronunciation"] {
+      background-color: var(--secondary-bg2);
+      color: var(--secondary);
+    } */
+
+    .button-microphone {
+      cursor: not-allowed;
+      background-color: var(--accent3);
+      border-color: var(--accent3);
+
+      [class^="div-icon"] {
+        background-image: url(/icons/microphone-icon-silence-white.svg);
+      }
+
+      &:hover {
+        transform: none;
       }
     }
   }
@@ -373,7 +400,7 @@ h6 {
 
     .div-description,
     .div-examples {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .h4 {
@@ -399,6 +426,14 @@ h6 {
     }
   }
 
+  .h4-gifs {
+    padding: 0 .5rem;
+    padding-top: 0;
+    color: var(--accent);
+    font-size: 1rem;
+    border-bottom: .12rem solid;
+  }
+
   .div-gifs {
     display: flex;
     flex-wrap: wrap;
@@ -406,8 +441,9 @@ h6 {
 
     .img-gif {
       height: 10rem;
-      max-width: 100%;
+      aspect-ratio: 1/1;
       object-fit: cover;
+      border-radius: .5rem;
     }
   }
 

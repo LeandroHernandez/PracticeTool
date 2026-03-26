@@ -32,7 +32,7 @@ import {
   IType,
 } from '../../../../../../interfaces';
 import { ElementToPracticeService } from '../../element-to-practice.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TestService } from '../../../test/test.service';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { giphyItem } from '../../../../../../interfaces/giphy.interfaces';
@@ -40,16 +40,6 @@ import { GifService } from '../../../../gif.service';
 import { WindowService } from '../../../../window.service';
 import stringSimilarity from 'string-similarity';
 import { DecimalPipe } from '@angular/common';
-
-interface IEnEs {
-  en: string;
-  es: string;
-}
-
-interface IPronunciation {
-  score: number;
-  label: IEnEs | null
-}
 
 @Component({
   selector: 'app-form',
@@ -88,8 +78,8 @@ export class FormComponent implements OnInit {
 
   public showErrors: boolean = false;
 
-  public show: boolean = false;
-  public gif: giphyItem | null = null;
+  public show: boolean = true;
+  // public gif: giphyItem | null = null;
   public gifsToShow: giphyItem[] = [];
 
   public enPronListening: boolean = false;
@@ -137,14 +127,14 @@ export class FormComponent implements OnInit {
     return this.form.get('verbInfo') as FormGroup;
   }
 
-  // get enPron(): IPronunciation | null {
-  //   // return this.pronunciations.find(item => item.key === 'en') ?? null;
-  //   return JSON.parse(localStorage.getItem('enPron') ?? 'null');
-  // }
+  get test(): boolean {
+    return this._router.url.split('/').includes('test');
+  }
 
   constructor(
     private _fb: FormBuilder,
     private _route: ActivatedRoute,
+    private _router: Router,
     private _ngZone: NgZone,
     private _gifSvc: GifService,
     private _windowSvc: WindowService,
@@ -589,7 +579,7 @@ export class FormComponent implements OnInit {
       this.showErrors = true;
       return this.invalidFormResponse();
     }
-    if (this.etpItem && !this.form.controls['en'].enabled && this.form.controls['enPron'].get('label')?.value.en.length === 0) {
+    if (this.etpItem && this.form.controls['pronValidation'].value && !this.form.controls['en'].enabled && this.form.controls['enPron'].get('label')?.value.en.length === 0) {
       this.showErrors = true;
       return this.invalidFormResponse();
     }
@@ -611,6 +601,7 @@ export class FormComponent implements OnInit {
     // delete formBody.pronValidation;
     // delete formBody.enPron;
     // delete formBody.gifReference;
+    delete formBody.pronValidation;
 
     if (this.etpItem) {
       const etpItem = { ...this.etpItem };
@@ -634,8 +625,8 @@ export class FormComponent implements OnInit {
     return this._gifSvc.loadTrendingGifs(this.form.value.gifReference).subscribe(
       giphyResponse => {
         this.gifsToShow = giphyResponse.data;
-        this.gif = giphyResponse.data[0];
-        console.log({ gif: this.gif });
+        // this.gif = giphyResponse.data[0];
+        // console.log({ gif: this.gif });
       },
       error => console.log({ error })
     )

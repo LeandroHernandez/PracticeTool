@@ -25,7 +25,6 @@ import {
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { RootService } from '../../root.service';
 import { DateTime } from 'luxon';
-// import { GifService } from '../../gif.service';
 
 @Component({
   selector: 'app-test',
@@ -43,7 +42,6 @@ export class TestComponent implements OnInit, OnDestroy {
   constructor(
     private _router: Router,
     private _rootSvc: RootService,
-    // private _gifSvc: GifService,
     private _elementToPracticeSvc: ElementToPracticeService,
     private _testSvc: TestService,
     private _nzNotificationSvc: NzNotificationService,
@@ -141,7 +139,6 @@ export class TestComponent implements OnInit, OnDestroy {
   public win(): void {
     return this._rootSvc.user$.subscribe((userInfo: IUser) => {
       if (!userInfo) return;
-      // const date = Date.now();
       const date = DateTime.now().toISO();
       const body = {
         author: userInfo.id,
@@ -151,9 +148,7 @@ export class TestComponent implements OnInit, OnDestroy {
         lastUpdate: date,
         state: true
       }
-      // console.log({ body });
       this._testSvc.addTest(body).then(() => {
-        // console.log('You win');
         this._nzNotificationSvc.success(
           'You win',
           'Congratulations, you have completed succesfully the test.'
@@ -163,7 +158,7 @@ export class TestComponent implements OnInit, OnDestroy {
     }, error => console.error({ error })).unsubscribe();
   }
 
-  public mistake(mistakeList: Array<IMistake>, index: number): void {
+  public mistake(mistakeList: Array<IMistake>, index: number, gifs: string[]): void {
     this._testSvc.reset();
     this.buildPracticeList();
     const modal: NzModalRef = this._nzModalSvc.create({
@@ -174,9 +169,8 @@ export class TestComponent implements OnInit, OnDestroy {
       nzWidth: '90vw'
     });
 
-    // console.log({ mistakeList });
-
     const instance = modal.getContentComponent();
+    instance.gifs = gifs;
     instance.mistakeList = mistakeList;
     instance.correctNumber = this.correctNumber;
 
@@ -210,7 +204,6 @@ export class TestComponent implements OnInit, OnDestroy {
 
   public check(etpToCheck: IEtpToCheck): Array<IMistake> {
     const { etpItem, formValue } = etpToCheck;
-    // console.log({ etpToCheck });
     const mistakeList: Array<IMistake> = [];
     const { meanings, uses, en } = etpItem.content.etp;
     if (en.toLowerCase() !== formValue.en.toLowerCase())
@@ -264,8 +257,6 @@ export class TestComponent implements OnInit, OnDestroy {
             if (vIndex >= 0) {
               usesList[i] = { name, meanings };
               enteredUsesList[vIndex] = { name: enteredUsesList[vIndex].name, meanings: enteredUsesList[vIndex].meanings, }
-              // delete usesList[i].verbInfo;
-              // delete enteredUsesList[vIndex].verbInfo;
             }
           }
 
@@ -276,13 +267,9 @@ export class TestComponent implements OnInit, OnDestroy {
           )
 
           if (!usesList[i].verbInfo && mIndex >= 0) {
-            // usesList.splice(i, 1);
-            // enteredUsesList.splice(mIndex, 1);
             usesNames.push(name);
           }
         })
-
-        // console.log({ usesList, enteredUsesList });
 
         usesNames.forEach(useName => {
           usesList.splice(usesList.findIndex(item => item.name === useName), 1);
@@ -297,11 +284,8 @@ export class TestComponent implements OnInit, OnDestroy {
           })
 
         }
-
-        // console.log({ usesNames });
       }
     }
-    // console.log({ mistakeList });
     return mistakeList;
   }
 
@@ -312,9 +296,7 @@ export class TestComponent implements OnInit, OnDestroy {
 
     const mistakeList = this.check(etpToCheck);
     if (mistakeList.length === 0) this.correctNumber++;
-    if (mistakeList.length > 0) return this.mistake(mistakeList, index);
-
-    // console.log('Without mistakes');
+    if (mistakeList.length > 0) return this.mistake(mistakeList, index, etpItem.content.etp.gifs ?? []);
 
     let { word, aplications } = content;
 
@@ -329,16 +311,6 @@ export class TestComponent implements OnInit, OnDestroy {
 
     return this.win();
   }
-
-  // public loadGifs(): Subscription {
-  //   return this._gifSvc.loadTrendingGifs('laugh').subscribe(
-  //     giphyResponse => {
-  //       console.log({ giphyResponse });
-  //       this.gifs = giphyResponse.data
-  //     },
-  //     error => console.log({ error }),
-  //   )
-  // }
 
   ngOnDestroy(): void {
     this._testSvc.reset();
