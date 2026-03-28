@@ -9,14 +9,20 @@ import { AuthService, validateComplexPassword } from '../../../auth';
 import { localStorageLabels, RoutesApp } from '../../../../enums';
 import { IUser } from '../../../../interfaces';
 
-import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzNotificationRef, NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzCalendarModule } from 'ng-zorro-antd/calendar';
+// import { NzCalendarModule } from 'ng-zorro-antd/calendar';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+
+import { DateTime } from 'luxon';
+import { Timestamp } from 'firebase/firestore';
+
 
 @Component({
   selector: 'app-profile',
-  imports: [ReactiveFormsModule, NzPopoverModule, NzIconModule, NzCalendarModule],
+  // imports: [ReactiveFormsModule, NzPopoverModule, NzIconModule, NzCalendarModule],
+  imports: [ReactiveFormsModule, NzPopoverModule, NzIconModule, NzDatePickerModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -30,6 +36,7 @@ export class ProfileComponent implements OnInit {
   public showPassword: boolean = false;
 
   public visible: boolean = false;
+  public age: number = 0;
 
   get en(): boolean {
     const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en';
@@ -51,9 +58,21 @@ export class ProfileComponent implements OnInit {
       lastnames: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(30)]],
       password: ['', [Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20)]],
       role: [''],
+      monthlyObjective: this._fb.group({
+        etps: [1, [Validators.required, Validators.min(1)]],
+        lists: [1, [Validators.required, Validators.min(1)]]
+      }),
       // createdAt: [],
       // lastUpdate: [new Date],
       state: []
+    });
+
+    this.form.get('email')?.disable();
+    this.form.get('role')?.disable();
+
+    this.form.get('age')?.valueChanges.subscribe(value => {
+      console.log({ value });
+      this.ageCalculator(value);
     });
   }
 
@@ -76,11 +95,17 @@ export class ProfileComponent implements OnInit {
       // console.log({ userInfo });
       const { email } = userInfo
       return this._usersSvc.getFilteredUsers({ email }).subscribe(users => {
-        // console.log({ users });
         if (users.length < 1) return notFindUser()
         this.user = users[0];
-        const { names, lastnames, email, password, role, state } = this.user;
-        return this.form.patchValue({ names, lastnames, email, password, role, state });
+        console.log({ user: this.user });
+        // const { names, lastnames, email, password, gender, age, role, state } = this.user;
+        // return this.form.patchValue({ names, lastnames, email, password, gender, age: age?.toDate(), role: role?.id, state });
+        const user: any = { ...this.user };
+        if (user.id) delete user.id;
+        if (user.createdAt) delete user.createdAt;
+        if (user.lastUpdate) delete user.lastUpdate;
+        const { age, role } = user
+        return this.form.patchValue({ ...user, age: age?.toDate(), role: role?.id });
       }, err => notFindUser(err));
     }, err => notFindUser(err))
   }
@@ -93,8 +118,44 @@ export class ProfileComponent implements OnInit {
     return Object.keys(this.form.get(control)?.errors ?? {});
   }
 
-  public submit(): void {
+  public disabledDate = (current: Date): boolean => {
+    const today = DateTime.now();
+    const minDate = today.minus({ years: 120 });
+
+    const currentDate = DateTime.fromJSDate(current);
+
+    return currentDate > today || currentDate < minDate;
+  };
+
+  public onValueChange(event: any): void {
+    console.log({ event });
+    this.ageCalculator(event);
+    // this.visible = false;
+  }
+
+  public ageCalculator(fechaNacimiento: Date): number {
+    const birthDate = DateTime.fromJSDate(fechaNacimiento);
+
+    const now = DateTime.now();
+
+    const edad = now.diff(birthDate, 'years').years;
+
+    return this.age = Math.floor(edad);
+  }
+
+  public submit(): NzNotificationRef | Promise<NzNotificationRef> {
     console.log({ form: this.form });
+    if (!this.user) return this._nzNotificationSvc.error('User info not found', 'There was not found any user info');
+    if (this.form.invalid) {
+      this.showErrors = true;
+      return this._nzNotificationSvc.warning('Invalid form', 'Please fill all the fields correctly');
+    }
+    return this._usersSvc.updateUser(this.user.id, { ...this.form.value }).then(() => {
+      return this._nzNotificationSvc.success('Profile updated', 'Your profile has been updated successfully');
+    }).catch(err => {
+      console.log({ err });
+      return this._nzNotificationSvc.error('Error updating profile', 'There was an error updating your profile, please try again');
+    });
   }
 
 }

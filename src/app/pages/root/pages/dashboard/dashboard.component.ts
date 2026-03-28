@@ -33,6 +33,11 @@ interface IChartData {
   val: string[]
 }
 
+interface IWeekWord {
+  word: string;
+  number: number;
+}
+
 @Component({
   selector: 'app-dashboard',
   imports: [DecimalPipe],
@@ -43,10 +48,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // @ViewChild('lineChart') lineChart!: ElementRef<HTMLCanvasElement>;
   public chart!: Chart;
 
-  public etpsTarget: number = 600;
-  public practiceListsTarget: number = 30;
-  // public etpList: string[] = [];
-  // public practiceListsList: number = 0;
+  public etpsTarget: number = 0;
+  public practiceListsTarget: number = 0;
   public reports: IReport = {
     etps: {
       total: [],
@@ -87,6 +90,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
       val: []
     },
   ];
+
+  public weekWords: IWeekWord[] = [
+    {
+      word: this.en ? 'Monday' : 'Lunes',
+      number: 0
+    },
+    {
+      word: this.en ? 'Tuesday' : 'Martes',
+      number: 0
+    },
+    {
+      word: this.en ? 'Wednesday' : 'Miércoles',
+      number: 0
+    },
+    {
+      word: this.en ? 'Thursday' : 'Jueves',
+      number: 0
+    },
+    {
+      word: this.en ? 'Friday' : 'Viernes',
+      number: 0
+    },
+    {
+      word: this.en ? 'Saturday' : 'Sábado',
+      number: 0
+    },
+    {
+      word: this.en ? 'Sunday' : 'Domingo',
+      number: 0
+    }
+  ];
+
 
   get monthlyTarget(): number {
     return this.etpsTarget + this.practiceListsTarget;
@@ -191,6 +226,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // console.log({ chartData: this.chartData })
     }
     return this._rootSvc.user$.subscribe((userInfo: IUser) => {
+
+      this.etpsTarget = userInfo.monthlyObjective?.etps ?? 0;
+      this.practiceListsTarget = userInfo.monthlyObjective?.lists ?? 0;
+
       this._testSvc.getFilteredTests({ author: userInfo.id }).subscribe(
         tests => {
           // console.log({ tests });

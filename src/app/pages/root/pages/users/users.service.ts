@@ -17,11 +17,9 @@ import {
   DocumentData,
   CollectionReference,
   docData,
-  getDoc,
-  fromRef,
 } from '@angular/fire/firestore';
 import { DbCollections } from '../../../../enums';
-import { IModule, IUser, IUserB } from '../../../../interfaces';
+import { IUser, IUserB } from '../../../../interfaces';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { RolesService } from '../roles';
 
@@ -109,13 +107,6 @@ export class UsersService {
       );
     });
   }
-
-  // getUser(id: string): Observable<IUser> {
-  //   return runInInjectionContext(this.injector, () => {
-  //     const userDoc = doc(this.firestore, `${DbCollections.users}/${id}`);
-  //     return docData(userDoc, { idField: 'id' }) as Observable<IUser>;
-  //   });
-  // }
 
   getUser(id: string, noPopulate?: boolean): Observable<IUser> {
 

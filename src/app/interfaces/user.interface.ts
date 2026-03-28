@@ -1,11 +1,17 @@
+import { Timestamp } from 'firebase/firestore/lite';
 import { ControlTypes } from '../enums';
 import { IRole } from './role.interface';
+
+interface IMonthlyObjective {
+  etps: number;
+  lists: number;
+}
 
 export interface IUser {
   id: string;
   email: string;
   names: string;
-  age: number;
+  age: Timestamp;
   gender: string;
   lastnames: string;
   password: string;
@@ -13,6 +19,7 @@ export interface IUser {
   createdAt: Date;
   lastUpdate: Date;
   state: boolean;
+  monthlyObjective?: IMonthlyObjective;
 }
 
 type TUser = Omit<IUser, 'id' | 'role'>;

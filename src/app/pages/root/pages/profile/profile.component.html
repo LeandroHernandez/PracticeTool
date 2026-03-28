@@ -17,65 +17,130 @@
     </header>
 
     <div class="div content">
-
         <fieldset class="fieldset">
-            <label class="label">
-                <span class="span">{{ en ? 'Names' : 'Nombres' }}</span>
-                <input class="input" formControlName="names" type="text"
-                    placeholder="{{ en ? 'Enter your names' : 'Ingrese sus nombres' }}">
-            </label>
-            <label class="label">
-                <span class="span">{{ en ? 'Last Names' : 'Apellidos' }}</span>
-                <input class="input" formControlName="lastnames" type="text"
-                    placeholder="{{ en ? 'Enter your last names' : 'Ingrese sus apellidos' }}">
-            </label>
-            <label class="label">
-                <span class="span">{{ en ? 'Gender' : 'Género' }}</span>
-                <select class="input" formControlName="gender">
-                    <option value="">{{ en ? 'Select your gender' : 'Seleccione su género' }}</option>
-                    <option value="male">{{ en ? 'Male' : 'Masculino' }}</option>
-                    <option value="female">{{ en ? 'Female' : 'Femenino' }}</option>
-                    <option value="other">{{ en ? 'Other' : 'Otro' }}</option>
-                </select>
-            </label>
+            <legend class="legend">{{ en ? 'Personal Information' : 'Información Personal' }}</legend>
+
+            <fieldset class="fieldset sub">
+                <label class="label">
+                    <span class="span">{{ en ? 'Names' : 'Nombres' }}</span>
+                    <input class="input" formControlName="names" type="text"
+                        placeholder="{{ en ? 'Enter your names' : 'Ingrese sus nombres' }}">
+                </label>
+                <label class="label">
+                    <span class="span">{{ en ? 'Last Names' : 'Apellidos' }}</span>
+                    <input class="input" formControlName="lastnames" type="text"
+                        placeholder="{{ en ? 'Enter your last names' : 'Ingrese sus apellidos' }}">
+                </label>
+                <label class="label">
+                    <span class="span">{{ en ? 'Gender' : 'Género' }}</span>
+                    <select class="input select" formControlName="gender">
+                        <option value="xRuvDZh5UZgQkiA1RusF">{{ en ? 'Male' : 'Masculino' }}</option>
+                        <option value="jXjQX6vnRVaovuZY4MT0">{{ en ? 'Female' : 'Femenino' }}</option>
+                        <option value="Tjc84MqZBTu6AoY6RgwZ">{{ en ? 'Other' : 'Otro' }}</option>
+                    </select>
+                </label>
+            </fieldset>
+
+            <fieldset class="fieldset sub">
+                <label class="label">
+                    <span class="span">{{ en ? 'Email' : 'Correo Electrónico' }}</span>
+                    <input class="input" formControlName="email" type="email"
+                        placeholder="{{ en ? 'Enter your email' : 'Ingrese su correo electrónico' }}">
+                </label>
+                <label class="label" (click)="visible = true">
+                    <span class="span">{{ en ? 'Age' : 'Edad' }}</span>
+                    <div class="div date">
+                        <!-- <input type="date" name="" id=""> -->
+                        <button class="button calendar" [title]="en ? 'select' : 'Seleccionar'" nz-popover
+                            [nzPopoverTitle]="en ? 'Select Date' : 'Seleccionar Fecha'" [(nzPopoverVisible)]="visible"
+                            nzPopoverTrigger="click" [nzPopoverContent]="contentTemplate">
+                            <nz-icon nzType="calendar" nzTheme="outline" />
+                        </button>
+                        <ng-template #contentTemplate>
+                            <!-- 
+                                (nzPanelChange)="onPanelChange($event)" -->
+                            <div class="div calendar">
+                                <!-- <nz-calendar (nzSelectChange)="onValueChange($event)" [nzFullscreen]="false"
+                                    formControlName="age" nz /> -->
+                                <nz-date-picker [nzDisabledDate]="disabledDate" formControlName="age">
+                                </nz-date-picker>
+
+                            </div>
+
+                        </ng-template>
+                        <input class="input calendar" [value]="age" type="text" min="0"
+                            placeholder="{{ en ? 'Enter your age' : 'Ingrese su edad' }}">
+                    </div>
+                </label>
+                <label class="label">
+                    <span class="span">{{ en ? 'Role' : 'Rol' }}</span>
+                    <select class="input select" formControlName="role">
+                        <option value="O45e76ZVglPzAgwkpEpJ">{{ en ? 'Admin' : 'Administrador' }}</option>
+                        <option value="0DVyrvO2rmDJZ6MoNBgv">{{ en ? 'Student' : 'Estudiante' }}</option>
+                        <option value="F7ZmnklWfv3iYO98ALTI">{{ en ? 'Teacher' : 'Docente' }}</option>
+                    </select>
+                </label>
+            </fieldset>
         </fieldset>
+        <fieldset class="fieldset" formGroupName="monthlyObjective">
+            <legend class="legend">{{ en ? 'Monthly Objectives' : 'Objetivos Mensuales' }}</legend>
 
-        <fieldset class="fieldset">
-            <label class="label">
-                <span class="span">{{ en ? 'Email' : 'Correo Electrónico' }}</span>
-                <input class="input" formControlName="email" type="email"
-                    placeholder="{{ en ? 'Enter your email' : 'Ingrese su correo electrónico' }}">
-            </label>
-            <label class="label" (click)="visible = true">
-                <span class="span">{{ en ? 'Age' : 'Edad' }}</span>
-                <div class="div date">
-                    <!-- <input type="date" name="" id=""> -->
-                    <button class="button calendar" [title]="en ? 'select' : 'Seleccionar'" nz-popover
-                        [nzPopoverTitle]="en ? 'Select Date' : 'Seleccionar Fecha'" [(nzPopoverVisible)]="visible"
-                        nzPopoverTrigger="click" [nzPopoverContent]="contentTemplate">
-                        <nz-icon nzType="calendar" nzTheme="outline" />
-                    </button>
-                    <ng-template #contentTemplate>
-                        <!-- (nzSelectChange)="onValueChange($event)"
-                            (nzPanelChange)="onPanelChange($event)" -->
-                        <div class="div calendar">
-                            <nz-calendar [nzFullscreen]="false" formControlName="age" nz />
-                        </div>
+            <fieldset class="fieldset sub">
+                <label class="label">
+                    <span class="span">{{ en ? 'Elements To Practice' : 'Elementos a Practicar' }}</span>
+                    <input class="input" formControlName="etps" type="number" min="1"
+                        placeholder="{{ en ? 'Enter the number of elements' : 'Ingrese el número de elementos' }}">
+                </label>
+                <!-- <label class="label">
+                    <span class="span">{{ en ? 'Last Names' : 'Apellidos' }}</span>
+                    <input class="input" formControlName="lastnames" type="text"
+                        placeholder="{{ en ? 'Enter your last names' : 'Ingrese sus apellidos' }}">
+                </label>
+                <label class="label">
+                    <span class="span">{{ en ? 'Gender' : 'Género' }}</span>
+                    <select class="input select" formControlName="gender">
+                        <option value="xRuvDZh5UZgQkiA1RusF">{{ en ? 'Male' : 'Masculino' }}</option>
+                        <option value="jXjQX6vnRVaovuZY4MT0">{{ en ? 'Female' : 'Femenino' }}</option>
+                        <option value="Tjc84MqZBTu6AoY6RgwZ">{{ en ? 'Other' : 'Otro' }}</option>
+                    </select>
+                </label> -->
+            </fieldset>
 
-                    </ng-template>
-                    <input class="input calendar" formControlName="age" type="number" min="0"
-                        placeholder="{{ en ? 'Enter your age' : 'Ingrese su edad' }}">
-                </div>
-            </label>
-            <label class="label">
-                <span class="span">{{ en ? 'Role' : 'Rol' }}</span>
-                <select class="input" formControlName="role">
-                    <option value="">{{ en ? 'Select your role' : 'Seleccione su rol' }}</option>
-                    <!-- <option value="admin">{{ en ? 'Admin' : 'Administrador' }}</option> -->
-                    <option value="user">{{ en ? 'Student' : 'Estudiante' }}</option>
-                    <option value="user">{{ en ? 'Teacher' : 'Docente' }}</option>
-                </select>
-            </label>
+            <fieldset class="fieldset sub">
+                <label class="label">
+                    <span class="span">{{ en ? 'Practice Lists' : 'Listas de Práctica' }}</span>
+                    <input class="input" formControlName="lists" type="number" min="1"
+                        placeholder="{{ en ? 'Enter the number of practice lists' : 'Ingrese el número de listas de prácica' }}">
+                </label>
+                <!-- <label class="label" (click)="visible = true">
+                    <span class="span">{{ en ? 'Age' : 'Edad' }}</span>
+                    <div class="div date">
+                        <button class="button calendar" [title]="en ? 'select' : 'Seleccionar'" nz-popover
+                            [nzPopoverTitle]="en ? 'Select Date' : 'Seleccionar Fecha'" [(nzPopoverVisible)]="visible"
+                            nzPopoverTrigger="click" [nzPopoverContent]="contentTemplate">
+                            <nz-icon nzType="calendar" nzTheme="outline" />
+                        </button>
+                        <ng-template #contentTemplate>
+                            <div class="div calendar">
+                                <nz-date-picker [nzDisabledDate]="disabledDate" formControlName="age">
+                                </nz-date-picker>
+
+                            </div>
+
+                        </ng-template>
+                        <input class="input calendar" [value]="age" type="text" min="0"
+                            placeholder="{{ en ? 'Enter your age' : 'Ingrese su edad' }}">
+                    </div>
+                </label>
+                <label class="label">
+                    <span class="span">{{ en ? 'Role' : 'Rol' }}</span>
+                    <select class="input select" formControlName="role">
+                        <option value="O45e76ZVglPzAgwkpEpJ">{{ en ? 'Admin' : 'Administrador' }}</option>
+                        <option value="0DVyrvO2rmDJZ6MoNBgv">{{ en ? 'Student' : 'Estudiante' }}</option>
+                        <option value="F7ZmnklWfv3iYO98ALTI">{{ en ? 'Teacher' : 'Docente' }}</option>
+                    </select>
+                </label> -->
+            </fieldset>
         </fieldset>
     </div>
 

@@ -2,9 +2,9 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    border-radius: .5rem;
+    border-radius: 1rem;
     background-color: rgba(255, 255, 255, 0.75);
-    padding: 2rem;
+    /* padding: 2rem; */
 
     .header {
         display: flex;
@@ -12,6 +12,11 @@
         justify-content: space-between;
         align-items: center;
         gap: 2rem;
+        padding: 2rem;
+        /* background: linear-gradient(0.25turn, var(--accent), var(--secondary-bg2)); */
+        position: relative;
+        background-color: transparent;
+        z-index: 1;
 
         .div.info {
             display: flex;
@@ -21,7 +26,7 @@
 
             .picture {
                 /* height: 100px; */
-                width: 7.5rem;
+                width: 8rem;
                 aspect-ratio: 1/1;
                 border-radius: 50%;
                 overflow: hidden;
@@ -53,90 +58,171 @@
                 .h6 {
                     font-size: 1.1rem;
                     color: var(--accent3);
+
+                    transition: .2s color ease;
                 }
+            }
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            offset: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            border-radius: 1rem 1rem 0 0;
+            background: linear-gradient(0.25turn, var(--accent3), var(--secondary-bg), var(--secondary-bg2));
+            z-index: -1;
+            opacity: 0;
+
+            transition: .2s opacity ease;
+        }
+
+        &:hover {
+            &::after {
+                opacity: 1;
+            }
+
+            .div.info .div.texts .h6 {
+                color: var(--primary);
+            }
+
+            .button.submit {
+                background-color: var(--primary);
+                color: var(--secondary-bg2);
             }
         }
 
         .button.submit {
             margin: 0;
+
+            /* &:hover {
+                background-color: var(--primary);
+                color: var(--secondary-bg);
+            } */
         }
     }
 }
+
+/* input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+} */
 
 .footer {
     display: none;
+    padding: 2rem;
+    padding-top: 0;
 }
 
 .div.content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
-    gap: 2rem;
-}
-
-.fieldset {
     display: flex;
     flex-direction: column;
+    gap: 3rem;
+    padding: 2rem;
+    padding-top: 0;
+}
+
+.fieldset:has(.fieldset.sub) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+    /* display: flex;
+    flex-direction: column; */
     gap: 2rem;
 
-    .label {
+    .legend {
+        font-size: 1.25rem;
+        /* font-weight: 600; */
+        border-bottom: .1251rem solid;
+        margin-bottom: 1.5rem;
+
+        transition: .2s color ease;
+    }
+
+    .fieldset.sub {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        font-size: 1rem;
+        gap: 2rem;
 
-        .input {
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            outline: none;
-            border: none;
-            font-size: .9rem;
-            background-color: var(--primary);
-
-            /* &.invalid {
-                border-color: #ff0000;
-            } */
-        }
-
-        .div.date {
-            width: 100%;
+        .label {
             display: flex;
-            flex-direction: row-reverse;
+            flex-direction: column;
             gap: 0.5rem;
+            font-size: 1rem;
 
             .input {
-                flex: 1;
-            }
-
-            .button.calendar {
-                padding: 0.3rem;
+                padding: 0.5rem;
                 border-radius: 0.25rem;
                 outline: none;
                 border: none;
-                font-size: 1rem;
-                border: .125rem solid var(--secondary-bg2);
-                color: var(--secondary-bg2);
-                background-color: transparent;
+                font-size: .9rem;
+                background-color: var(--primary);
 
-                transition-property: transform, background-color, color;
-
-                &:hover {
-                    background-color: var(--secondary-bg2);
-                    color: #ffffff
-                }
+                /* &.invalid {
+                    border-color: #ff0000;
+                } */
             }
 
-        }
+            .div.date {
+                width: 100%;
+                display: flex;
+                flex-direction: row-reverse;
+                gap: 0.5rem;
 
-        /* .error-messages {
-            color: #ff0000;
-            font-size: 0.875rem;
-        } */
+                .input {
+                    flex: 1;
+                    cursor: pointer;
+                    caret-color: transparent;
+                }
+
+                .button.calendar {
+                    padding: 0.3rem;
+                    border-radius: 0.25rem;
+                    outline: none;
+                    border: none;
+                    font-size: 1rem;
+                    border: .125rem solid var(--secondary-bg2);
+                    color: var(--secondary-bg2);
+                    background-color: transparent;
+
+                    transition-property: transform, background-color, color;
+
+                    &:hover {
+                        background-color: var(--secondary-bg2);
+                        color: #ffffff
+                    }
+                }
+
+            }
+
+            /* .error-messages {
+                color: #ff0000;
+                font-size: 0.875rem;
+            } */
+        }
     }
+
+    &:hover .legend {
+        color: var(--secondary-bg2);
+    }
+
 }
 
 .div.calendar {
     max-width: min(20rem, 90dvw);
     overflow: auto;
+}
+
+.input.select {
+    cursor: pointer;
+}
+
+.input[disabled] {
+    background-color: var(--primary);
+    color: var(--accent3);
+    cursor: not-allowed;
 }
 
 @media (max-width: 780px) {
