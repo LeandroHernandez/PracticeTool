@@ -114,46 +114,7 @@ export class TestService {
     });
   }
 
-  // getTest(id: string, noPopulate?: boolean): Observable<ITest> {
-  //   return runInInjectionContext(this.injector, () => {
-  //     const testDoc = doc(this.firestore, `${DbCollections.tests}/${id}`);
-
-  //     return docData(testDoc, { idField: 'id' }).pipe(
-  //       switchMap((test: any) => {
-  //         if (noPopulate) return of(test as ITest);
-
-  //         // Acepta ambos nombres por si hay inconsistencias
-  //         const assigned: string[] = test.assignedModules || test.asignnedModules;
-
-  //         if (!assigned || !Array.isArray(assigned) || assigned.length === 0) {
-  //           return of(test as ITest);
-  //         }
-
-  //         // Creamos un array de promesas que traen cada módulo por su document id
-  //         const modulePromises = assigned.map((moduleId: string) => {
-  //           return runInInjectionContext(this.injector, () => {
-  //             const moduleDocRef = doc(this.firestore, `${DbCollections.modules}/${moduleId}`);
-  //             return getDoc(moduleDocRef).then((snapshot: any) => {
-  //               if (!snapshot.exists()) return null;
-  //               return { id: snapshot.id, ...(snapshot.data() as any) } as IModule;
-  //             });
-  //           });
-  //         });
-
-  //         // from(Promise.all(...)) convierte la promesa en un Observable
-  //         return from(Promise.all(modulePromises)).pipe(
-  //           map(mods => (mods.filter(Boolean) as IModule[])), // filtra nulos
-  //           map((modules: IModule[]) => ({
-  //             ...test,
-  //             assignedModules: modules, // remplaza ids por documentos completos
-  //           } as ITest))
-  //         );
-  //       })
-  //     );
-  //   });
-  // }
-
-  async addTest(data: TTestBody): Promise<string> {
+  async addTest(data: Partial<TTestBody>): Promise<string> {
     return runInInjectionContext(this.injector, async () => {
       const docRef = await addDoc(this.testsRef, data);
       return docRef.id;

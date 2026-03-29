@@ -6,13 +6,22 @@ export enum ETestReference {
     practiceLists = 'practiceLists',
 }
 
+export type TEtpTestItem = Pick<IElementToPractice, 'id' | 'en'>;
+
+export interface TEtpTI extends TEtpTestItem {
+    number: number;
+};
+
 export interface ITest {
     id: string;
     author: string | IUser;
-    etps: Array<IElementToPractice>;
+    etps: Array<TEtpTestItem>;
+    mistakes: Array<TEtpTI>;
+    correctOnes: Array<TEtpTI>;
     reference: ETestReference;
     createdAt: Date | any,
     lastUpdate: Date | any,
+    completedPercentage: number;
     state: boolean;
 }
 

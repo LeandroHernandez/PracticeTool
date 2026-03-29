@@ -107,40 +107,41 @@
         </div>
     </div>
     @if (weekWords.length > 0) {
-    <div class="div box-A">
+    <div class="div box-A"
+        [title]="en ? 'Words you have struggled with this week.' : 'Palabras con las que has tenido dificultades esta semana.'">
         <h6 class="title"> {{ en ? 'Difficult Words' : 'Palabras Difíciles' }} </h6>
-        @for (item of weekWords; track $index) {
         <div class="div weekness">
-            <div class="div info">
+            @for (item of weekWords; track $index) {
+            <div class="div info {{ ($index + 1) % 2 === 0 ? 'pair' : ''}}">
                 <span class="span word">{{ item.word }}</span>
-                <span class="span times"> {{ en ? 'Practiced' : 'Practicada' }} {{ item.number }} {{ en ? 'times' :
-                    'veces' }} </span>
+                <span class="span errors"> {{ en ? 'Errors' : 'Errores' }}: <span class="span number"> {{ item.number }}
+                    </span> </span>
             </div>
+            }
         </div>
-        }
     </div>
     }
     <div class="div boxes">
-        <div class="box-A">
+        <div class="box-A"
+            [title]="en ? 'Your recent activity in the app.' : 'Tu actividad reciente en la aplicación.'">
             <h6 class="title"> {{ en ? 'Recent Activity' : 'Actividad Reciente' }} </h6>
-            <span class="label-span"> {{ en ? 'Elements Reviewed' :'Elementos repasados' }} </span>
-            <div class="numbers">
-                <strong class="data">{{ reports.etps.today.length }}</strong>
-                <!-- <span class="percentage">
-                    <i class="bi bi-arrow-up"></i>
-                    11.01%
-                </span> -->
+            <div class="div items activity">
+                <span class="span item"> {{ en ? 'Completed Tests' : 'Pruebas Completadas' }} <span class="span number">
+                        {{ 80 }}% </span> </span>
+                <span class="span item">
+                    {{ en ? 'Practiced' : 'Practicadas' }}
+                    <span class="span number"> {{ 10 }} </span>
+                    <span> {{ en ? 'Elements' : 'Elementos' }} </span>
+                </span>
             </div>
         </div>
-        <div class="box-B">
+        <div class="box-B"
+            [title]="en ? 'Based on your progress, we recommend focusing on these areas.' : 'Basado en tu progreso, te recomendamos enfocarte en estas áreas.'">
             <h6 class="title"> {{ en ? 'Recommendations' : 'Recomendaciones' }} </h6>
-            <span class="label-span"> {{ en ? 'Practice Lists' : 'Listas de práctica' }} </span>
-            <div class="numbers">
-                <strong class="data">{{ reports.practiceLists.today }}</strong>
-                <!-- <span class="percentage">
-                    <i class="bi bi-arrow-up"></i>
-                    11.01%
-                </span> -->
+            <div class="div items recomendations">
+                <span class="span item"> {{ en ? 'Practice difficult words' : 'Practica las palabras difíciles' }}
+                </span>
+                <span class="span item"> {{ en ? 'Practice pronunciation' : 'Practica la pronunciación' }} </span>
             </div>
         </div>
     </div>

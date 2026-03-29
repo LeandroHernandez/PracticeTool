@@ -11,6 +11,9 @@ import {
   IMistakenUse,
   IUser,
   ETestReference,
+  TEtpTestItem,
+  TEtpTI,
+  TTestBody,
 } from '../../../../interfaces';
 
 import { ElementToPracticeService } from '../elements-to-practice/element-to-practice.service';
@@ -36,6 +39,15 @@ export class TestComponent implements OnInit, OnDestroy {
   public elementsToPractice: Array<IElementToPractice> = [];
   public practiceList: Array<IEtp> = [];
   public correctNumber: number = 0;
+  public correctTotal: number = 0;
+
+  public id: string | null = null;
+  public author: string = '';
+  public etps: Array<TEtpTestItem> = [];
+  public mistakes: Array<TEtpTI> = [];
+  public correctOnes: Array<TEtpTI> = [];
+
+  public date = DateTime.now().toISO();
 
   public gifs: any = [];
 
@@ -110,6 +122,7 @@ export class TestComponent implements OnInit, OnDestroy {
       .getFilteredElementsToPractice()
       .subscribe((elementsToPractice) => {
         this.elementsToPractice = elementsToPractice;
+        this.etps = this.elementsToPractice.map((etp) => { const { id, en } = etp; return { id: id ?? '', en } });
         this.buildPracticeList();
         this.getRandomETP();
       });
@@ -136,26 +149,31 @@ export class TestComponent implements OnInit, OnDestroy {
     return index;
   }
 
-  public win(): void {
-    return this._rootSvc.user$.subscribe((userInfo: IUser) => {
-      if (!userInfo) return;
-      const date = DateTime.now().toISO();
-      const body = {
-        author: userInfo.id,
-        etps: this.elementsToPractice,
-        reference: ETestReference[this.url.split('/').includes('practice-lists') ? 'practiceLists' : 'etps'],
-        createdAt: date,
-        lastUpdate: date,
-        state: true
-      }
-      this._testSvc.addTest(body).then(() => {
-        this._nzNotificationSvc.success(
-          'You win',
-          'Congratulations, you have completed succesfully the test.'
-        );
-        return this._router.navigateByUrl(this.backTo);
-      }).catch(error => console.error({ error }))
-    }, error => console.error({ error })).unsubscribe();
+  public win(): Promise<boolean> {
+    // return this._rootSvc.user$.subscribe((userInfo: IUser) => {
+    //   if (!userInfo) return;
+    //   const date = DateTime.now().toISO();
+    //   const body = {
+    //     author: userInfo.id,
+    //     etps: this.elementsToPractice,
+    //     reference: ETestReference[this.url.split('/').includes('practice-lists') ? 'practiceLists' : 'etps'],
+    //     createdAt: date,
+    //     lastUpdate: date,
+    //     state: true
+    //   }
+    //   this._testSvc.addTest(body).then(() => {
+    //     this._nzNotificationSvc.success(
+    //       'You win',
+    //       'Congratulations, you have completed succesfully the test.'
+    //     );
+    //     return this._router.navigateByUrl(this.backTo);
+    //   }).catch(error => console.error({ error }))
+    // }, error => console.error({ error })).unsubscribe();
+    this._nzNotificationSvc.success(
+      'You win',
+      'Congratulations, you have completed succesfully the test.'
+    );
+    return this._router.navigateByUrl(this.backTo);
   }
 
   public mistake(mistakeList: Array<IMistake>, index: number, gifs: string[]): void {
@@ -289,14 +307,50 @@ export class TestComponent implements OnInit, OnDestroy {
     return mistakeList;
   }
 
-  public submit(etpToCheck: IEtpToCheck): void {
+  public registerEditTest(body: Partial<TTestBody>): void {
+    if (!this.id) {
+      this._testSvc.addTest(body).then((newId) => {
+        console.log({ newId });
+        this.id = newId;
+      });
+    } else {
+      this._testSvc.updateTest(this.id, body).then(() => console.log('Test updated')).catch(error => console.error({ error }));
+    }
+  }
+
+
+  public submit(etpToCheck: IEtpToCheck): Promise<boolean> | void {
     const { etpItem, checkingWord } = etpToCheck;
 
     const { content, index } = etpItem;
 
+    const testBody: Partial<TTestBody> = {
+      author: this.author,
+      etps: this.etps,
+      // mistakes: this.mistakes,
+      correctOnes: this.correctOnes,
+      reference: ETestReference[this.url.split('/').includes('practice-lists') ? 'practiceLists' : 'etps'],
+      completedPercentage: this.correctTotal === this.etps.length ? 100 : Math.round((this.correctTotal * 100) / this.etps.length),
+      createdAt: this.date,
+      lastUpdate: this.date,
+      state: true,
+    }
+
+    const { id, en } = content.etp;
     const mistakeList = this.check(etpToCheck);
-    if (mistakeList.length === 0) this.correctNumber++;
-    if (mistakeList.length > 0) return this.mistake(mistakeList, index, etpItem.content.etp.gifs ?? []);
+    if (mistakeList.length > 0) {
+      const existingIndex = this.mistakes.findIndex(item => item.id === id);
+      if (existingIndex < 0) {
+        this.mistakes.push({ id, en, number: 0 });
+      } else this.mistakes[existingIndex] = { id, en, number: this.mistakes[existingIndex].number + 1 };
+      const body: Partial<TTestBody> = {
+        ...testBody,
+        mistakes: this.mistakes,
+        // correctOnes: this.correctOnes,
+      }
+      this.registerEditTest(body);
+      return this.mistake(mistakeList, index, etpItem.content.etp.gifs ?? []);
+    }
 
     let { word, aplications } = content;
 
@@ -306,6 +360,22 @@ export class TestComponent implements OnInit, OnDestroy {
     if (aplications) this.practiceList[index].aplications = aplications;
 
     if (word && aplications) this.practiceList.splice(index, 1);
+
+    this.correctNumber++;
+    if (this.correctNumber > this.correctTotal) this.correctTotal++;
+
+    const existingIndex = this.correctOnes.findIndex(item => item.id === id);
+    if (existingIndex < 0) {
+      this.correctOnes.push({ id, en, number: 0 });
+    } else this.correctOnes[existingIndex] = { id, en, number: this.correctOnes[existingIndex].number + 1 };
+
+    const body: Partial<TTestBody> = {
+      ...testBody,
+      mistakes: this.mistakes,
+      correctOnes: this.correctOnes,
+      completedPercentage: this.correctTotal === this.etps.length ? 100 : Math.round((this.correctTotal * 100) / this.etps.length),
+    }
+    this.registerEditTest(body);
 
     if (this.practiceList.length > 0) return this.getRandomETP(index);
 

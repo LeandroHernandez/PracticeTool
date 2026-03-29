@@ -1,17 +1,15 @@
 <!-- <p>table works!</p> -->
 <main class="main">
-  <div class="actual_selection">
-    <div class="selectedItem_div">
-      @if (actualSelectedItems.length > 0 || setOfCheckedId.size > 0) {
-      <span class="selectedItem_span"> You have selected <span class="number"> {{actualSelectedItems.length > 0 ?
-          actualSelectedItems.length : setOfCheckedId.size }} </span>
-        items </span>
-      <span> - </span>
-      <button type="button" class="button-clear" (click)="clearSelectedItems()" title="Clear selected items">
-        Clear <i class="bi bi-eraser-fill"></i>
-      </button>
-      }
-    </div>
+  <div class="selectedItem_div">
+    @if (actualSelectedItems.length > 0 || setOfCheckedId.size > 0) {
+    <span class="selectedItem_span"> You have selected <span class="number"> {{actualSelectedItems.length > 0 ?
+        actualSelectedItems.length : setOfCheckedId.size }} </span>
+      items </span>
+    <span> - </span>
+    <button type="button" class="button-clear" (click)="clearSelectedItems()" title="Clear selected items">
+      Clear <i class="bi bi-eraser-fill"></i>
+    </button>
+    }
   </div>
   @if ( itemList && paginatedItems.length > 0 || actualSelectedFilters ) {
   <div class="filters_section">

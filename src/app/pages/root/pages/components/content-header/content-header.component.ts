@@ -128,6 +128,35 @@ import { localStorageLabels, RoleIds } from '../../../../../enums';
           color: var(--primary);
         }
       }
+
+      @media (max-width: 830px) {
+        .main_content {
+          flex-direction: column-reverse;
+        }
+
+        h3.title {
+          order: 2;
+        }
+
+        [class*='button-add'] {
+          order: 1;
+        }
+        
+        [class^='button'] {
+          width: 70%;
+        }
+        
+      }
+      
+      @media (max-width: 450px) {
+        
+        [class^='button'] {
+          font-size: .9rem;
+          width: 100%;
+        }
+        
+      }
+
     `,
   ],
 })

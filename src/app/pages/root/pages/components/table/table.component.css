@@ -6,23 +6,18 @@
   /* overflow-x: auto; */
 }
 
-.actual_selection {
+
+.selectedItem_div {
   min-height: 2.4rem;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  gap: .5rem;
 
   .number {
     color: var(--accent);
   }
-}
-
-.selectedItem_div {
-  min-height: 28px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: .5rem;
 }
 
 .selectedItem_span {
