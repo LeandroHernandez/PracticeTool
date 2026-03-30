@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { TestService } from '../test';
 import { RootService } from '../../root.service';
 
-import { ETestReference, ITest, IUser } from '../../../../interfaces';
+import { ETestReference, ITest, IUser, TEtpTI } from '../../../../interfaces';
 import { Subscription } from 'rxjs';
 
 interface ITT {
@@ -50,6 +50,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public etpsTarget: number = 0;
   public practiceListsTarget: number = 0;
+
+  public tests: ITest[] = [];
+  public completedTestsPercentage: number = 0;
+
+  public correctEtps: TEtpTI[] = [];
+  public mistakenEtps: TEtpTI[] = [];
+
   public reports: IReport = {
     etps: {
       total: [],
@@ -123,18 +130,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
 
 
-  get monthlyTarget(): number {
-    return this.etpsTarget + this.practiceListsTarget;
-  }
+  // get monthlyTarget(): number {
+  //   return this.etpsTarget + this.practiceListsTarget;
+  // }
 
   get en(): boolean {
     const en = localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en'
     return en === 'en';
   }
 
+  get etpsNumber(): number {
+    return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
+  }
+
+  get practiceLists(): ITest[] {
+    return this.tests.filter(test => test.reference === ETestReference.practiceLists && test.completedPercentage === 100);
+  }
+
   get monthlyProgress(): number {
-    const { length } = this.reports.etps.total;
-    return length > 0 ? (length * 100) / this.monthlyTarget : 0;
+    // const { length } = this.reports.etps.total;
+    // return length > 0 ? (length * 100) / this.monthlyTarget : 0;
+
+    const Eprogress = (this.etpsNumber * 100) / this.etpsTarget;
+    const Pprogress = (this.practiceLists.length * 100) / this.practiceListsTarget;
+    return ((Eprogress > 100 ? 100 : Eprogress) / 2) + ((Pprogress > 100 ? 100 : Pprogress) / 2);
   }
 
   constructor(private _rootSvc: RootService, private _testSvc: TestService) { }
@@ -225,15 +244,50 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.createChart(this.chartData.map(item => item.val.length ?? null));
       // console.log({ chartData: this.chartData })
     }
+    const tPss = (tests: ITest[]) => {
+      this.correctEtps = [];
+      this.mistakenEtps = [];
+      this.completedTestsPercentage = 0;
+      // const correctEtps: TEtpTI[] = [];
+      // const mistakenEtps: TEtpTI[] = [];
+
+      tests.forEach(test => {
+        const { correctOnes, mistakes, completedPercentage, reference, createdAt } = test;
+        const testDate = DateTime.fromISO(createdAt);
+        console.log({ testDate, correctOnes, mistakes, completedPercentage, reference });
+        correctOnes.forEach(co => {
+          const cIndex = this.correctEtps.findIndex(item => item.id === co.id);
+          if (cIndex < 0) {
+            this.correctEtps.push({ ...co, number: co.number / 20 });
+          } else if (this.correctEtps[cIndex].number < 1) this.correctEtps[cIndex].number += (co.number / 20);
+        });
+        mistakes.forEach(m => {
+          const mIndex = this.mistakenEtps.findIndex(item => item.id === m.id);
+          if (mIndex < 0) {
+            this.mistakenEtps.push(m);
+          } else this.mistakenEtps[mIndex].number += m.number;
+        });
+        this.mistakenEtps.sort((a, b) => b.number - a.number);
+      });
+
+      const per = (this.tests.map(t => t.completedPercentage).reduce((a, b) => a + b, 0) * 100) / (tests.length * 100);
+      this.completedTestsPercentage = per > 100 ? 100 : per;
+
+      console.log({ correctEtps: this.correctEtps, mistakenEtps: this.mistakenEtps });
+    };
     return this._rootSvc.user$.subscribe((userInfo: IUser) => {
+
+      console.log({ userInfo });
 
       this.etpsTarget = userInfo.monthlyObjective?.etps ?? 0;
       this.practiceListsTarget = userInfo.monthlyObjective?.lists ?? 0;
 
       this._testSvc.getFilteredTests({ author: userInfo.id }).subscribe(
         tests => {
-          // console.log({ tests });
+          console.log({ tests });
+          this.tests = tests;
           testsProcess(tests);
+          tPss(tests);
         },
         error => console.error({ error })
       )

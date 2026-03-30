@@ -189,14 +189,17 @@
 
 .div-gifs {
   margin-top: 1rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 10rem));
   gap: .5rem;
-  flex-wrap: wrap;
-  justify-content: start;
+  /* justify-content: start; */
+  /* flex-wrap: wrap; */
 
   img {
-    width: 10rem;
-    height: 10rem;
+    /* width: 10rem; */
+    width: 100%;
+    /* height: 10rem; */
+    aspect-ratio: 1/1;
     object-fit: cover;
     border-radius: .5rem;
   }
@@ -215,6 +218,12 @@
 
 @media (max-width: 700px) {
   .mistake_div .content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 470px) {
+  .div-gifs {
     grid-template-columns: 1fr;
   }
 }

@@ -58,7 +58,29 @@ export class TestComponent implements OnInit, OnDestroy {
     private _testSvc: TestService,
     private _nzNotificationSvc: NzNotificationService,
     private _nzModalSvc: NzModalService
-  ) { }
+  ) {
+
+    this._rootSvc.user$.subscribe((userInfo: IUser) => {
+      // if (!userInfo) return;
+      this.author = userInfo.id;
+      // const date = DateTime.now().toISO();
+      // const body = {
+      //   author: userInfo.id,
+      //   etps: this.elementsToPractice,
+      //   reference: ETestReference[this.url.split('/').includes('practice-lists') ? 'practiceLists' : 'etps'],
+      //   createdAt: date,
+      //   lastUpdate: date,
+      //   state: true
+      // }
+      // this._testSvc.addTest(body).then(() => {
+      //   this._nzNotificationSvc.success(
+      //     'You win',
+      //     'Congratulations, you have completed succesfully the test.'
+      //   );
+      //   return this._router.navigateByUrl(this.backTo);
+      // }).catch(error => console.error({ error }))
+    }, error => console.error({ error })).unsubscribe();
+  }
 
   get url(): string {
     return this._router.url;
@@ -109,6 +131,7 @@ export class TestComponent implements OnInit, OnDestroy {
 
     if (selectedList.length > 0) {
       this.elementsToPractice = selectedList;
+      this.etps = this.elementsToPractice.map((etp) => ({ id: etp.id ?? '', en: etp.en }));
       this.buildPracticeList();
       this.getRandomETP();
       return this.elementsToPractice;
@@ -122,7 +145,7 @@ export class TestComponent implements OnInit, OnDestroy {
       .getFilteredElementsToPractice()
       .subscribe((elementsToPractice) => {
         this.elementsToPractice = elementsToPractice;
-        this.etps = this.elementsToPractice.map((etp) => { const { id, en } = etp; return { id: id ?? '', en } });
+        this.etps = this.elementsToPractice.map((etp) => ({ id: etp.id ?? '', en: etp.en }));
         this.buildPracticeList();
         this.getRandomETP();
       });
@@ -308,13 +331,14 @@ export class TestComponent implements OnInit, OnDestroy {
   }
 
   public registerEditTest(body: Partial<TTestBody>): void {
+    console.log({ registerEditBody: body });
     if (!this.id) {
       this._testSvc.addTest(body).then((newId) => {
         console.log({ newId });
         this.id = newId;
       });
     } else {
-      this._testSvc.updateTest(this.id, body).then(() => console.log('Test updated')).catch(error => console.error({ error }));
+      this._testSvc.updateTest(this.id, { ...body, lastUpdate: DateTime.now().toISO() }).then(() => console.log('Test updated')).catch(error => console.error({ error }));
     }
   }
 
@@ -324,13 +348,20 @@ export class TestComponent implements OnInit, OnDestroy {
 
     const { content, index } = etpItem;
 
+    // const completedPercentage = () => (this.correctTotal * 100) / this.etps.length;
+    const completedPercentage = () => {
+      const percentage = (this.correctTotal * 100) / this.etps.length;
+      console.log({ percentage });
+      return percentage;
+    }
+
     const testBody: Partial<TTestBody> = {
       author: this.author,
       etps: this.etps,
       // mistakes: this.mistakes,
       correctOnes: this.correctOnes,
       reference: ETestReference[this.url.split('/').includes('practice-lists') ? 'practiceLists' : 'etps'],
-      completedPercentage: this.correctTotal === this.etps.length ? 100 : Math.round((this.correctTotal * 100) / this.etps.length),
+      completedPercentage: completedPercentage(),
       createdAt: this.date,
       lastUpdate: this.date,
       state: true,
@@ -341,7 +372,7 @@ export class TestComponent implements OnInit, OnDestroy {
     if (mistakeList.length > 0) {
       const existingIndex = this.mistakes.findIndex(item => item.id === id);
       if (existingIndex < 0) {
-        this.mistakes.push({ id, en, number: 0 });
+        this.mistakes.push({ id, en, number: 1 });
       } else this.mistakes[existingIndex] = { id, en, number: this.mistakes[existingIndex].number + 1 };
       const body: Partial<TTestBody> = {
         ...testBody,
@@ -359,23 +390,25 @@ export class TestComponent implements OnInit, OnDestroy {
     if (word) this.practiceList[index].word = word;
     if (aplications) this.practiceList[index].aplications = aplications;
 
-    if (word && aplications) this.practiceList.splice(index, 1);
+    if (word && aplications) {
+      this.practiceList.splice(index, 1);
 
-    this.correctNumber++;
-    if (this.correctNumber > this.correctTotal) this.correctTotal++;
+      this.correctNumber++;
+      if (this.correctNumber > this.correctTotal) this.correctTotal = this.correctNumber;
 
-    const existingIndex = this.correctOnes.findIndex(item => item.id === id);
-    if (existingIndex < 0) {
-      this.correctOnes.push({ id, en, number: 0 });
-    } else this.correctOnes[existingIndex] = { id, en, number: this.correctOnes[existingIndex].number + 1 };
+      const existingIndex = this.correctOnes.findIndex(item => item.id === id);
+      if (existingIndex < 0) {
+        this.correctOnes.push({ id, en, number: 1 });
+      } else this.correctOnes[existingIndex] = { id, en, number: this.correctOnes[existingIndex].number + 1 };
 
-    const body: Partial<TTestBody> = {
-      ...testBody,
-      mistakes: this.mistakes,
-      correctOnes: this.correctOnes,
-      completedPercentage: this.correctTotal === this.etps.length ? 100 : Math.round((this.correctTotal * 100) / this.etps.length),
+      const body: Partial<TTestBody> = {
+        ...testBody,
+        mistakes: this.mistakes,
+        correctOnes: this.correctOnes,
+        completedPercentage: completedPercentage(),
+      }
+      this.registerEditTest(body);
     }
-    this.registerEditTest(body);
 
     if (this.practiceList.length > 0) return this.getRandomETP(index);
 

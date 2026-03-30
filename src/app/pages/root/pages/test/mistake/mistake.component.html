@@ -65,30 +65,30 @@
       </div>
       }
     </div>
+  </div>
+  }
 
-    @if (gifs.length > 0) {
-    <div class="div-gifs">
-      <!-- <header class="gifsHeader">
+  @if (gifs.length > 0) {
+  <div class="div-gifs">
+    <!-- <header class="gifsHeader">
         <h6 class="h6">Gifs</h6>
         <span> {{ gifs.length }} </span>
       </header>
       <div class="gifsContent"> -->
-      @for (gif of gifs; track $index) {
-      <img class="gif" [src]="gif" alt="Gif Image {{ $index + 1 }}" />
-      }
-      <!-- </div> -->
-    </div>
+    @for (gif of gifs; track $index) {
+    <img class="gif" [src]="gif" alt="Gif Image {{ $index + 1 }}" />
     }
-
-    @if ( correctNumber > 0 ) {
-    <footer class="footer">
-      <span class="streak">
-        {{ en ? 'Streak:' : 'Racha' }}
-        <span class="number"> {{ correctNumber }} </span>
-      </span>
-    </footer>
-    }
+    <!-- </div> -->
   </div>
+  }
+
+  @if ( correctNumber > 0 ) {
+  <footer class="footer">
+    <span class="streak">
+      {{ en ? 'Streak:' : 'Racha' }}
+      <span class="number"> {{ correctNumber }} </span>
+    </span>
+  </footer>
   }
 </div>
 
