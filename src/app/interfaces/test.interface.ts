@@ -8,24 +8,34 @@ export enum ETestReference {
 
 export type TEtpTestItem = Pick<IElementToPractice, 'id' | 'en'>;
 
-export interface TEtpTI extends TEtpTestItem {
+export interface IEtpTI extends TEtpTestItem {
     date: Date | string;
     number: number;
 };
 
+type TEnEs = {
+    en: string;
+    es: string;
+}
+
 type TPLReference = {
     id: string;
-    title: string;
+    title: TEnEs;
 }
+
+type TListTestItem = Omit<IEtpTI, 'id' | 'en'>;
+export interface IListTI extends TListTestItem {
+    reference: TPLReference;
+};
 
 export interface ITest {
     id: string;
     author: string | IUser;
     etps: Array<TEtpTestItem>;
-    mistakes: Array<TEtpTI>;
-    correctOnes: Array<TEtpTI>;
+    mistakes: Array<IEtpTI>;
+    correctOnes: Array<IEtpTI>;
     reference: ETestReference;
-    practiceListReferences: string;
+    practiceListReferences: Array<TPLReference>;
     createdAt: Date | any,
     lastUpdate: Date | any,
     completedPercentage: number;

@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { TestService } from '../test';
 import { RootService } from '../../root.service';
 
-import { ETestReference, ITest, IUser, TEtpTI } from '../../../../interfaces';
+import { ETestReference, IEtpTI, IListTI, ITest, IUser } from '../../../../interfaces';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
@@ -53,11 +53,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public practiceListsTarget: number = 0;
 
   public tests: ITest[] = [];
-  public lists: TEtpTI[] = [];
+  public lists: IListTI[] = [];
   public completedTestsPercentage: number = 0;
 
-  public correctEtps: TEtpTI[] = [];
-  public mistakenEtps: TEtpTI[] = [];
+  public correctEtps: IEtpTI[] = [];
+  public mistakenEtps: IEtpTI[] = [];
 
   public elementsVisible: boolean = false;
   public listsVisible: boolean = false;
@@ -261,8 +261,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.correctEtps = [];
       this.mistakenEtps = [];
       this.completedTestsPercentage = 0;
-      // const correctEtps: TEtpTI[] = [];
-      // const mistakenEtps: TEtpTI[] = [];
+      // const correctEtps: IEtpTI[] = [];
+      // const mistakenEtps: IEtpTI[] = [];
+
+
+      this.lists = [];
 
       tests.forEach(test => {
         const { correctOnes, mistakes, completedPercentage, reference, createdAt } = test;
@@ -281,17 +284,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
           } else this.mistakenEtps[mIndex].number += m.number;
         });
         this.mistakenEtps.sort((a, b) => b.number - a.number);
-      });
+        if (test.reference === ETestReference.practiceLists && test.completedPercentage === 100)
+          test.practiceListReferences.forEach(
+            pLReference => {
+              // !lists.some(list => list.reference === pLReference)
 
-      this.lists =
-        tests.filter(test => test.reference === ETestReference.practiceLists)
-          .map(
-            test => {
-              const { id, practiceListName, createdAt } = test;
-              // return { id, en: practiceListName ?? '', number: test.completedPercentage / 100, date: createdAt } as TEtpTI
-              return { id, en: practiceListName ?? '', number: 1, date: createdAt } as TEtpTI
+              const lIndex = this.lists.findIndex(item => item.reference.id === pLReference.id);
+
+              if (lIndex < 0) {
+                this.lists.push({
+                  reference: pLReference,
+                  date: test.createdAt,
+                  number: 1,
+                })
+              } else this.lists[lIndex].number++
             }
           );
+      });
+      // this.lists = [];
+      // const lists: IListTI[] = [];
+      // tests.filter(test => test.reference === ETestReference.practiceLists && test.completedPercentage === 100)
+      // .forEach(
+      //   test => {
+      //     test.practiceListReferences.forEach(
+      //       pLReference => {
+
+      //         const lIndex = this.lists.findIndex(item => item.reference.id === pLReference.id);
+
+      //         if (lIndex < 0) {
+      //           this.lists.push({
+      //             reference: pLReference,
+      //             date: test.createdAt,
+      //             number: 1,
+      //           })
+      //         } else this.lists[lIndex].number++
+      //       }
+      //     );
+      //   }
+      // );
 
       console.log({ lists: this.lists });
 

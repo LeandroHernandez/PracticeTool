@@ -12,7 +12,7 @@ import {
   IUser,
   ETestReference,
   TEtpTestItem,
-  TEtpTI,
+  IEtpTI,
   TTestBody,
 } from '../../../../interfaces';
 
@@ -44,8 +44,8 @@ export class TestComponent implements OnInit, OnDestroy {
   public id: string | null = null;
   public author: string = '';
   public etps: Array<TEtpTestItem> = [];
-  public mistakes: Array<TEtpTI> = [];
-  public correctOnes: Array<TEtpTI> = [];
+  public mistakes: Array<IEtpTI> = [];
+  public correctOnes: Array<IEtpTI> = [];
 
   public date = DateTime.now().toISO();
 
@@ -368,8 +368,8 @@ export class TestComponent implements OnInit, OnDestroy {
     }
 
     if (testBody.reference === ETestReference.practiceLists) {
-      console.log('Practice list name:', false);
-      JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedListItems) ?? '[]');
+      testBody.practiceListReferences = JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedListItems) ?? '[]');
+      console.log('Practice list´s references:', testBody.practiceListReferences);
     }
 
     const { id, en } = content.etp;

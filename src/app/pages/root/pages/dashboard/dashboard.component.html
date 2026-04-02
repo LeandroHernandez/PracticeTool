@@ -121,8 +121,8 @@
                                         <tbody>
                                             @for (item of lists; track $index) {
                                             <tr>
-                                                <td>{{ item.en }}</td>
-                                                <td>{{ item.number * 20 | number: '0.0-1' }}</td>
+                                                <td>{{ en ? item.reference.title.en : item.reference.title.es }}</td>
+                                                <td>{{ item.number }}</td>
                                                 <td>{{ (item.number * 100) / 20 | number:'0.0-1' }}%</td>
                                             </tr>
                                             }
