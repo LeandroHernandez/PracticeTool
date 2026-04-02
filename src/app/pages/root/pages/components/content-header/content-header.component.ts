@@ -200,7 +200,8 @@ export class ContentHeaderComponent {
       nzTitle: this.en ? 'Test conformation' : 'Confirmación de test',
       nzContent: TestConfirmationComponent,
       nzFooter: null,
-      nzWidth: '90vw'
+      nzWidth: '90vw',
+      nzOnCancel: () => { localStorage.removeItem(localStorageLabels.pl.selectedListItems) },
     });
 
     const instance = modal.getContentComponent();

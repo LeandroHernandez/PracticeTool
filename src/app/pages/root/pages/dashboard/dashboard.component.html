@@ -11,34 +11,138 @@
                             <i class="bi bi-translate"></i>
                         </div>
                         <div class="div info">
-                            <!-- <span class="icon-span"></span> -->
-                            <i class="bi bi-info"></i>
+                            <!-- <i class="bi bi-info"></i> -->
+                            <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
+                                    'Here you can check the elements you have memorized.' :
+                                    'Aquí puedes revisar los elementos que has memorizado.'
+                                " [nzPopoverContent]="elementInfoPopoverContent" nzType="question-circle"
+                                nzTheme="outline" />
+                            <ng-template #elementInfoPopoverContent>
+                                <div class="div elementInfoPopoverContent">
+                                    <span class="span">
+                                        {{ en ?
+                                        'Please remember you need to review at least 20 times an element to master it.'
+                                        :
+                                        `Por favor, recuerda que necesitas repasar al menos 20 veces un elemento para
+                                        dominarlo.`
+                                        }}
+                                    </span>
+                                </div>
+                            </ng-template>
                         </div>
                     </header>
                     <span class="label-span"> {{ en ? 'Elements memorized' :'Elementos memorizados' }} </span>
                     <div class="numbers">
                         <!-- <strong class="data">{{ reports.etps.today.length }}</strong> -->
                         <strong class="data">{{ etpsNumber }}</strong>
-                        <!-- <span class="percentage">
-                            <i class="bi bi-arrow-up"></i>
-                            11.01%
-                        </span> -->
+                        @if ( correctEtps.length > 0 ) {
+                        <div class="div content {{ elementsVisible ? 'visible' : ''}}" nz-popover nzType="primary"
+                            [nzPopoverContent]="elementPopoverContent" [(nzPopoverVisible)]="elementsVisible"
+                            nzPopoverTrigger="click">
+                            <nz-icon class="nz-icon eye" nzType="eye" nzTheme="outline" />
+                            <ng-template #elementPopoverContent>
+                                <div class="div popoverContent">
+                                    <h6 class="h6 title"> {{ en ?
+                                        'These are the elements you have memorized.' :
+                                        `Estos son los elementos que has memorizado.`
+                                        }} </h6>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ en ? 'Element' : 'Elemento' }}</th>
+                                                <th>{{ en ? 'Reviews' : 'Repasos' }}</th>
+                                                <th>{{ en ? 'Mastered' : 'Dominado' }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (item of correctEtps; track $index) {
+                                            <tr>
+                                                <td>{{ item.en }}</td>
+                                                <td>{{ item.number * 20 | number: '0.0-1' }}</td>
+                                                <td>{{ (item.number * 100) / 20 | number:'0.0-1' }}%</td>
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </ng-template>
+                        </div>
+                        }
                     </div>
                 </div>
                 <div class="box-2">
+                    <header class="header">
+                        <div class="avatar">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+                        <div class="div info">
+                            <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
+                                    'Here you can check the practice lists you have mastered.' :
+                                    'Aquí puedes revisar las listas que has dominado.'
+                                " [nzPopoverContent]="listInfoPopoverContent" nzType="question-circle"
+                                nzTheme="outline" />
+                            <ng-template #listInfoPopoverContent>
+                                <div class="div listInfoPopoverContent">
+                                    <span class="span">
+                                        {{ en ?
+                                        'Please remember you need to review at least 20 times a list to master it.'
+                                        :
+                                        `Por favor, recuerda que necesitas repasar al menos 20 veces una lista para
+                                        dominarla.`
+                                        }}
+                                    </span>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </header>
+                    <span class="label-span"> {{ en ? 'List Reviewed' : 'Listas Repasadas' }} </span>
+                    <div class="numbers">
+                        <!-- <strong class="data">{{ reports.etps.today.length }}</strong> -->
+                        <strong class="data">{{ lists.length }}</strong>
+                        @if ( lists.length > 0 ) {
+                        <div class="div content {{ listsVisible ? 'visible' : ''}}" nz-popover nzType="primary"
+                            [nzPopoverContent]="listPopoverContent" [(nzPopoverVisible)]="listsVisible"
+                            nzPopoverTrigger="click">
+                            <nz-icon class="nz-icon eye" nzType="eye" nzTheme="outline" />
+                            <ng-template #listPopoverContent>
+                                <div class="div popoverContent">
+                                    <h6 class="h6 title"> {{ en ?
+                                        'These are the lists you have mastered.' :
+                                        `Estas son las listas que has dominado.`
+                                        }} </h6>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ en ? 'List' : 'Lista' }}</th>
+                                                <th>{{ en ? 'Reviews' : 'Repasos' }}</th>
+                                                <th>{{ en ? 'Mastered' : 'Dominada' }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (item of lists; track $index) {
+                                            <tr>
+                                                <td>{{ item.en }}</td>
+                                                <td>{{ item.number * 20 | number: '0.0-1' }}</td>
+                                                <td>{{ (item.number * 100) / 20 | number:'0.0-1' }}%</td>
+                                            </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </ng-template>
+                        </div>
+                        }
+                    </div>
+                </div>
+                <!-- <div class="box-2">
                     <div class="avatar">
-                        <!-- <span class="icon-span"></span> -->
                         <i class="bi bi-list-check"></i>
                     </div>
                     <span class="label-span"> {{ en ? 'List Reviewed' : 'Listas Repasadas'}} </span>
                     <div class="numbers">
                         <strong class="data">{{ practiceLists.length }}</strong>
-                        <!-- <span class="percentage">
-                            <i class="bi bi-arrow-down"></i>
-                            9.05%
-                        </span> -->
                     </div>
-                </div>
+                </div> -->
             </div>
             <section class="chart-section">
                 <header class="header-chart">

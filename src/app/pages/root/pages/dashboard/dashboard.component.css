@@ -22,6 +22,9 @@
     gap: 1rem;
     font-size: 1rem;
 
+    transition: .2s ease;
+    transition-property: background-color, color;
+
     h6.title {
         font-size: 1rem;
         font-weight: 600;
@@ -82,27 +85,46 @@
         }
     }
 
-    .avatar {
-        width: fit-content;
-        background-color: var(--primary);
-        border-radius: .7rem;
-        padding: .5rem 1rem;
-        font-size: 1.5rem;
-        margin-bottom: .7rem;
+    .header {
+        display: flex;
+        justify-content: space-between;
 
-        transition: .2s background-color;
+        .avatar {
+            width: fit-content;
+            background-color: var(--primary);
+            border-radius: .7rem;
+            padding: .5rem 1rem;
+            font-size: 1.5rem;
+            margin-bottom: .7rem;
 
-        .bi {
-            transition-duration: .2s;
-            transition-property: transform, color;
-        }
-
-        &:hover {
-            background-color: #2b2858;
+            transition: .2s background-color;
 
             .bi {
-                transform: scale(110%);
-                color: var(--accent);
+                transition: .2s color ease;
+            }
+
+            &:hover {
+                background-color: var(--secondary-bg2);
+
+                .bi {
+                    color: var(--primary);
+                }
+            }
+        }
+
+        .div.info {
+            font-size: 1.75rem;
+            display: flex;
+            flex-direction: column;
+
+            .nz-icon {
+                cursor: zoom-in;
+                transform: translateX(100%);
+                color: var(--secondary-bg2);
+                opacity: 0;
+
+                transition: .2s ease;
+                transition-property: transform, opacity, color;
             }
         }
     }
@@ -110,6 +132,8 @@
     .label-span {
         color: var(--accent3);
         font-size: .9rem;
+
+        transition: .2s color ease;
     }
 
     .numbers {
@@ -122,21 +146,161 @@
         .data {
             font-size: 2rem;
 
-            transition-duration: .2s;
+            transition: .2s ease;
             transition-property: transform, color;
         }
 
-        .percentage {
-            background-color: rgb(220, 255, 220);
-            color: rgb(0, 128, 0);
-            border-radius: 1rem;
-            padding: .25rem .5rem;
+        .div.content {
+            background-color: var(--secondary);
+            color: var(--primary);
+            border-radius: 50%;
+            /* padding: .25rem .5rem; */
+            padding: .5rem;
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+
+            transition: .2s ease;
+            transition-property: background-color, color, border-radius, transform;
+
+            .nz-icon.eye {
+                transition: .2s transform ease;
+            }
+
+            &:hover,
+            &.visible {
+                background-color: var(--accent);
+                color: var(--primary);
+                transform: scale(1.1);
+
+                &.visible {
+                    border-radius: .25rem;
+
+                    .nz-icon.eye {
+                        transform: scale(1.25);
+                    }
+
+                }
+            }
+
         }
     }
 
-    &:has(.avatar:hover) .numbers .data {
-        color: var(--accent);
-        transform: scale(1.1);
+    &:has(.nz-icon.info:hover) {
+        background-color: var(--secondary-bg);
+
+        .header .div.info .nz-icon {
+            color: var(--primary);
+            transform: translate(0) scale(1.1);
+        }
+
+        .label-span {
+            color: var(--primary);
+        }
+
+        .numbers .div.content {
+            background-color: var(--primary);
+            color: var(--secondary);
+        }
+    }
+
+    &:has(.div.content:hover),
+    &:has(.div.content.visible) {
+
+        .header {
+            .avatar {
+                background-color: #2b2858;
+
+                .bi {
+                    color: var(--accent);
+                }
+            }
+
+            .div.info .nz-icon {
+                color: var(--accent3);
+            }
+        }
+
+        .numbers .data {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+    }
+
+    &:has(.avatar:hover) {
+        .numbers {
+            .data {
+                color: var(--secondary-bg2);
+            }
+
+            .div.content {
+                background-color: var(--secondary-bg2);
+                color: var(--primary);
+            }
+
+        }
+
+    }
+
+    &:hover {
+        .header .div.info .nz-icon {
+            /* color: var(--accent); */
+            transform: translate(0);
+            opacity: 1;
+        }
+
+    }
+}
+
+.div.popoverContent {
+    max-width: 90dvw;
+
+    .h6.title {
+        /* background-color: var(--secondary);
+        color: var(--primary); */
+        padding: .5rem;
+        padding-top: 0;
+        font-size: 1rem;
+        /* margin: 2rem 1rem;
+        margin-top: .5rem; */
+        margin-bottom: 1rem;
+        border-bottom: .125rem solid var(--secondary);
+    }
+
+    .table {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+
+        thead {
+            background-color: var(--primary);
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        th,
+        td {
+            padding: .5rem;
+            max-width: fit-content;
+            text-align: center;
+            /* border: .1rem solid #d6d7dc; */
+        }
+
+        td:first-child {
+            text-align: start;
+        }
+
+        tbody {
+            max-height: 5lh;
+            overflow-y: auto;
+        }
+
+        tr:hover {
+            background-color: var(--secondary-bg2);
+            color: var(--primary);
+        }
     }
 }
 

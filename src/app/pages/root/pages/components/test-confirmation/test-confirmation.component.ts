@@ -198,7 +198,7 @@ export class TestConfirmationComponent {
     //   nzWidth: '90vw',
     // })
     if (this.practiceList) {
-      if (this.selectedListOfPL.length === 0)
+      if (this.selectedListOfPL.length === 0) {
         return this._practiceListsSvc.getPracticeLists().subscribe(
           (practiceLists) => {
             // console.log({ practiceLists })
@@ -211,6 +211,7 @@ export class TestConfirmationComponent {
               // return showList(true);
               return this.navigate(true);
             }
+            localStorage.setItem(localStorageLabels.pl.selectedListItems, JSON.stringify(practiceLists.map((item) => { return { id: item.id, title: item.title } })));
             // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify([...new Set(practiceLists.flatMap(item => item.list))]));
             this.setCustomList(practiceLists.flatMap((item) => item.list));
             // return this.navigate();
@@ -227,6 +228,7 @@ export class TestConfirmationComponent {
             return this.showList = true;
           }
         );
+      } else localStorage.setItem(localStorageLabels.pl.selectedListItems, JSON.stringify(this.selectedListOfPL.map((item) => { return { id: item.id, title: item.title } })));
 
       // localStorage.setItem(localStorageLabels.etp.customSelectedList, JSON.stringify([...new Set(this.selectedListOfPL)]))
       this.setCustomList(this.selectedListOfPL.flatMap((item) => item.list));

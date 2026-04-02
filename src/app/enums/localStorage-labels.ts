@@ -26,6 +26,7 @@ enum etp {
 enum pl {
   customSelectedList = 'customSelectedListOfPL',
   selectedList = 'selectedListOfPL',
+  selectedListItems = 'selectedListOfPLItems',
   filerBody = 'filerBodyPL',
 }
 

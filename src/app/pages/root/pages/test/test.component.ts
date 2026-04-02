@@ -367,13 +367,18 @@ export class TestComponent implements OnInit, OnDestroy {
       state: true,
     }
 
+    if (testBody.reference === ETestReference.practiceLists) {
+      console.log('Practice list name:', false);
+      JSON.parse(localStorage.getItem(localStorageLabels.pl.selectedListItems) ?? '[]');
+    }
+
     const { id, en } = content.etp;
     const mistakeList = this.check(etpToCheck);
     if (mistakeList.length > 0) {
       const existingIndex = this.mistakes.findIndex(item => item.id === id);
       if (existingIndex < 0) {
-        this.mistakes.push({ id, en, number: 1 });
-      } else this.mistakes[existingIndex] = { id, en, number: this.mistakes[existingIndex].number + 1 };
+        this.mistakes.push({ id, en, number: 1, date: DateTime.now().toISO() });
+      } else this.mistakes[existingIndex] = { id, en, number: this.mistakes[existingIndex].number + 1, date: DateTime.now().toISO() };
       const body: Partial<TTestBody> = {
         ...testBody,
         mistakes: this.mistakes,
@@ -398,8 +403,8 @@ export class TestComponent implements OnInit, OnDestroy {
 
       const existingIndex = this.correctOnes.findIndex(item => item.id === id);
       if (existingIndex < 0) {
-        this.correctOnes.push({ id, en, number: 1 });
-      } else this.correctOnes[existingIndex] = { id, en, number: this.correctOnes[existingIndex].number + 1 };
+        this.correctOnes.push({ id, en, number: 1, date: DateTime.now().toISO() });
+      } else this.correctOnes[existingIndex] = { id, en, number: this.correctOnes[existingIndex].number + 1, date: DateTime.now().toISO() };
 
       const body: Partial<TTestBody> = {
         ...testBody,

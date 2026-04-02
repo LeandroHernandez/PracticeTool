@@ -10,7 +10,8 @@ import { TestService } from '../test';
 import { RootService } from '../../root.service';
 
 import { ETestReference, ITest, IUser, TEtpTI } from '../../../../interfaces';
-import { Subscription } from 'rxjs';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 interface ITT {
   total: string[];
@@ -40,7 +41,7 @@ interface IWeekWord {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, NzPopoverModule, NzIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -52,10 +53,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public practiceListsTarget: number = 0;
 
   public tests: ITest[] = [];
+  public lists: TEtpTI[] = [];
   public completedTestsPercentage: number = 0;
 
   public correctEtps: TEtpTI[] = [];
   public mistakenEtps: TEtpTI[] = [];
+
+  public elementsVisible: boolean = false;
+  public listsVisible: boolean = false;
 
   public reports: IReport = {
     etps: {
@@ -139,8 +144,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return en === 'en';
   }
 
+  get etps() {
+    return this.correctEtps.map(item => item.number);
+  }
+
   get etpsNumber(): number {
-    return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
+    if (this.correctEtps.length === 0) return 0;
+    const numbers = this.etps.filter(num => num >= 1);
+    const max = Math.max(...this.etps.filter(num => num < 1));
+    // return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
+    return Math.floor((numbers.length + max) * 100) / 100;
   }
 
   get practiceLists(): ITest[] {
@@ -269,6 +282,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
         this.mistakenEtps.sort((a, b) => b.number - a.number);
       });
+
+      this.lists =
+        tests.filter(test => test.reference === ETestReference.practiceLists)
+          .map(
+            test => {
+              const { id, practiceListName, createdAt } = test;
+              // return { id, en: practiceListName ?? '', number: test.completedPercentage / 100, date: createdAt } as TEtpTI
+              return { id, en: practiceListName ?? '', number: 1, date: createdAt } as TEtpTI
+            }
+          );
+
+      console.log({ lists: this.lists });
+
+      this.correctEtps.sort((a, b) => a.number - b.number);
 
       const per = (this.tests.map(t => t.completedPercentage).reduce((a, b) => a + b, 0) * 100) / (tests.length * 100);
       this.completedTestsPercentage = per > 100 ? 100 : per;
