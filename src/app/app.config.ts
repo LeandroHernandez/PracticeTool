@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 registerLocaleData(en);
 
@@ -24,6 +25,6 @@ export const appConfig: ApplicationConfig = {
     })),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()), provideNzI18n(en_US), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient()
+    provideFirestore(() => getFirestore()), provideNzI18n(en_US), importProvidersFrom(FormsModule), provideAnimationsAsync(), provideHttpClient(), provideCharts(withDefaultRegisterables())
   ]
 };

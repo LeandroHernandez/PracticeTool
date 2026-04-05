@@ -28,6 +28,8 @@ export interface IListTI extends TListTestItem {
     reference: TPLReference;
 };
 
+// export type TReviewedEL = Omit<IEtpTI, 'number'>
+
 export interface ITest {
     id: string;
     author: string | IUser;
@@ -43,3 +45,18 @@ export interface ITest {
 }
 
 export type TTestBody = Omit<ITest, 'id'>;
+
+
+//
+type TWeekDatasets = { data: number[], label?: string };
+export type TWeek = {
+    year: number,
+    // month: {
+    //   en: string,
+    //   es: string
+    // },
+    month: number,
+    weekNumber: number,
+    labels: string[],
+    datasets: TWeekDatasets[],
+};

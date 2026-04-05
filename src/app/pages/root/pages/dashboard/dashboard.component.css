@@ -1,22 +1,22 @@
-[class^='main'] {
+.main {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
 .div.progressObjective,
-.boxes {
+.div.boxes {
     display: grid;
     grid-template-columns: minmax(min(100%, 200px), 1fr) minmax(min(100%, 200px), 40%);
     gap: 1.5rem;
 }
 
-.boxes {
+.div.boxes {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
     margin-bottom: 1.5rem;
 }
 
-[class*="box-"] {
+.div.box {
     display: flex;
     flex-direction: column;
     gap: clamp(.7rem, 2dvw, 1rem);
@@ -89,7 +89,7 @@
         display: flex;
         justify-content: space-between;
 
-        .avatar {
+        .div.avatar {
             width: fit-content;
             background-color: var(--primary);
             border-radius: .7rem;
@@ -129,21 +129,21 @@
         }
     }
 
-    .label-span {
+    .span.label {
         color: var(--accent3);
         font-size: clamp(.7rem, 1.5dvw, .9rem);
 
         transition: .2s color ease;
     }
 
-    .numbers {
+    .div.numbers {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
         gap: .75rem;
 
-        .data {
+        .strong.data {
             font-size: clamp(1.4rem, 4dvw, 2rem);
 
             transition: .2s ease;
@@ -195,11 +195,11 @@
             transform: translate(0) scale(1.1);
         }
 
-        .label-span {
+        .span.label {
             color: var(--primary);
         }
 
-        .numbers .div.content {
+        .div.numbers .div.content {
             background-color: var(--primary);
             color: var(--secondary);
         }
@@ -209,7 +209,7 @@
     &:has(.div.content.visible) {
 
         .header {
-            .avatar {
+            .div.avatar {
                 background-color: #2b2858;
 
                 .bi {
@@ -222,15 +222,15 @@
             }
         }
 
-        .numbers .data {
+        .div.numbers .strong.data {
             color: var(--accent);
             transform: scale(1.1);
         }
     }
 
-    &:has(.avatar:hover) {
-        .numbers {
-            .data {
+    &:has(.div.avatar:hover) {
+        .div.numbers {
+            .strong.data {
                 color: var(--secondary-bg2);
             }
 
@@ -255,22 +255,40 @@
 
 .div.popoverContent {
     max-width: 90dvw;
+    max-height: 80dvh;
 
-    .h6.title {
+    /* .h6.title {
         padding: .5rem;
         padding-top: 0;
         font-size: 1rem;
         margin-bottom: 1rem;
         border-bottom: .125rem solid var(--secondary);
+    } */
+
+    .span.amount {
+        width: 100%;
+        display: block;
+        font-size: 1.2rem;
+        font-weight: 600;
+        background-color: var(--secondary);
+        color: var(--accent);
+        padding: .1rem .25rem;
+        border-radius: .25rem;
+        margin-bottom: .5rem;
+        text-align: center;
     }
 
-    .table {
+    table {
         width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-        border-collapse: collapse;
+        max-height: 60vh;
+        /* border-collapse: collapse; */
+        position: relative;
 
         thead {
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 10;
             background-color: var(--primary);
             color: var(--secondary);
             font-weight: 500;
@@ -288,43 +306,67 @@
             text-align: start;
         }
 
-        tbody {
-            max-height: 5lh;
-            overflow-y: auto;
-        }
-
-        tr:hover {
-            background-color: var(--secondary-bg2);
-            color: var(--primary);
+        tbody tr:hover {
+            background-color: var(--secondary-bg);
+            /* color: var(--primary); */
         }
     }
+
 }
 
 
-/* .card  */
-[class*="box-"],
-.chart-section,
-.second-section .card {
+.box,
+.section.chart-container,
+.div.objective .div.card {
     border: .1rem solid #d6d7dc;
     border-radius: 1rem;
     padding: 1.5rem;
     background-color: #ffffff;
 }
 
-.first-section {
+.div.progress {
     max-width: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
-.chart-section {
+.section.chart-container {
     min-height: fit-content;
     max-width: 100%;
     flex: 1;
+
+    .header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1rem;
+
+        .h4.title {
+            font-weight: 600;
+        }
+
+        .bi-three-dots-vertical {
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--accent3);
+        }
+    }
+
+    .div.chart {
+        padding: 1rem;
+
+        canvas {
+            min-width: 100%;
+            max-width: 100%;
+            min-height: max-content;
+        }
+    }
 }
 
-.second-section {
+.div.objective {
     border-radius: 1rem;
     background-color: #e9ebe0;
     border: .1rem solid #d6d7dc;
@@ -334,12 +376,12 @@
     flex-direction: column;
     gap: 1.5rem;
 
-    .title {
+    .h5.title {
         font-size: clamp(.77rem, 4dvw, 1rem);
         font-weight: 600;
     }
 
-    .subtitle {
+    .h6.subtitle {
         /* font-size: clamp(.7rem, 1.5dvw, .9rem); */
         font-size: clamp(.6rem, 1.8dvw, .8rem);
         color: var(--accent3);
@@ -353,7 +395,7 @@
         font-weight: 500;
     }
 
-    .card {
+    .div.card {
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -401,7 +443,7 @@
         display: flex;
         justify-content: space-around;
 
-        [class^="item-"] {
+        .div.item {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -410,13 +452,13 @@
             transition-duration: .2s;
             transition-property: transform, opacity, filter;
 
-            .label-item {
+            .span.label {
                 color: var(--accent3);
 
                 transition: .2s color;
             }
 
-            .data-item {
+            .span.data {
                 font-size: 1.5rem;
                 font-weight: 600;
 
@@ -430,43 +472,24 @@
             &:hover {
                 transform: scale(1.1);
 
-                .label-item {
+                .span.label {
                     color: var(--secondary);
                 }
 
-                .data-item {
+                .span.data {
                     color: var(--accent);
                 }
             }
         }
 
-        &:has([class^="item-"]:hover) [class^="item-"]:not(:hover) {
+        &:has(.div.item:hover) .div.item:not(:hover) {
             opacity: .7;
             filter: blur(1px);
         }
     }
 }
 
-.header-chart {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1rem;
-
-    .chart-title {
-        font-weight: 600;
-    }
-
-    .bi-three-dots-vertical {
-        font-size: 1.25rem;
-        cursor: pointer;
-        color: var(--accent3);
-    }
-}
-
-.arc-container {
+.div.arc-container {
     width: 100%;
     max-height: min(200px, 100%);
     text-align: center;
@@ -476,14 +499,14 @@
 }
 
 /* SVG general */
-.arc {
+.svg.arc {
     width: 100%;
     height: auto;
     max-height: 100%;
 }
 
 /* Arco de fondo */
-.arc-bg {
+.path.arc-bg {
     fill: none;
     /* stroke: #ddd; */
     stroke: var(--primary);
@@ -493,7 +516,7 @@
 }
 
 /* Arco de progreso */
-.arc-progress {
+.path.arc-progress {
     fill: none;
     /* stroke: #4caf50; */
     stroke: var(--secondary);
@@ -507,7 +530,7 @@
 }
 
 /* Texto centrado debajo del arco */
-.arc-text {
+.span.arc-text {
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -528,12 +551,12 @@
         grid-template-columns: 1fr;
     }
 
-    .second-section {
+    .div.objective {
         .p {
             font-size: clamp(.7rem, 3dvw, 1.2rem);
         }
 
-        .card .div.data .div.items .span.item {
+        .div.card .div.strong.data .div.items .span.item {
             font-size: clamp(.6rem, 3.5dvw, 1rem);
 
             .span.number {
