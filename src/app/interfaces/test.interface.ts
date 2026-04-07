@@ -23,7 +23,7 @@ type TPLReference = {
     title: TEnEs;
 }
 
-type TListTestItem = Omit<IEtpTI, 'id' | 'en'>;
+export type TListTestItem = Omit<IEtpTI, 'id' | 'en'>;
 export interface IListTI extends TListTestItem {
     reference: TPLReference;
 };
@@ -51,11 +51,7 @@ export type TTestBody = Omit<ITest, 'id'>;
 type TWeekDatasets = { data: number[], label?: string };
 export type TWeek = {
     year: number,
-    // month: {
-    //   en: string,
-    //   es: string
-    // },
-    month: number,
+    months: number[],
     weekNumber: number,
     labels: string[],
     datasets: TWeekDatasets[],

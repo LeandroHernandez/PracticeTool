@@ -67,7 +67,7 @@
                                                 <tr>
                                                     <td>{{ item.en }}</td>
                                                     <td>{{ item.number * 20 | number: '0.0-1' }}</td>
-                                                    <td>{{ (item.number * 100) / 20 | number:'0.0-1' }}%</td>
+                                                    <td>{{ ((item.number * 20) * 100) / 20 | number:'0.0-1' }}%</td>
                                                 </tr>
                                                 }
                                             </tbody>
@@ -144,25 +144,77 @@
                     </div>
                 </div>
             </div>
-            <section class="section chart-container">
+            <section class="section chart">
                 <header class="header">
                     <h4 class="h4 title"> {{ en ? 'Weekly Reviews' : 'Repasos Semanales' }} </h4>
-                    <i class="bi bi-three-dots-vertical" (click)="randomize()"></i>
+                    <div class="div buttons">
+                        @if ( !chartVisible ) {
+                        <div class="div info">
+                            <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
+                                        'Here you can check your weekly review progress.' :
+                                        'Aquí puedes revisar tu progreso de repasos semanales.'
+                                    " [nzPopoverContent]="chartInfoPopoverContent" nzType="question-circle"
+                                [(nzPopoverVisible)]="chartInfoVisible" nzTheme="outline" />
+                        </div>
+                        }
+                        <ng-template #chartInfoPopoverContent>
+                            <div class="div chartInfoPopoverContent">
+                                <span class="span">
+                                    {{ en ?
+                                    `This chart shows the number of reviews you've done each week. Use the visualization
+                                    options to change the type of chart.` :
+                                    `Este gráfico muestra la cantidad de repasos que has hecho cada semana. Usa las
+                                    opciones para cambiar el tipo de grafico.`
+                                    }}
+                                </span>
+                            </div>
+                        </ng-template>
+                        @if ( tests.length > 0 ) {
+                        <!-- nzPopoverTrigger="click" (click)="randomize()"></i> -->
+                        <i class="bi bi-three-dots-vertical {{ chartVisible ? 'visible' : ''}}" nz-popover
+                            nzType="primary"
+                            [nzPopoverTitle]=" en ? 'Visualization options' : 'Opciones de visualización' "
+                            [nzPopoverContent]="chartPopoverContent" [(nzPopoverVisible)]="chartVisible"
+                            nzPopoverTrigger="click"></i>
+                        <ng-template #chartPopoverContent>
+                            <div class="div chartPopoverContent">
+                                <button class="button option {{ barChartType === 'bar' ? 'active' : '' }}" type="button"
+                                    (click)="barChartType = 'bar'">
+                                    {{ en ? 'Bar chart' : 'Gráfico de barras' }}
+                                </button>
+                                <button class="button option {{ barChartType === 'line' ? 'active' : '' }}"
+                                    type="button" (click)="barChartType = 'line'">
+                                    {{ en ? 'Line chart' : 'Gráfico de lineas' }}
+                                </button>
+                            </div>
+                        </ng-template>
+                        }
+                    </div>
                 </header>
                 <div class="div chart">
 
-                    <h6 class="h6 yearMonth">
-                        {{ mothYear }}
-                    </h6>
+                    <div class="div canvas-container">
+                        <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
+                        <canvas class="canvas chart" baseChart [data]="barChartData" [options]="barChartOptions2"
+                            [type]="barChartType">
+                        </canvas>
+                        <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
+                        <canvas class="canvas chart" baseChart [data]="barChartData" [options]="barChartOptions"
+                            [type]="barChartType">
+                        </canvas>
+                    </div>
 
-                    <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
-                    <canvas class="canvas" baseChart [data]="barChartData" [options]="barChartOptions"
-                        [type]="barChartType">
-                    </canvas>
+                    <div class="div options">
 
-                    <nz-pagination [nzPageIndex]=" weeks.length > 0 ? weeks.length - 1 : 0 " [nzHideOnSinglePage]="true"
-                        [nzTotal]="weeks.length" [nzPageSize]="1" [nzResponsive]="true"
-                        (nzPageIndexChange)=" actualWeekIndex = $event - 1" nzShowQuickJumper />
+                        <h6 class="h6 yearMonth">
+                            {{ mothYear }}
+                        </h6>
+
+                        <nz-pagination [nzPageIndex]=" weeks.length > 0 ? weeks.length : 0 " [nzHideOnSinglePage]="true"
+                            [nzTotal]="weeks.length" [nzPageSize]="1" [nzResponsive]="true"
+                            (nzPageIndexChange)=" actualWeekIndex = $event - 1; refreshChart()" nzShowQuickJumper />
+
+                    </div>
                 </div>
             </section>
         </div>
@@ -189,11 +241,9 @@
                 </div>
                 <div class="div data">
                     <p class="p">
-                        {{
-                        en ?
-                        'You have reached the 75.55% of your monthly target.' :
-                        'Has alcanzado el 75.55% de tu objetivo mensual.'
-                        }}
+                        {{ en ? 'You have reached the' : 'Has alcanzado el' }}
+                        <span class="percentage-number"> {{ monthlyProgress }}% </span>
+                        {{ en ? 'of your monthly target.' : 'de tu objetivo mensual.'}}
                     </p>
                     <div class="div items">
                         <span class="span item">
@@ -213,20 +263,22 @@
                 </div>
             </div>
             <footer class="footer">
-                <div class="div item elements">
-                    <span class="span label"> {{ en ? 'Elements' : 'Elementos' }} </span>
-                    <span class="span data"> {{ etpsTarget / 30 | number: '0.0-1' }} <i class="bi bi-arrow-up"></i>
-                    </span>
-                </div>
-                <div class="div item lists">
-                    <span class="span label"> {{ en ? 'Lists' : 'Listas' }} </span>
-                    <span class="span data"> {{ practiceListsTarget / 30 | number: '0.0-1' }} <i
-                            class="bi bi-arrow-up"></i> </span>
-                </div>
-                <div class="div item total">
-                    <span class="span label"> {{ en ? 'Today' : 'Hoy' }} </span>
-                    <span class="span data"> {{ (etpsTarget / 30) + (practiceListsTarget / 30) | number: '0.0-1' }} <i
-                            class="bi bi-arrow-up"></i> </span>
+                <h5 class="h5 title"> {{ en ? 'Daily Target' : 'Objetivo Diario' }} </h5>
+                <div class="div items">
+                    <div class="div item elements">
+                        <span class="span label"> {{ en ? 'Elements' : 'Elementos' }} </span>
+                        <span class="span data"> {{ dailyEtpsTarget }} <i class="bi bi-arrow-up"></i>
+                        </span>
+                    </div>
+                    <div class="div item lists">
+                        <span class="span label"> {{ en ? 'Lists' : 'Listas' }} </span>
+                        <span class="span data"> {{ dailyPLTarget }} <i class="bi bi-arrow-up"></i> </span>
+                    </div>
+                    <div class="div item total">
+                        <span class="span label"> Total </span>
+                        <span class="span data"> {{ dailyEtpsTarget + dailyPLTarget }}
+                            <i class="bi bi-arrow-up"></i> </span>
+                    </div>
                 </div>
             </footer>
         </div>

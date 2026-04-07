@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 import { TestService } from '../test';
 import { RootService } from '../../root.service';
 
-import { ETestReference, IEtpTI, IListTI, ITest, IUser, TWeek } from '../../../../interfaces';
+import { ETestReference, IEtpTI, IListTI, ITest, IUser, TListTestItem, TWeek } from '../../../../interfaces';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
@@ -33,19 +33,45 @@ export class DashboardComponent implements OnInit {
 
   public actualWeekIndex = 0;
 
+  public dailyEtpsTarget = 0;
+  public dailyPLTarget = 0;
   public etpsTarget = 0;
   public practiceListsTarget = 0;
   public completedTestsPercentage = 0;
 
   public elementsVisible: boolean = false;
   public listsVisible: boolean = false;
+  public chartInfoVisible: boolean = false;
+  public chartVisible: boolean = false;
 
   public barChartType: ChartType = 'bar';
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
-    scales: { y: { beginAtZero: true } },
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    },
     plugins: { legend: { display: true } }
+  };
+
+  public barChartOptions2: ChartConfiguration['options'] = {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: '#f3f4ee'
+        }
+      },
+      x: {
+        grid: {
+          color: '#f3f4ee'
+        }
+      }
+    },
+    plugins: { legend: { display: true, labels: { color: '#f3f4ee' } } }
   };
 
   public barChartData: ChartData<'bar'> = {
@@ -53,54 +79,66 @@ export class DashboardComponent implements OnInit {
     datasets: []
   };
 
+  private etps: TListTestItem[] = [];
+  // private practiceLists: ITest[] = [];
+
+  public etpsMonthNumber: number = 0;
+  public etpsNumber: number = 0;
+  public monthlyProgress: number = 0;
+
+
   get en(): boolean {
     return (localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en') === 'en';
   }
 
-  get etps() {
-    return this.correctEtps.map(item => item.number);
-  }
+  // get etps() {
+  //   return this.correctEtps.map(item => item.number);
+  // }
 
-  get etpsNumber(): number {
-    if (this.correctEtps.length === 0) return 0;
-    const numbers = this.etps.filter(num => num >= 1);
-    const max = Math.max(...this.etps.filter(num => num < 1));
-    // return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
-    return Math.floor((numbers.length + max) * 100) / 100;
-  }
+  // get etpsNumber(): number {
+  //   if (this.correctEtps.length === 0) return 0;
+  //   const numbers = this.etps.filter(num => num >= 1);
+  //   const max = Math.max(...this.etps.filter(num => num < 1));
+  //   console.log({ numbers, max });
+  //   // return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
+  //   return Math.floor((numbers.length + max) * 100) / 100;
+  // }
 
-  get practiceLists(): ITest[] {
-    return this.tests.filter(test => test.reference === ETestReference.practiceLists && test.completedPercentage === 100);
-  }
+  // get practiceLists(): ITest[] {
+  //   return this.tests.filter(test => test.reference === ETestReference.practiceLists && test.completedPercentage === 100);
+  // }
 
-  get monthlyProgress(): number {
-    // const { length } = this.reports.etps.total;
-    // return length > 0 ? (length * 100) / this.monthlyTarget : 0;
+  // get monthlyProgress(): number {
+  //   // const { length } = this.reports.etps.total;
+  //   // return length > 0 ? (length * 100) / this.monthlyTarget : 0;
 
-    const Eprogress = (this.etpsNumber * 100) / this.etpsTarget;
-    const Pprogress = (this.practiceLists.length * 100) / this.practiceListsTarget;
-    return ((Eprogress > 100 ? 100 : Eprogress) / 2) + ((Pprogress > 100 ? 100 : Pprogress) / 2);
-  }
+  //   const Eprogress = (this.etpsNumber * 100) / this.etpsTarget;
+  //   const Pprogress = (this.practiceLists.length * 100) / this.practiceListsTarget;
+  //   return ((Eprogress > 100 ? 100 : Eprogress) / 2) + ((Pprogress > 100 ? 100 : Pprogress) / 2);
+  // }
 
   get mothYear(): string {
-    const today = DateTime.now();
-    // const month = this.en ? today.toFormat('LLLL') : today.setLocale('es').toFormat('LLLL');
-    let month = '';
-    switch (this.weeks[this.actualWeekIndex]?.month) {
-      case 1: month = this.en ? 'January' : 'Enero'; break;
-      case 2: month = this.en ? 'February' : 'Febrero'; break;
-      case 3: month = this.en ? 'March' : 'Marzo'; break;
-      case 4: month = this.en ? 'April' : 'Abril'; break;
-      case 5: month = this.en ? 'May' : 'Mayo'; break;
-      case 6: month = this.en ? 'June' : 'Junio'; break;
-      case 7: month = this.en ? 'July' : 'Julio'; break;
-      case 8: month = this.en ? 'August' : 'Agosto'; break;
-      case 9: month = this.en ? 'September' : 'Septiembre'; break;
-      case 10: month = this.en ? 'October' : 'Octubre'; break;
-      case 11: month = this.en ? 'November' : 'Noviembre'; break;
-      case 12: month = this.en ? 'December' : 'Diciembre'; break;
-    }
-    return `${month} - ${this.weeks[this.actualWeekIndex]?.year}`;
+    const getMoth = (m: number): string => {
+      let month = '';
+      switch (m) {
+        case 1: month = this.en ? 'January' : 'Enero'; break;
+        case 2: month = this.en ? 'February' : 'Febrero'; break;
+        case 3: month = this.en ? 'March' : 'Marzo'; break;
+        case 4: month = this.en ? 'April' : 'Abril'; break;
+        case 5: month = this.en ? 'May' : 'Mayo'; break;
+        case 6: month = this.en ? 'June' : 'Junio'; break;
+        case 7: month = this.en ? 'July' : 'Julio'; break;
+        case 8: month = this.en ? 'August' : 'Agosto'; break;
+        case 9: month = this.en ? 'September' : 'Septiembre'; break;
+        case 10: month = this.en ? 'October' : 'Octubre'; break;
+        case 11: month = this.en ? 'November' : 'Noviembre'; break;
+        case 12: month = this.en ? 'December' : 'Diciembre'; break;
+      }
+      return month;
+    };
+    const months = this.weeks[this.actualWeekIndex]?.months.map(m => getMoth(m)).join(' / ');
+    // return `${months} - ${this.weeks[this.actualWeekIndex]?.year}`;
+    return `${months} - ${this.weeks[this.actualWeekIndex]?.year}`;
   }
 
   constructor(private _rootSvc: RootService, private _testSvc: TestService) { }
@@ -113,28 +151,47 @@ export class DashboardComponent implements OnInit {
   // 🔥 CORE LOGIC
   // =========================
 
-  private ensureWeekExists(date: DateTime): number {
-    let index = this.weeks.findIndex(w => w.weekNumber === date.weekNumber && w.year === date.year);
+  // private ensureWeekExists(date: DateTime): number {
+  //   let index = this.weeks.findIndex(w => w.weekNumber === date.weekNumber && w.year === date.year);
 
-    if (index < 0) {
-      const labels = this.getLabels(date);
+  //   if (index < 0) {
+  //     const labels = this.getLabels(date);
 
-      this.weeks.push({
-        year: date.year,
-        month: date.month,
-        weekNumber: date.weekNumber,
-        labels,
-        datasets: [
-          { data: [0, 0, 0, 0, 0, 0, 0], label: this.en ? 'Elements' : 'Elementos' },
-          { data: [0, 0, 0, 0, 0, 0, 0], label: this.en ? 'Lists' : 'Listas' },
-        ],
-      });
+  //     this.weeks.push({
+  //       year: date.year,
+  //       month: date.month,
+  //       weekNumber: date.weekNumber,
+  //       labels,
+  //       datasets: [
+  //         { data: [0, 0, 0, 0, 0, 0, 0], label: this.en ? 'Elements' : 'Elementos' },
+  //         { data: [0, 0, 0, 0, 0, 0, 0], label: this.en ? 'Lists' : 'Listas' },
+  //       ],
+  //     });
 
-      index = this.weeks.length - 1;
-    }
+  //     index = this.weeks.length - 1;
+  //   }
 
-    return index;
+  //   return index;
+  // }
+
+  private getEtpsNumber(m?: boolean): number {
+    if (this.etps.length === 0) return 0;
+
+    const numbers = this.etps.filter(etp => m ? etp.number >= 1 && DateTime.fromISO(etp.date as string).month === DateTime.now().month : etp.number >= 1);
+    const max = Math.max(...this.etps.filter(etp => m ? etp.number < 1 && DateTime.fromISO(etp.date as string).month === DateTime.now().month : etp.number < 1).map(etp => etp.number));
+    // return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
+    return Math.floor((numbers.length + max) * 100) / 100;
   }
+
+  private getMonthlyProgress(): number {
+
+    // const Eprogress = (this.etpsNumber * 100) / this.etpsTarget;
+    const Eprogress = (this.etpsMonthNumber * 100) / this.etpsTarget;
+    const Pprogress = (this.lists.filter(list => DateTime.fromISO(list.date as string).month === DateTime.now().month).length * 100) / this.practiceListsTarget;
+    const result = ((Eprogress >= 100 ? 100 : Eprogress) / 2) + ((Pprogress >= 100 ? 100 : Pprogress) / 2);
+    return Math.floor(result * 100) / 100;
+  }
+
 
   private getLabels(date: DateTime): string[] {
     const weekday = date.weekday;
@@ -155,6 +212,30 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  private generateWeeks(from: DateTime, to: DateTime): TWeek[] {
+    const weeks: TWeek[] = [];
+
+    let cursor = from.startOf('week'); // lunes
+    const end = to.endOf('week');
+
+    while (cursor <= end) {
+      weeks.push({
+        year: cursor.year,
+        months: [cursor.startOf('week').month, cursor.endOf('week').month].filter((m, i, arr) => arr.indexOf(m) === i), // meses únicos
+        weekNumber: cursor.weekNumber,
+        labels: this.getLabels(cursor),
+        datasets: [
+          { data: [0, 0, 0, 0, 0, 0, 0], label: this.en ? 'Elements' : 'Elementos' },
+          { data: [0, 0, 0, 0, 0, 0, 0], label: this.en ? 'Lists' : 'Listas' },
+        ]
+      });
+
+      cursor = cursor.plus({ weeks: 1 });
+    }
+
+    return weeks;
+  }
+
   private processTests(tests: ITest[]): void {
     this.weeks = [];
     this.correctEtps = [];
@@ -164,15 +245,45 @@ export class DashboardComponent implements OnInit {
     // ✅ ORDEN CLAVE
     tests.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 
+    const allDates: DateTime[] = [];
+
+    tests.forEach(test => {
+      allDates.push(DateTime.fromISO(test.createdAt));
+      // this.completedTestsPercentage += test.completedPercentage;
+
+      test.correctOnes.forEach(co => {
+        if (typeof co.date === 'string') {
+          allDates.push(DateTime.fromISO(co.date));
+        }
+      });
+    });
+
+    if (!allDates.length) return;
+
+    // 2. Generar semanas completas
+    const minDate = allDates.reduce((min, d) => d < min ? d : min, allDates[0]);
+    this.weeks = this.generateWeeks(minDate, DateTime.now());
+
+    // 3. Crear mapa
+    const weekMap = new Map<string, number>();
+    this.weeks.forEach((w, i) => {
+      weekMap.set(`${w.year}-${w.weekNumber}`, i);
+    });
+
     tests.forEach(test => {
       const testDate = DateTime.fromISO(test.createdAt);
 
       // ===== ELEMENTS =====
       test.correctOnes.forEach(co => {
-        const coDate = DateTime.fromISO(typeof co.date === 'string' ? co.date : '');
-        const index = this.ensureWeekExists(coDate);
+        // const coDate = DateTime.fromISO(typeof co.date === 'string' ? co.date : '');
+        // const index = this.ensureWeekExists(coDate);
 
-        this.weeks[index].datasets[0].data[coDate.weekday - 1]++;
+        // this.weeks[index].datasets[0].data[coDate.weekday - 1]++;
+        const coDate = DateTime.fromISO(co.date as string);
+        const index = weekMap.get(`${coDate.year}-${coDate.weekNumber}`);
+        if (index !== undefined) {
+          this.weeks[index].datasets[0].data[coDate.weekday - 1]++;
+        }
 
         const cIndex = this.correctEtps.findIndex(e => e.id === co.id);
         if (cIndex < 0) {
@@ -184,10 +295,14 @@ export class DashboardComponent implements OnInit {
 
       // ===== LISTS =====
       if (test.reference === ETestReference.practiceLists && test.completedPercentage === 100) {
-        const index = this.ensureWeekExists(testDate);
+        // const index = this.ensureWeekExists(testDate);
 
         test.practiceListReferences.forEach(ref => {
-          this.weeks[index].datasets[1].data[testDate.weekday - 1]++;
+          // this.weeks[index].datasets[1].data[testDate.weekday - 1]++;
+          const index = weekMap.get(`${testDate.year}-${testDate.weekNumber}`);
+          if (index !== undefined) {
+            this.weeks[index].datasets[1].data[testDate.weekday - 1]++;
+          }
 
           const lIndex = this.lists.findIndex(l => l.reference.id === ref.id);
           if (lIndex < 0) {
@@ -197,6 +312,8 @@ export class DashboardComponent implements OnInit {
           }
         });
       }
+
+      // this.ensureWeekExists(DateTime.now());
 
       // ===== MISTAKES =====
       test.mistakes.forEach(m => {
@@ -209,6 +326,14 @@ export class DashboardComponent implements OnInit {
       });
     });
 
+    this.etps = this.correctEtps.map(item => { return { date: item.date, number: item.number } });
+    if (this.correctEtps.length > 0) {
+      this.etpsNumber = this.getEtpsNumber();
+      this.etpsMonthNumber = this.getEtpsNumber(true);
+    }
+    this.monthlyProgress = this.getMonthlyProgress();
+    console.log({ monthlyProgress: this.monthlyProgress });
+
     // ✅ ordenar semanas correctamente
     this.weeks.sort((a, b) =>
       a.year !== b.year
@@ -216,13 +341,23 @@ export class DashboardComponent implements OnInit {
         : a.weekNumber - b.weekNumber
     );
 
+    // this.completedTestsPercentage = Math.floor((((this.completedTestsPercentage / tests.length) * 100) / tests.length) * 100) / 100;
     // 👉 mostrar última semana
     this.actualWeekIndex = this.weeks.length - 1;
 
     this.refreshChart();
   }
 
-  private refreshChart(): void {
+  public getDailyEtpsTarget(): number {
+    return Math.ceil(this.etpsTarget / DateTime.now().daysInMonth);
+  }
+
+  public getDailyPLTarget(): number {
+    return Math.ceil(this.practiceListsTarget / DateTime.now().daysInMonth);
+  }
+
+  // private refreshChart(): void {
+  public refreshChart(): void {
     if (!this.weeks.length) return;
 
     const week = this.weeks[this.actualWeekIndex];
@@ -252,6 +387,8 @@ export class DashboardComponent implements OnInit {
     this._rootSvc.user$.subscribe((user: IUser) => {
       this.etpsTarget = user.monthlyObjective?.etps ?? 0;
       this.practiceListsTarget = user.monthlyObjective?.lists ?? 0;
+      this.dailyEtpsTarget = this.getDailyEtpsTarget();
+      this.dailyPLTarget = this.getDailyPLTarget();
 
       this._testSvc.getFilteredTests({ author: user.id }).subscribe(tests => {
         this.tests = tests;
@@ -278,7 +415,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  public randomize(): void {
-    this.barChartType = this.barChartType === 'bar' ? 'line' : 'bar';
-  }
+  // public randomize(): void {
+  //   this.barChartType = this.barChartType === 'bar' ? 'line' : 'bar';
+  // }
 }
