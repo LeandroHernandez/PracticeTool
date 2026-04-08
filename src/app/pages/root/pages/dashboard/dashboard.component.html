@@ -104,10 +104,9 @@
                             </ng-template>
                         </div>
                     </header>
-                    <span class="span label"> {{ en ? 'List Reviewed' : 'Listas Repasadas' }} </span>
+                    <span class="span label"> {{ en ? 'List Mastered' : 'Listas Dominadas' }} </span>
                     <div class="div numbers">
-                        <!-- <strong class="data">{{ reports.etps.today.length }}</strong> -->
-                        <strong class="strong data">{{ lists.length }}</strong>
+                        <strong class="strong data">{{ listsNumber }}</strong>
                         @if ( lists.length > 0 ) {
                         <div class="div content {{ listsVisible ? 'visible' : ''}}" nz-popover nzType="primary"
                             [nzPopoverContent]="listPopoverContent" [(nzPopoverVisible)]="listsVisible"
@@ -267,17 +266,18 @@
                 <div class="div items">
                     <div class="div item elements">
                         <span class="span label"> {{ en ? 'Elements' : 'Elementos' }} </span>
-                        <span class="span data"> {{ dailyEtpsTarget }} <i class="bi bi-arrow-up"></i>
+                        <span class="span data"> {{ dailyEtpsTarget }}
+                            <i class="bi bi-translate"></i>
                         </span>
                     </div>
                     <div class="div item lists">
                         <span class="span label"> {{ en ? 'Lists' : 'Listas' }} </span>
-                        <span class="span data"> {{ dailyPLTarget }} <i class="bi bi-arrow-up"></i> </span>
+                        <span class="span data"> {{ dailyPLTarget }} <i class="bi bi-list-check"></i> </span>
                     </div>
                     <div class="div item total">
                         <span class="span label"> Total </span>
                         <span class="span data"> {{ dailyEtpsTarget + dailyPLTarget }}
-                            <i class="bi bi-arrow-up"></i> </span>
+                            <i class="bi bi-globe"></i> </span>
                     </div>
                 </div>
             </footer>
@@ -305,12 +305,12 @@
             [title]="en ? 'Your recent activity in the app.' : 'Tu actividad reciente en la aplicación.'">
             <h6 class="title"> {{ en ? 'Recent Activity' : 'Actividad Reciente' }} </h6>
             <div class="div items activity">
-                @if ( tests.length > 0 ) {
-                <span class="span item"> {{ en ? 'Completed Tests' : 'Pruebas Completadas' }} <span class="span number">
+                @if ( todayEtps.length > 0 ) { <span class="span item"> {{ en ? 'Completed Tests' :
+                    'Pruebas Completadas' }} <span class="span number">
                         {{ completedTestsPercentage | number:'0.0-1' }}% </span> </span>
                 <span class="span item">
                     {{ en ? 'Practiced' : 'Practicadas' }}
-                    <span class="span number"> {{ 10 }} </span>
+                    <span class="span number"> {{ todayEtps.length }} </span>
                     <span> {{ en ? 'Elements' : 'Elementos' }} </span>
                 </span>
                 } @else {
@@ -326,8 +326,10 @@
             <h6 class="title"> {{ en ? 'Recommendations' : 'Recomendaciones' }} </h6>
             <div class="div items recomendations">
                 @if (tests.length > 0) {
+                @if ( mistakenEtps.length > 0 ) {
                 <span class="span item"> {{ en ? 'Practice difficult words' : 'Practica las palabras difíciles' }}
                 </span>
+                }
                 <span class="span item"> {{ en ? 'Practice pronunciation' : 'Practica la pronunciación' }} </span>
                 } @else {
                 <span class="span item empty">

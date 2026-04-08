@@ -696,30 +696,39 @@ div.chartPopoverContent {
             .span.data {
                 font-size: 1.5rem;
                 font-weight: 600;
+                padding: .5rem;
 
-                transition: .2s color;
+                transition: .2s ease;
+                transition-property: color, background-color, border-radius;
 
-                [class^="bi bi-arrow"] {
-                    color: green;
+                .bi {
+                    font-size: 1.25rem;
+                    color: var(--secondary-bg2);
                 }
             }
 
             &:hover {
                 transform: scale(1.1);
 
-                .span.label {
+                /* .span.label {
                     color: var(--secondary);
-                }
+                } */
 
                 .span.data {
-                    color: var(--accent);
+                    color: var(--primary);
+                    background-color: var(--secondary);
+                    border-radius: .5rem;
+
+                    .bi {
+                        color: var(--accent);
+                    }
                 }
             }
         }
 
         &:has(.div.item:hover) .div.item:not(:hover) {
             opacity: .7;
-            filter: blur(1px);
+            /* filter: blur(1px); */
         }
     }
 }

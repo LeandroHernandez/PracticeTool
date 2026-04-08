@@ -80,42 +80,20 @@ export class DashboardComponent implements OnInit {
   };
 
   private etps: TListTestItem[] = [];
+  public todayEtps: TListTestItem[] = [];
   // private practiceLists: ITest[] = [];
 
   public etpsMonthNumber: number = 0;
+  // public etpsTodayNumber: number = 0;
   public etpsNumber: number = 0;
+  public listsMonthNumber: number = 0;
+  public listsNumber: number = 0;
   public monthlyProgress: number = 0;
 
 
   get en(): boolean {
     return (localStorage.getItem(localStorageLabels.localCurrentLanguage) ?? 'en') === 'en';
   }
-
-  // get etps() {
-  //   return this.correctEtps.map(item => item.number);
-  // }
-
-  // get etpsNumber(): number {
-  //   if (this.correctEtps.length === 0) return 0;
-  //   const numbers = this.etps.filter(num => num >= 1);
-  //   const max = Math.max(...this.etps.filter(num => num < 1));
-  //   console.log({ numbers, max });
-  //   // return this.correctEtps.map(item => item.number).reduce((a, b) => a + b, 0);
-  //   return Math.floor((numbers.length + max) * 100) / 100;
-  // }
-
-  // get practiceLists(): ITest[] {
-  //   return this.tests.filter(test => test.reference === ETestReference.practiceLists && test.completedPercentage === 100);
-  // }
-
-  // get monthlyProgress(): number {
-  //   // const { length } = this.reports.etps.total;
-  //   // return length > 0 ? (length * 100) / this.monthlyTarget : 0;
-
-  //   const Eprogress = (this.etpsNumber * 100) / this.etpsTarget;
-  //   const Pprogress = (this.practiceLists.length * 100) / this.practiceListsTarget;
-  //   return ((Eprogress > 100 ? 100 : Eprogress) / 2) + ((Pprogress > 100 ? 100 : Pprogress) / 2);
-  // }
 
   get mothYear(): string {
     const getMoth = (m: number): string => {
@@ -174,8 +152,14 @@ export class DashboardComponent implements OnInit {
   //   return index;
   // }
 
-  private getEtpsNumber(m?: boolean): number {
+  // private getTodayEtps(): TListTestItem[] {
+  //   return this.etps.filter(etp => { const { year, month, day } = DateTime.fromISO(etp.date as string); return `${day}/${month}/${year}` === `${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}` });
+  // }
+
+  private getEtpsNumber(options: { m: boolean, t: boolean }): number {
+    const { m, t } = options;
     if (this.etps.length === 0) return 0;
+    if (t) return Math.floor((this.todayEtps.length) * 100) / 100;
 
     const numbers = this.etps.filter(etp => m ? etp.number >= 1 && DateTime.fromISO(etp.date as string).month === DateTime.now().month : etp.number >= 1);
     const max = Math.max(...this.etps.filter(etp => m ? etp.number < 1 && DateTime.fromISO(etp.date as string).month === DateTime.now().month : etp.number < 1).map(etp => etp.number));
@@ -183,11 +167,33 @@ export class DashboardComponent implements OnInit {
     return Math.floor((numbers.length + max) * 100) / 100;
   }
 
+  private getListsNumber(m?: boolean): number {
+    if (this.lists.length === 0) return 0;
+
+    const numbers =
+      this.lists.filter(
+        list => m ?
+          list.number >= 1 &&
+          DateTime.fromISO(list.date as string).month === DateTime.now().month :
+          list.number >= 1
+      );
+    const max =
+      Math.max(
+        ...this.lists.filter(
+          list => m ?
+            list.number < 1 &&
+            DateTime.fromISO(list.date as string).month === DateTime.now().month :
+            list.number < 1
+        ).map(list => list.number));
+    console.log({ lists: this.lists, date: DateTime.fromISO(this.lists[0].date as string), numbers, max });
+    return Math.floor((numbers.length + max) * 100) / 100;
+  }
+
   private getMonthlyProgress(): number {
 
-    // const Eprogress = (this.etpsNumber * 100) / this.etpsTarget;
     const Eprogress = (this.etpsMonthNumber * 100) / this.etpsTarget;
-    const Pprogress = (this.lists.filter(list => DateTime.fromISO(list.date as string).month === DateTime.now().month).length * 100) / this.practiceListsTarget;
+    // const Pprogress = (this.lists.filter(list => DateTime.fromISO(list.date as string).month === DateTime.now().month).length * 100) / this.practiceListsTarget;
+    const Pprogress = (this.listsMonthNumber * 100) / this.practiceListsTarget;
     const result = ((Eprogress >= 100 ? 100 : Eprogress) / 2) + ((Pprogress >= 100 ? 100 : Pprogress) / 2);
     return Math.floor(result * 100) / 100;
   }
@@ -236,11 +242,17 @@ export class DashboardComponent implements OnInit {
     return weeks;
   }
 
+  private comproveIsToday(date: DateTime): boolean {
+    const { day, month, year } = DateTime.now();
+    return `${day}/${month}/${year}` === `${date.day}/${date.month}/${date.year}`
+  }
+
   private processTests(tests: ITest[]): void {
     this.weeks = [];
     this.correctEtps = [];
     this.mistakenEtps = [];
     this.lists = [];
+    this.completedTestsPercentage = 0;
 
     // ✅ ORDEN CLAVE
     tests.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
@@ -248,8 +260,9 @@ export class DashboardComponent implements OnInit {
     const allDates: DateTime[] = [];
 
     tests.forEach(test => {
-      allDates.push(DateTime.fromISO(test.createdAt));
-      // this.completedTestsPercentage += test.completedPercentage;
+      const tDate = DateTime.fromISO(test.createdAt);
+      allDates.push(tDate);
+      if (this.comproveIsToday(tDate)) this.completedTestsPercentage += test.completedPercentage;
 
       test.correctOnes.forEach(co => {
         if (typeof co.date === 'string') {
@@ -306,9 +319,9 @@ export class DashboardComponent implements OnInit {
 
           const lIndex = this.lists.findIndex(l => l.reference.id === ref.id);
           if (lIndex < 0) {
-            this.lists.push({ reference: ref, date: test.createdAt, number: 1 });
+            this.lists.push({ reference: ref, date: test.createdAt, number: 1 / 20 });
           } else {
-            this.lists[lIndex].number++;
+            this.lists[lIndex].number += 1 / 20;
           }
         });
       }
@@ -327,9 +340,14 @@ export class DashboardComponent implements OnInit {
     });
 
     this.etps = this.correctEtps.map(item => { return { date: item.date, number: item.number } });
+
+    this.todayEtps = this.etps.filter(etp => this.comproveIsToday(DateTime.fromISO(etp.date as string)));
     if (this.correctEtps.length > 0) {
-      this.etpsNumber = this.getEtpsNumber();
-      this.etpsMonthNumber = this.getEtpsNumber(true);
+      this.etpsNumber = this.getEtpsNumber({ m: false, t: false });
+      this.etpsMonthNumber = this.getEtpsNumber({ m: true, t: false });
+      // this.etpsTodayNumber = this.getEtpsNumber({ m: false, t: true });
+      this.listsNumber = this.getListsNumber();
+      this.listsMonthNumber = this.getListsNumber(true);
     }
     this.monthlyProgress = this.getMonthlyProgress();
     console.log({ monthlyProgress: this.monthlyProgress });
@@ -341,7 +359,7 @@ export class DashboardComponent implements OnInit {
         : a.weekNumber - b.weekNumber
     );
 
-    // this.completedTestsPercentage = Math.floor((((this.completedTestsPercentage / tests.length) * 100) / tests.length) * 100) / 100;
+    this.completedTestsPercentage = Math.floor((this.completedTestsPercentage / tests.length) * 100) / 100;
     // 👉 mostrar última semana
     this.actualWeekIndex = this.weeks.length - 1;
 
@@ -349,11 +367,13 @@ export class DashboardComponent implements OnInit {
   }
 
   public getDailyEtpsTarget(): number {
-    return Math.ceil(this.etpsTarget / DateTime.now().daysInMonth);
+    // return Math.ceil(this.etpsTarget / DateTime.now().daysInMonth);
+    return Math.floor((this.etpsTarget / DateTime.now().daysInMonth) * 100) / 100;
   }
 
   public getDailyPLTarget(): number {
-    return Math.ceil(this.practiceListsTarget / DateTime.now().daysInMonth);
+    // return Math.ceil(this.practiceListsTarget / DateTime.now().daysInMonth);
+    return Math.floor((this.practiceListsTarget / DateTime.now().daysInMonth) * 100) / 100;
   }
 
   // private refreshChart(): void {
