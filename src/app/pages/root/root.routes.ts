@@ -17,6 +17,11 @@ export const rootRoutes: Routes = [
   },
   {
     canActivate: [canActivateAuthStateRole([RoleIds.admin])],
+    path: RoutesApp.plans,
+    loadChildren: () => import('./pages/plans').then((m) => m.plansRoutes),
+  },
+  {
+    canActivate: [canActivateAuthStateRole([RoleIds.admin])],
     path: RoutesApp.modules,
     loadChildren: () => import('./pages/modules').then((m) => m.modulesRoutes),
   },

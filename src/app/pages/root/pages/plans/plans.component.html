@@ -1,0 +1,20 @@
+<!-- <p>plans works!</p> -->
+
+<main class="main">
+    <div class="content-header">
+        <div class="main_content">
+            <button type="button" class="button-add" [title]="en ? 'Add Plan' : 'Añadir Plan'"
+                [routerLink]="['/plans/add']">
+                {{ en ? 'Add' : 'Añadir' }}
+                <i class="bi bi-plus-lg"></i>
+            </button>
+            <h3 class="title">{{ en ? 'Plans' : 'Planes' }}</h3>
+            <div></div>
+        </div>
+    </div>
+    <div class="table">
+        <app-table [tableInfo]="tableInfo" [itemList]="plans" [page]="page" (editAction)="planEdit($event)"
+            (deleteAction)="planDelete($event)" (pageEmitter)="page = $event" (filterAction)="getPlans($event)"
+            (deleteAllAction)="deleteAll($event)" (changeStateEmitter)="changeState($event)"></app-table>
+    </div>
+</main>

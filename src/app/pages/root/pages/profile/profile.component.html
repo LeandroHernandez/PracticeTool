@@ -148,4 +148,54 @@
         <button class="button submit" type="submit">{{ en ? 'Update Profile' : 'Actualizar Perfil' }}</button>
     </footer>
 </form>
+
+<section class="section pricing">
+    <header class="header section">
+        <h4 class="h4 title"> Plan </h4>
+    </header>
+    <div class="div plans">
+        @for (plan of plans; track $index) {
+        <div class="div plan">
+            <header class="header plan">
+                <h5 class="h5 title"> {{ plan.title[en ? 'en' : 'es'] }} </h5>
+                <p class="p description"> {{ plan.description[en ? 'en' : 'es'] }} </p>
+            </header>
+
+            <div class="div price">
+                @if (plan.price > 0) {
+                <i class="bi bi-currency-dollar"></i>
+                <div class="span value">
+                    {{ plan.price }}
+                </div>
+                <span class="span per-month">
+                    / {{ en ? 'per month' : 'Por mes' }}
+                </span>
+                } @else {
+                <div class="span value"> {{ en ? 'Free' : 'Gratis' }} </div>
+                }
+            </div>
+
+            <button class="button cta" type="button" (click)="selectPlan(plan.id)">
+                {{
+                user.plan.id === plan.id ?
+                en ? 'Selected' : 'Seleccionado' :
+                en ? 'Select' : 'Seleccionar'
+                }}
+            </button>
+
+            <div class="div features">
+                <h6 class="h6"> {{ en ? 'What you will get' : 'Que obtendrás' }} </h6>
+                <ul class="ul">
+                    @for (feature of plan.features; track $index) {
+                    <li class="li">
+                        <nz-icon nzType="check" nzTheme="outline" />
+                        {{ feature[en ? 'en' : 'es'] }}
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        }
+    </div>
+</section>
 }

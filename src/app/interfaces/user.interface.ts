@@ -1,6 +1,7 @@
 import { Timestamp } from 'firebase/firestore/lite';
 import { ControlTypes } from '../enums';
 import { IRole } from './role.interface';
+import { IPlan } from './plan.interface';
 
 interface IMonthlyObjective {
   etps: number;
@@ -20,6 +21,7 @@ export interface IUser {
   lastUpdate: Date;
   state: boolean;
   monthlyObjective?: IMonthlyObjective;
+  plan: IPlan
 }
 
 type TUser = Omit<IUser, 'id' | 'role'>;

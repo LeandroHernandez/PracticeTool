@@ -6,32 +6,36 @@
             <div class="div boxes">
                 <div class="div box elements">
                     <header class="header">
-                        <div class="div avatar">
-                            <!-- <span class="icon-span"></span> -->
-                            <i class="bi bi-translate"></i>
+                        <div class="div icons">
+                            <div class="div avatar">
+                                <!-- <span class="icon-span"></span> -->
+                                <i class="bi bi-translate"></i>
+                            </div>
+                            <div class="div info">
+                                <!-- <i class="bi bi-info"></i> -->
+                                <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
+                                        'Here you can check the elements you have memorized.' :
+                                        'Aquí puedes revisar los elementos que has memorizado.'
+                                    " [nzPopoverContent]="elementInfoPopoverContent" nzType="question-circle"
+                                    nzTheme="outline" />
+                                <ng-template #elementInfoPopoverContent>
+                                    <div class="div elementInfoPopoverContent">
+                                        <span class="span">
+                                            {{ en ?
+                                            'Please remember you need to review at least 20 times an element to master
+                                            it.'
+                                            :
+                                            `Por favor, recuerda que necesitas repasar al menos 20 veces un elemento
+                                            para
+                                            dominarlo.`
+                                            }}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </div>
                         </div>
-                        <div class="div info">
-                            <!-- <i class="bi bi-info"></i> -->
-                            <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
-                                    'Here you can check the elements you have memorized.' :
-                                    'Aquí puedes revisar los elementos que has memorizado.'
-                                " [nzPopoverContent]="elementInfoPopoverContent" nzType="question-circle"
-                                nzTheme="outline" />
-                            <ng-template #elementInfoPopoverContent>
-                                <div class="div elementInfoPopoverContent">
-                                    <span class="span">
-                                        {{ en ?
-                                        'Please remember you need to review at least 20 times an element to master it.'
-                                        :
-                                        `Por favor, recuerda que necesitas repasar al menos 20 veces un elemento para
-                                        dominarlo.`
-                                        }}
-                                    </span>
-                                </div>
-                            </ng-template>
-                        </div>
+                        <span class="span label"> {{ en ? 'Elements memorized' :'Elementos memorizados' }} </span>
                     </header>
-                    <span class="span label"> {{ en ? 'Elements memorized' :'Elementos memorizados' }} </span>
                     <div class="div numbers">
                         <!-- <strong class="data">{{ reports.etps.today.length }}</strong> -->
                         <strong class="strong data">{{ etpsNumber }}</strong>
@@ -81,30 +85,32 @@
                 </div>
                 <div class="div box lists">
                     <header class="header">
-                        <div class="div avatar">
-                            <i class="bi bi-list-check"></i>
+                        <div class="div icons">
+                            <div class="div avatar">
+                                <i class="bi bi-list-check"></i>
+                            </div>
+                            <div class="div info">
+                                <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
+                                        'Here you can check the practice lists you have mastered.' :
+                                        'Aquí puedes revisar las listas que has dominado.'
+                                    " [nzPopoverContent]="listInfoPopoverContent" nzType="question-circle"
+                                    nzTheme="outline" />
+                                <ng-template #listInfoPopoverContent>
+                                    <div class="div listInfoPopoverContent">
+                                        <span class="span">
+                                            {{ en ?
+                                            'Please remember you need to review at least 20 times a list to master it.'
+                                            :
+                                            `Por favor, recuerda que necesitas repasar al menos 20 veces una lista para
+                                            dominarla.`
+                                            }}
+                                        </span>
+                                    </div>
+                                </ng-template>
+                            </div>
                         </div>
-                        <div class="div info">
-                            <nz-icon class="nz-icon info" nz-popover nzType="primary" [nzPopoverTitle]=" en ?
-                                    'Here you can check the practice lists you have mastered.' :
-                                    'Aquí puedes revisar las listas que has dominado.'
-                                " [nzPopoverContent]="listInfoPopoverContent" nzType="question-circle"
-                                nzTheme="outline" />
-                            <ng-template #listInfoPopoverContent>
-                                <div class="div listInfoPopoverContent">
-                                    <span class="span">
-                                        {{ en ?
-                                        'Please remember you need to review at least 20 times a list to master it.'
-                                        :
-                                        `Por favor, recuerda que necesitas repasar al menos 20 veces una lista para
-                                        dominarla.`
-                                        }}
-                                    </span>
-                                </div>
-                            </ng-template>
-                        </div>
+                        <span class="span label"> {{ en ? 'List Mastered' : 'Listas Dominadas' }} </span>
                     </header>
-                    <span class="span label"> {{ en ? 'List Mastered' : 'Listas Dominadas' }} </span>
                     <div class="div numbers">
                         <strong class="strong data">{{ listsNumber }}</strong>
                         @if ( lists.length > 0 ) {
@@ -296,7 +302,8 @@
             </div>
             }
             } @else {
-            <p class="p"> {{ en ? 'No difficult words to work!' : '¡No hay palabras difíciles por trabajar!' }} </p>
+            <p class="p empty"> {{ en ? 'No difficult words to work!' : '¡No hay palabras difíciles por trabajar!' }}
+            </p>
             }
         </div>
     </div>
@@ -314,9 +321,9 @@
                     <span> {{ en ? 'Elements' : 'Elementos' }} </span>
                 </span>
                 } @else {
-                <span class="span item empty">
+                <p class="p empty">
                     {{ en ? 'Theres no recent activity to show' : 'No hay actividad reciente para mostrar' }}
-                </span>
+                </p>
                 }
             </div>
         </div>
@@ -332,9 +339,9 @@
                 }
                 <span class="span item"> {{ en ? 'Practice pronunciation' : 'Practica la pronunciación' }} </span>
                 } @else {
-                <span class="span item empty">
+                <p class="p empty">
                     {{ en ? 'Theres no recommendations to show' : 'No hay recomendaciones para mostrar' }}
-                </span>
+                </p>
                 }
             </div>
         </div>

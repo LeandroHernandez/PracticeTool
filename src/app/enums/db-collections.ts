@@ -1,5 +1,6 @@
 
 export enum DbCollections {
+    plans = 'plans',
     roles = 'roles',
     modules = 'modules',
     users = 'users',

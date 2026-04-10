@@ -71,7 +71,7 @@
             display: flex;
             align-items: center;
             gap: .5rem;
-            color: var(--accent3);
+            color: var(--secondary-bg2);
             font-size: .9rem;
 
             .span.number {
@@ -84,7 +84,14 @@
 
     .header {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        /* gap: .5rem; */
+
+        .div.icons {
+            display: flex;
+            justify-content: space-between;
+            gap: .5rem;
+        }
 
         .div.avatar {
             width: fit-content;
@@ -108,27 +115,11 @@
                 }
             }
         }
-
-        /* .div.info {
-            font-size: 1.75rem;
-            display: flex;
-            flex-direction: column;
-
-            .nz-icon.info {
-                cursor: zoom-in;
-                transform: translateX(100%);
-                color: var(--secondary-bg2);
-                opacity: 0;
-
-                transition: .2s ease;
-                transition-property: transform, opacity, color;
-            }
-        } */
     }
 
     .span.label {
         color: var(--accent3);
-        font-size: clamp(.7rem, 1.5dvw, .9rem);
+        font-size: .9rem;
 
         transition: .2s color ease;
     }
@@ -239,14 +230,6 @@
         }
 
     }
-
-    /* &:hover {
-        .header .div.info .nz-icon {
-            transform: translate(0);
-            opacity: 1;
-        }
-
-    } */
 }
 
 .div.box,
@@ -360,13 +343,28 @@
     border-radius: 1rem;
     padding: 1.5rem;
     background-color: #ffffff;
+
+    .p.empty {
+        width: fit-content;
+        background-color: var(--primary);
+        color: var(--secondary);
+        border-radius: .25rem;
+        padding: .25rem .5rem;
+    }
 }
 
 .div.progress {
     max-width: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: hidden; */
+
+    .div.box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
+    }
 }
 
 .section.chart {
@@ -612,8 +610,7 @@ div.chartPopoverContent {
     .p {
         text-align: center;
         color: var(--accent3);
-        /* font-size: .9rem; */
-        font-size: clamp(.62rem, 1.2dvw, .9rem);
+        font-size: clamp(.62rem, 1.5dvw, .9rem);
         font-weight: 500;
     }
 
@@ -633,7 +630,7 @@ div.chartPopoverContent {
                 width: 100%;
                 display: flex;
                 justify-content: space-around;
-                gap: .5rem;
+                gap: .25rem;
 
                 .span.item {
                     display: flex;
@@ -641,10 +638,11 @@ div.chartPopoverContent {
                     align-items: center;
                     text-align: center;
                     color: var(--accent3);
-                    font-size: clamp(.612rem, 1.3dvw, .875rem);
+                    /* font-size: clamp(.612rem, 1.3dvw, .875rem); */
+                    font-size: clamp(.58rem, 1.2dvw, .875rem);
 
                     .span.number {
-                        font-size: .95rem;
+                        font-size: clamp(.7rem, 2dvw, .95rem);
                         font-weight: 600;
                         color: var(--secondary-bg2);
                     }
@@ -676,6 +674,7 @@ div.chartPopoverContent {
         .div.items {
             display: flex;
             justify-content: space-around;
+            gap: .5rem;
         }
 
         .div.item {
@@ -683,9 +682,10 @@ div.chartPopoverContent {
             flex-direction: column;
             align-items: center;
             gap: .5rem;
+            padding: .5rem;
 
             transition-duration: .2s;
-            transition-property: transform, opacity, filter;
+            transition-property: transform, border-radius, background-color;
 
             .span.label {
                 color: var(--accent3);
@@ -694,12 +694,12 @@ div.chartPopoverContent {
             }
 
             .span.data {
-                font-size: 1.5rem;
+                font-size: clamp(1rem, 2dvw, 1.5rem);
                 font-weight: 600;
-                padding: .5rem;
+                /* padding: .5rem; */
 
                 transition: .2s ease;
-                transition-property: color, background-color, border-radius;
+                transition-property: color;
 
                 .bi {
                     font-size: 1.25rem;
@@ -709,26 +709,21 @@ div.chartPopoverContent {
 
             &:hover {
                 transform: scale(1.1);
+                background-color: var(--secondary);
+                border-radius: .5rem;
 
-                /* .span.label {
-                    color: var(--secondary);
-                } */
+                .span.label {
+                    color: var(--accent);
+                }
 
                 .span.data {
                     color: var(--primary);
-                    background-color: var(--secondary);
-                    border-radius: .5rem;
 
                     .bi {
                         color: var(--accent);
                     }
                 }
             }
-        }
-
-        &:has(.div.item:hover) .div.item:not(:hover) {
-            opacity: .7;
-            /* filter: blur(1px); */
         }
     }
 }
@@ -796,22 +791,60 @@ div.chartPopoverContent {
     }
 
     .div.objective {
-        .p {
-            font-size: clamp(.7rem, 3dvw, 1.2rem);
-        }
 
-        .div.card .div.strong.data .div.items .span.item {
-            font-size: clamp(.6rem, 3.5dvw, 1rem);
+        .div.card {
 
-            .span.number {
-                color: var(--secondary-bg2);
+            .header {
+                .h5.title {
+                    font-size: clamp(1rem, 5dvw, 1.4rem);
+                }
+
+                .h6.subtitle {
+                    font-size: clamp(.8rem, 3dvw, 1rem);
+                }
+
             }
 
+            .div.data {
+                .p {
+                    font-size: clamp(.7rem, 3dvw, 1.2rem);
+                }
+
+                .div.items .span.item {
+                    font-size: clamp(.7rem, 3dvw, 1rem);
+
+                    .span.number {
+                        font-size: clamp(.9rem, 3dvw, 1.2rem);
+                    }
+                }
+
+            }
+        }
+
+        .footer {
+            .h5.title {
+                font-size: clamp(1rem, 5dvw, 1.4rem);
+            }
+
+            .div.item {
+
+                .span.label {
+                    font-size: clamp(.8rem, 4dvw, 1.25rem);
+                }
+
+                .span.data {
+                    font-size: clamp(.8rem, 4dvw, 1.5rem);
+
+                    .bi {
+                        font-size: clamp(1rem, 4dvw, 1.25rem);
+                    }
+                }
+            }
         }
 
     }
 
-    .arc-text {
+    .span.arc-text {
         font-size: clamp(1.4rem, 10dvw, 3rem);
     }
 }

@@ -6,6 +6,7 @@ export enum RoutesApp {
     landingPage = 'landing-page',
     home = 'home',
     dashboard = 'dashboard',
+    plans = 'plans',
     roles = 'roles',
     modules = 'modules',
     users = 'users',

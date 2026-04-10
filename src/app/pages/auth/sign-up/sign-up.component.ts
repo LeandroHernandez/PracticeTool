@@ -113,7 +113,7 @@ export class SignUpComponent {
       .then(sigUpResponse => {
         // return this.success(sigUpResponse);
         const d: number = Date.now();
-        return this._userSvc.addUser({ ...this.form.value, createdAt: d, lastUpdate: d })
+        return this._userSvc.addUser({ ...this.form.value, monthlyObjective: { etps: 30, lists: 4 }, createdAt: d, lastUpdate: d })
           .then(addUserResponse => { console.log({ addUserResponse }); return this.success(sigUpResponse); })
           .catch(error => {
             this._authSvc.delete(sigUpResponse.user).then(() => { })

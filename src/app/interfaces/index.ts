@@ -1,3 +1,4 @@
+export * from './plan.interface';
 export * from './content-header-info.interface';
 export * from './element-to-practice.interface';
 export * from './etp-item.interface';

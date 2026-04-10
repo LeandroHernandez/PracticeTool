@@ -67,6 +67,18 @@ export class TableComponent implements OnInit, OnDestroy {
     // const urlA: string[] = this._router.url.split('/');
     const urlA: string[] = this.url.split('/');
     switch (urlA[urlA.length - 1]) {
+      case RoutesApp.modules:
+        return localStorageLabels.module.selectedList;
+        break;
+
+      case RoutesApp.users:
+        return localStorageLabels.user.selectedList;
+        break;
+
+      case RoutesApp.plans:
+        return localStorageLabels.plan.selectedList;
+        break;
+
       case RoutesApp.practiceLists:
         return localStorageLabels.pl.selectedList;
         break;

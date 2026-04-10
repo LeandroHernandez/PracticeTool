@@ -1,4 +1,10 @@
 
+enum plan {
+  customSelectedList = 'customSelectedListOfPLAN',
+  selectedList = 'selectedListOfPLAN',
+  filerBody = 'filerBodyPLAN',
+}
+
 enum module {
   customSelectedList = 'customSelectedListOfMODULE',
   selectedList = 'selectedListOfMODULE',
@@ -31,6 +37,7 @@ enum pl {
 }
 
 export const localStorageLabels = {
+  plan,
   module,
   tutoFinished: 'tutoFinished',
   role,

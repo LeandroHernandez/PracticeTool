@@ -17,6 +17,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 import { DateTime } from 'luxon';
 import { Timestamp } from 'firebase/firestore';
+import { IPlan } from '../../../../interfaces/plan.interface';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class ProfileComponent implements OnInit {
 
   public user: IUser | null = null;
   public form: FormGroup;
+  public plans: IPlan[] = [];
 
   public showErrors: boolean = false;
   public showPassword: boolean = false;
@@ -59,8 +61,8 @@ export class ProfileComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6), validateComplexPassword(), Validators.maxLength(20)]],
       role: [''],
       monthlyObjective: this._fb.group({
-        etps: [1, [Validators.required, Validators.min(1)]],
-        lists: [1, [Validators.required, Validators.min(1)]]
+        etps: [30, [Validators.required, Validators.min(30)]],
+        lists: [4, [Validators.required, Validators.min(4)]]
       }),
       // createdAt: [],
       // lastUpdate: [new Date],
@@ -156,6 +158,10 @@ export class ProfileComponent implements OnInit {
       console.log({ err });
       return this._nzNotificationSvc.error('Error updating profile', 'There was an error updating your profile, please try again');
     });
+  }
+
+  public selectPlan(id: string): void {
+    console.log({ id });
   }
 
 }
