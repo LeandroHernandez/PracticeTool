@@ -36,6 +36,7 @@
 
         .div.info {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
             gap: .5rem;
             padding: .25rem 0;
@@ -43,16 +44,14 @@
             transition: .2s ease;
             transition-property: background-color, padding;
 
-            .span.errors {
-                /* color: var(--accent3);
-                font-size: .9rem; */
+            .span {
+                font-size: 1rem;
+            }
 
-                .span.number {
-                    font-size: 1rem;
-                    font-weight: 600;
-                    color: var(--error-color);
-                    /* opacity: .9; */
-                }
+            .span.errors .span.number {
+                font-weight: 600;
+                color: var(--error-color);
+                /* opacity: .9; */
             }
 
             &:hover {
@@ -378,7 +377,7 @@
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
-        font-size: 1rem;
+        font-size: clamp(.7rem, 1.25dvw, 1rem);
 
         .h4.title {
             font-weight: 600;
@@ -389,7 +388,7 @@
 
         .div.buttons {
             display: flex;
-            gap: .5rem;
+            gap: clamp(.25rem, 1.25dvw, .5rem);
 
             .bi-three-dots-vertical {
                 display: flex;
@@ -420,25 +419,29 @@
 
     }
 
-    .div.chart .div.canvas-container {
-        width: 100%;
-        max-width: 100%;
-        aspect-ratio: 3/1;
+    .div.chart {
+        .canvas-scroll {
+            width: 100%;
+            overflow-x: auto;
+        }
 
-        overflow: auto;
-
-        position: relative;
-
-        transition: .2s background-color ease;
+        .canvas-stage {
+            position: relative;
+            width: max(700px, 100%);
+            /* 👈 ESTA es la clave */
+            height: auto;
+            aspect-ratio: 3/1;
+        }
 
         .canvas.chart {
-            min-width: max-content;
-            max-width: 100%;
-            min-height: max-content;
-            max-height: 100%;
 
             position: absolute;
-            offset: 0;
+            inset: 0;
+
+            width: 100% !important;
+            height: 100% !important;
+
+            display: block;
 
             transition: .2s opacity ease;
 
@@ -846,5 +849,15 @@ div.chartPopoverContent {
 
     .span.arc-text {
         font-size: clamp(1.4rem, 10dvw, 3rem);
+    }
+}
+
+@media (max-width: 700px) {
+    .canvas-stage {
+        width: 700px;
+        height: 233px;
+        /* 👈 700 / 3 */
+        aspect-ratio: unset;
+        /* 👈 importante */
     }
 }

@@ -198,15 +198,17 @@
                 </header>
                 <div class="div chart">
 
-                    <div class="div canvas-container">
-                        <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
-                        <canvas class="canvas chart" baseChart [data]="barChartData" [options]="barChartOptions2"
-                            [type]="barChartType">
-                        </canvas>
-                        <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
-                        <canvas class="canvas chart" baseChart [data]="barChartData" [options]="barChartOptions"
-                            [type]="barChartType">
-                        </canvas>
+                    <div class="div canvas-scroll">
+                        <div class="div canvas-stage">
+                            <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
+                            <canvas class="canvas chart" baseChart [data]="barChartData" [options]="barChartOptions2"
+                                [type]="barChartType">
+                            </canvas>
+                            <!-- [type]="barChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"> -->
+                            <canvas class="canvas chart" baseChart [data]="barChartData" [options]="barChartOptions"
+                                [type]="barChartType">
+                            </canvas>
+                        </div>
                     </div>
 
                     <div class="div options">

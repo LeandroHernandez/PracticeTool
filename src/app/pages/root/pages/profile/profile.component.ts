@@ -18,6 +18,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { DateTime } from 'luxon';
 import { Timestamp } from 'firebase/firestore';
 import { IPlan } from '../../../../interfaces/plan.interface';
+import { PlansService } from '../plans';
 
 
 @Component({
@@ -50,6 +51,7 @@ export class ProfileComponent implements OnInit {
     private _router: Router,
     private _authSvc: AuthService,
     private _usersSvc: UsersService,
+    private _plansSvc: PlansService,
     private _nzNotificationSvc: NzNotificationService
   ) {
     this.form = this._fb.group({
@@ -100,6 +102,13 @@ export class ProfileComponent implements OnInit {
         if (users.length < 1) return notFindUser()
         this.user = users[0];
         console.log({ user: this.user });
+        // this._plansSvc.getPlan(this.user.plan.id).subscribe(plan => {
+        this._plansSvc.getFilteredPlans().subscribe(plans => {
+          // console.log({ plan });
+          // this.plans.push(plan);
+          console.log({ plans });
+          this.plans = plans;
+        }, err => console.log({ err }));
         // const { names, lastnames, email, password, gender, age, role, state } = this.user;
         // return this.form.patchValue({ names, lastnames, email, password, gender, age: age?.toDate(), role: role?.id, state });
         const user: any = { ...this.user };
