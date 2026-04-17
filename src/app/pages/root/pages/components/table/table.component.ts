@@ -48,7 +48,7 @@ import { TableService } from './table.service';
 export class TableComponent implements OnInit, OnDestroy {
   @Input() filterFormFields: Array<IFilterFormField> | null = null;
   @Input() tableInfo: Array<ITableItem> = [];
-  @Input() page: IPageTableInfo = { index: 1, size: 10 };
+  @Input() page: IPageTableInfo = { index: 1, size: 50 };
   @Input() itemList: Array<any> | null = null;
   @Input() pageEmitter: EventEmitter<IPageTableInfo> = new EventEmitter();
 

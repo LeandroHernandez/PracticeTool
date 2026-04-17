@@ -93,7 +93,7 @@ export class ElementsToPracticeContentComponent implements OnInit {
 
   public page: IPageTableInfo | any = {
     index: 1,
-    size: 10,
+    size: 50,
   };
 
   public itemList: Array<any> = [];
