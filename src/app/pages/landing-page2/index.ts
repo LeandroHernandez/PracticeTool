@@ -1,0 +1,1 @@
+export * from './landing-page2.component';

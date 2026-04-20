@@ -6,6 +6,10 @@ import { canActivateAuthStateRole } from './guards/auth-state-role.guard';
 
 export const routes: Routes = [
     {
+        path: RoutesApp.landingPage2,
+        loadComponent: () => import('./pages/landing-page2').then(m => m.LandingPage2Component),
+    },
+    {
         path: RoutesApp.landingPage,
         loadComponent: () => import('./pages/landing-page').then(m => m.LandingPageComponent),
     },
